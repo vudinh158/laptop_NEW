@@ -42,7 +42,7 @@ const startServer = async () => {
     await sequelize.authenticate()
     console.log("Database connection established successfully.")
 
-    // Sync models (use { force: true } only in development to recreate tables)
+    // Sẽ tạo các bảng trong Neon Postgres nếu chưa tồn tại
     await sequelize.sync({ alter: true })
     console.log("Database models synchronized.")
 
