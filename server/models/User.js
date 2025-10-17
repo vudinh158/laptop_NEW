@@ -32,6 +32,11 @@ const User = sequelize.define(
     },
     phone_number: {
       type: DataTypes.STRING(20),
+      allowNull : false,
+      unique : true,
+      vialidate : {
+        is: /^[+0-9][0-9\s\-()]{6,}$/i,
+      }
     },
     address: {
       type: DataTypes.TEXT,
