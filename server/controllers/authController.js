@@ -1,11 +1,12 @@
 const jwt = require("jsonwebtoken")
 const { User, Role, Cart } = require("../models")
 const { validationResult } = require("express-validator")
+const { Op } = require("sequelize")
 
 // Generate JWT token
-const generateToken = (userId) => {
-  return jwt.sign({ userId }, process.env.JWT_SECRET || "your-secret-key", { expiresIn: "7d" })
-}
+const generateToken = (userId) =>
+  jwt.sign({ userId }, process.env.JWT_SECRET || "your-secret-key", { expiresIn: "7d" })
+
 
 // Register new user
 exports.register = async (req, res, next) => {
@@ -18,12 +19,29 @@ exports.register = async (req, res, next) => {
     const { username, email, password, full_name, phone_number } = req.body
 
     // Check if user exists
-    const existingUser = await User.findOne({
-      where: { email },
+    const existing = await User.findOne({
+      where: {
+        [Op.or]: [
+          { username },
+          { email },
+          { phone_number },
+        ],
+      },
+      attributes: ["username", "email", "phone_number"],
     })
 
-    if (existingUser) {
-      return res.status(409).json({ message: "Email already registered" })
+    if (existing) {
+      const dupErrors = []
+      if (existing.username === username) {
+        dupErrors.push({ field: "username", code: "DUPLICATE_USERNAME", message: "Username already taken" })
+      }
+      if (existing.email === email) {
+        dupErrors.push({ field: "email", code: "DUPLICATE_EMAIL", message: "Email already registered" })
+      }
+      if (existing.phone_number === phone_number) {
+        dupErrors.push({ field: "phone_number", code: "DUPLICATE_PHONE", message: "Phone number already registered" })
+      }
+      return res.status(409).json({ message: "Duplicate entry", errors: dupErrors })
     }
 
     // Create user
@@ -55,6 +73,7 @@ exports.register = async (req, res, next) => {
         username: user.username,
         email: user.email,
         full_name: user.full_name,
+        phone_number: user.phone_number,
       },
     })
   } catch (error) {
@@ -70,11 +89,11 @@ exports.login = async (req, res, next) => {
       return res.status(400).json({ errors: errors.array() })
     }
 
-    const { email, password } = req.body
+    const { username, password } = req.body
 
     // Find user
     const user = await User.findOne({
-      where: { email },
+      where: { username },
       include: [
         {
           model: Role,
@@ -84,13 +103,13 @@ exports.login = async (req, res, next) => {
     })
 
     if (!user) {
-      return res.status(401).json({ message: "Invalid email or password" })
+      return res.status(401).json({ message: "Invalid username or password" })
     }
 
     // Check password
     const isValidPassword = await user.comparePassword(password)
     if (!isValidPassword) {
-      return res.status(401).json({ message: "Invalid email or password" })
+      return res.status(401).json({ message: "Invalid username or password" })
     }
 
     // Check if user is active
@@ -112,8 +131,9 @@ exports.login = async (req, res, next) => {
         username: user.username,
         email: user.email,
         full_name: user.full_name,
+        phone_number: user.phone_number,
         avatar_url: user.avatar_url,
-        roles: user.Roles.map((role) => role.role_name),
+        roles: user.Roles.map((r) => r.role_name),
       },
     })
   } catch (error) {
