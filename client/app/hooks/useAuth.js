@@ -2,42 +2,40 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useDispatch } from "react-redux"
 import { setCredentials, logout as logoutAction } from "../store/slices/authSlice"
 import api from "../services/api"
+import { authAPI } from "../services/api"
 
-export function useLogin() {
-  const dispatch = useDispatch()
-
+export function useRegister() {
   return useMutation({
-    mutationFn: async (credentials) => {
-      const { data } = await api.post("/auth/login", credentials)
+    mutationFn: async (payload) => {
+      // payload: { username, email, password, full_name, phone_number }
+      const { data } = await authAPI.register(payload)
       return data
-    },
-    onSuccess: (data) => {
-      dispatch(
-        setCredentials({
-          user: data.user,
-          token: data.token,
-        }),
-      )
     },
   })
 }
 
-export function useRegister() {
+export function useLogin() {
   const dispatch = useDispatch()
-
   return useMutation({
-    mutationFn: async (userData) => {
-      const { data } = await api.post("/auth/register", userData)
+    mutationFn: async ({ username, password }) => {
+      const { data } = await authAPI.login({ username, password })
       return data
     },
     onSuccess: (data) => {
-      dispatch(
-        setCredentials({
-          user: data.user,
-          token: data.token,
-        }),
-      )
+      // data: { token, user, ... }
+      dispatch(setCredentials({ token: data.token, user: data.user }))
     },
+  })
+}
+export function useMe(enabled = true) {
+  // tiện lấy lại user khi refresh nếu cần
+  return useQuery({
+    queryKey: ["me"],
+    queryFn: async () => {
+      const { data } = await authAPI.getCurrentUser()
+      return data
+    },
+    enabled,
   })
 }
 
@@ -54,16 +52,5 @@ export function useCurrentUser() {
 
 export function useLogout() {
   const dispatch = useDispatch()
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: async () => {
-      // Optional: call logout endpoint if you have one
-      // await api.post('/auth/logout')
-    },
-    onSuccess: () => {
-      dispatch(logoutAction())
-      queryClient.clear()
-    },
-  })
+  return () => dispatch(logout())
 }

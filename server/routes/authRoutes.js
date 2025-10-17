@@ -10,10 +10,11 @@ const registerValidation = [
   body("email").isEmail().normalizeEmail().withMessage("Invalid email"),
   body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters"),
   body("full_name").optional().trim().isLength({ max: 100 }),
+  body("phone_number").trim().notEmpty().withMessage("Phone number is required").matches(/^[+0-9][0-9\s\-()]{6,}$/).withMessage("Invalid phone number"),
 ]
 
 const loginValidation = [
-  body("email").isEmail().normalizeEmail().withMessage("Invalid email"),
+  body("username").trim().notEmpty().withMessage("Username is required"),
   body("password").notEmpty().withMessage("Password is required"),
 ]
 

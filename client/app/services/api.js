@@ -27,7 +27,12 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    // KHÔNG redirect 401 cho các request auth, để Login/Register tự hiển thị lỗi chính xác
+    const status = error.response?.status
+    const url = error.config?.url || ""
+    const isAuthEndpoint = url.includes("/auth/login") || url.includes("/auth/register")
+
+    if (status === 401 && !isAuthEndpoint) {
       localStorage.removeItem("token")
       localStorage.removeItem("user")
       window.location.href = "/login"

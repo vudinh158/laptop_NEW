@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useRegister } from "../hooks/useAuth"
 import LoadingSpinner from "../components/LoadingSpinner"
@@ -10,6 +10,7 @@ export default function RegisterPage() {
   const register = useRegister()
 
   const [formData, setFormData] = useState({
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -17,33 +18,55 @@ export default function RegisterPage() {
     phone_number: "",
   })
 
+  const [fieldErrors, setFieldErrors] = useState({})
+
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+    setFieldErrors((prev) => ({ ...prev, [e.target.name]: null }))
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-
     if (formData.password !== formData.confirmPassword) {
-      alert("Mật khẩu không khớp")
+      setFieldErrors((prev) => ({ ...prev, confirmPassword: "Mật khẩu không khớp" }))
       return
     }
-
     try {
       await register.mutateAsync({
-        email: formData.email,
+        username: formData.username.trim(),
+        email: formData.email.trim(),
         password: formData.password,
-        full_name: formData.full_name,
-        phone_number: formData.phone_number,
+        full_name: formData.full_name.trim(),
+        phone_number: formData.phone_number.trim(),
       })
-      navigate("/")
+      navigate("/login")
     } catch (error) {
-      console.error("Registration failed:", error)
+    const res = error?.response?.data
+    const next = {}
+    // Map 2 dạng:
+    // 1) Duplicate/tuỳ chỉnh: { errors: [{ field, message }] }
+    // 2) express-validator: { errors: [{ param, msg }] }
+    if (Array.isArray(res?.errors)) {
+      for (const err of res.errors) {
+        const fieldName = err.field || err.param || err.path
+        const message = err.message || err.msg
+        if (fieldName && message) next[fieldName] = message
+      }
     }
+    if (!Object.keys(next).length) {
+      next.general = res?.message || "Đăng ký thất bại. Vui lòng thử lại."
+    }
+    setFieldErrors(next)
   }
+  }
+
+  const dupHints = useMemo(() => {
+    const arr = []
+    if (fieldErrors.username) arr.push(fieldErrors.username)
+    if (fieldErrors.email) arr.push(fieldErrors.email)
+    if (fieldErrors.phone_number) arr.push(fieldErrors.phone_number)
+    return arr
+  }, [fieldErrors])
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -65,6 +88,22 @@ export default function RegisterPage() {
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+              <input
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                required
+                autoComplete="username"
+                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  fieldErrors.username ? "border-red-500" : "border-gray-300"
+                }`}
+              />
+              {fieldErrors.username && <p className="text-sm text-red-600 mt-1">{fieldErrors.username}</p>}
             </div>
 
             <div>
@@ -115,9 +154,19 @@ export default function RegisterPage() {
                 minLength={6}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+               {fieldErrors.confirmPassword && (
+                <p className="text-sm text-red-600 mt-1">{fieldErrors.confirmPassword}</p>
+              )}
             </div>
 
-            {register.isError && <div className="text-red-600 text-sm">Đăng ký thất bại. Vui lòng thử lại.</div>}
+            {(fieldErrors.general || dupHints.length > 0) && (
+              <div className="text-red-600 text-sm space-y-1">
+                {fieldErrors.general && <p>{fieldErrors.general}</p>}
+                {dupHints.map((m, i) => (
+                  <p key={i}>• {m}</p>
+                ))}
+              </div>
+            )}
 
             <button
               type="submit"
