@@ -11,29 +11,34 @@ export default function LoginPage() {
   const login = useLogin()
 
   const [formData, setFormData] = useState({
-    email: "",
+    username: "",
     password: "",
   })
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-
     try {
-      await login.mutateAsync(formData)
+      await login.mutateAsync({
+        username: formData.username.trim(),
+        password: formData.password,
+      })
       const redirect = searchParams.get("redirect") || "/"
       navigate(redirect)
     } catch (error) {
-      console.error("Login failed:", error)
+      // lỗi đã hiển thị dưới form
     }
   }
-
+  
+  // helper lấy message lỗi từ BE
+    const errorMsg =
+    login.error?.response?.data?.message ||
+    login.error?.message ||
+    (login.error ? "Tên đăng nhập hoặc mật khẩu không đúng" : "")
+    
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
@@ -44,14 +49,15 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
               <input
-                type="email"
-                name="email"
-                value={formData.email}
+                type="text"
+                name="username"
+                value={formData.username}
                 onChange={handleChange}
                 required
+                autoComplete="username"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -68,7 +74,7 @@ export default function LoginPage() {
               />
             </div>
 
-            {login.isError && <div className="text-red-600 text-sm">Email hoặc mật khẩu không đúng</div>}
+            {login.isError && <div className="text-red-600 text-sm">{errorMsg}</div>}
 
             <button
               type="submit"
