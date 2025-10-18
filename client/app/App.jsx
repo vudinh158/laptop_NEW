@@ -15,6 +15,8 @@ import AdminProducts from "./pages/admin/AdminProducts"
 import AdminOrders from "./pages/admin/AdminOrders"
 import AdminUsers from "./pages/admin/AdminUsers"
 import AdminCategories from "./pages/admin/AdminCategories"
+import AdminProductNewPage from "./pages/admin/AdminProductNewPage"
+import AdminProductEditPage from "./pages/admin/AdminProductEditPage"
 
 function App() {
   return (
@@ -68,6 +70,24 @@ function App() {
             element={
               <AdminRoute>
                 <AdminProducts />
+              </AdminRoute>
+            }
+          />
+
+          <Route
+            path="admin/products/new" 
+            element={
+              <AdminRoute>
+                <AdminProductNewPage /> 
+              </AdminRoute>
+            }
+          />
+
+          <Route
+            path="admin/products/edit/:id" 
+            element={
+              <AdminRoute>
+                <AdminProductEditPage /> 
               </AdminRoute>
             }
           />

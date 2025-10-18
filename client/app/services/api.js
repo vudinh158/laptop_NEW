@@ -94,7 +94,7 @@ export const adminAPI = {
   deleteUser: (id) => api.delete(`/admin/users/${id}`),
 
   // Categories
-  getCategories: () => api.get("/admin/categories"),
+  getCategories: () => api.get("/admin/categories"), // Lấy tất cả categories
   createCategory: (data) => api.post("/admin/categories", data),
   updateCategory: (id, data) => api.put(`/admin/categories/${id}`, data),
   deleteCategory: (id) => api.delete(`/admin/categories/${id}`),
