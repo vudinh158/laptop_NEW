@@ -17,7 +17,6 @@ export default function ProductCard({ product }) {
       const defaultVariation = product.variations[0]
       dispatch(
         addItem({
-          // SỬA: Dùng product.product_id và defaultVariation.variation_id
           product_id: product.product_id,
           variation_id: defaultVariation.variation_id,
           quantity: 1,
@@ -31,34 +30,37 @@ export default function ProductCard({ product }) {
   }
 
   const productId = product.product_id; 
-  const productName = product.product_name; 
-
+  const productName = product.product_name; // FIX: Sử dụng product_name
+  
   const defaultVariation = product.variations?.[0]
-  const price = defaultVariation?.price || 0
-  // Lấy discount từ Product (base) hoặc Variation (nếu có)
-  const discount = product.discount_percentage || defaultVariation?.discount_percentage || 0
-  const finalPrice = price * (1 - discount / 100)
+  
+  // FIX: Lấy giá từ defaultVariation, nếu không có thì dùng base_price
+  const price = Number(defaultVariation?.price || product.base_price || 0); 
+  
+  // FIX: Lấy discount từ Product base
+  const discount = Number(product.discount_percentage || 0); 
+  
+  const finalPrice = price * (1 - discount / 100);
+  
+  // Dữ liệu rating và review
+  const average_rating = Number(product.rating_average || 0); 
+  const review_count = Number(product.review_count || 0);
   
   // FIX HIỂN THỊ ẢNH: Lấy ảnh từ mảng images hoặc thumbnail_url
   const imageUrl = product.images?.[0]?.image_url || product.thumbnail_url || "/placeholder.svg" 
 
-  // Dữ liệu rating hiện chưa được API trả về đầy đủ, sử dụng giá trị mock an toàn
-  const average_rating = product.rating_average || 0; 
-  const review_count = product.review_count || 0;
-
   return (
-    // SỬA: Dùng productId cho Link
     <Link to={`/products/${productId}`} className="group"> 
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
         <div className="relative aspect-square overflow-hidden bg-gray-100">
           <img
-            src={imageUrl} // DÙNG URL ĐÃ FIX
+            src={imageUrl} 
             alt={productName}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
           {discount > 0 && (
             <div className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded-md text-sm font-semibold">
-              Giảm {Math.round(discount)}% {/* HIỂN THỊ % GIẢM */}
+              Giảm {Math.round(discount)}%
             </div>
           )}
         </div>

@@ -11,22 +11,26 @@ import { Star, ShoppingCart, Truck, Shield, RefreshCw } from "lucide-react"
 import { formatPrice } from "../utils/formatters"
 
 export default function ProductDetailPage() {
-  const { id } = useParams()
+  const { id } = useParams() // ID này là product_id hoặc slug
   const dispatch = useDispatch()
-  const { data: product, isLoading, error } = useProduct(id)
-  const { data: recommended } = useRecommendedProducts(id)
+  const { data: productData, isLoading, error } = useProduct(id) // Lấy productData
+  const product = productData?.product; // Trích xuất object product
+  
+  // FIX: Truyền ID sản phẩm thực tế cho recommended products
+  const { data: recommended } = useRecommendedProducts(product?.product_id) 
 
   const [selectedVariation, setSelectedVariation] = useState(null)
   const [selectedImage, setSelectedImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
 
   const handleAddToCart = () => {
-    if (!selectedVariation) return
+    if (!selectedVariation || !product) return
 
     dispatch(
       addItem({
-        product_id: product.id,
-        variation_id: selectedVariation.id,
+        // FIX: Sử dụng product_id và variation_id
+        product_id: product.product_id, 
+        variation_id: selectedVariation.variation_id, 
         quantity,
         product: {
           ...product,
@@ -54,10 +58,12 @@ export default function ProductDetailPage() {
     )
   }
 
+  // FIX: Sử dụng thuộc tính product_id, product_name
   const currentVariation = selectedVariation || product.variations?.[0]
-  const price = currentVariation?.price || 0
-  const discount = currentVariation?.discount_percentage || 0
+  const price = Number(currentVariation?.price) || 0
+  const discount = Number(product.discount_percentage || 0)
   const finalPrice = price * (1 - discount / 100)
+  const productName = product.product_name; // Lấy tên sản phẩm
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -67,10 +73,11 @@ export default function ProductDetailPage() {
             <div>
               <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-4">
                 <img
+                  // FIX: Truy cập images và thumbnail_url
                   src={
-                    product.images?.[selectedImage]?.image_url || "/placeholder.svg?height=600&width=600&query=laptop"
+                    product.images?.[selectedImage]?.image_url || product.thumbnail_url || "/placeholder.svg"
                   }
-                  alt={product.name}
+                  alt={productName}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -79,7 +86,7 @@ export default function ProductDetailPage() {
                 <div className="grid grid-cols-4 gap-2">
                   {product.images.map((image, index) => (
                     <button
-                      key={image.id}
+                      key={image.image_id} // FIX: Sử dụng image_id làm key
                       onClick={() => setSelectedImage(index)}
                       className={`aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 ${
                         selectedImage === index ? "border-blue-600" : "border-transparent"
@@ -87,7 +94,7 @@ export default function ProductDetailPage() {
                     >
                       <img
                         src={image.image_url || "/placeholder.svg"}
-                        alt={`${product.name} ${index + 1}`}
+                        alt={`${productName} ${index + 1}`}
                         className="w-full h-full object-cover"
                       />
                     </button>
@@ -97,7 +104,7 @@ export default function ProductDetailPage() {
             </div>
 
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-4 text-balance">{product.name}</h1>
+              <h1 className="text-3xl font-bold text-gray-900 mb-4 text-balance">{productName}</h1> {/* FIX: Hiển thị productName */}
 
               <div className="flex items-center gap-4 mb-4">
                 <div className="flex items-center gap-1">
@@ -105,7 +112,7 @@ export default function ProductDetailPage() {
                     <Star
                       key={i}
                       className={`w-5 h-5 ${
-                        i < Math.floor(product.average_rating || 0)
+                        i < Math.floor(product.rating_average || 0) // FIX: Dùng rating_average
                           ? "fill-yellow-400 text-yellow-400"
                           : "text-gray-300"
                       }`}
@@ -120,7 +127,8 @@ export default function ProductDetailPage() {
                   <span className="text-4xl font-bold text-blue-600">{formatPrice(finalPrice)}</span>
                   {discount > 0 && (
                     <>
-                      <span className="text-xl text-gray-400 line-through">{formatPrice(price)}</span>
+                      {/* Giá gốc hiển thị base_price */}
+                      <span className="text-xl text-gray-400 line-through">{formatPrice(price)}</span> 
                       <span className="px-2 py-1 bg-orange-500 text-white rounded-md text-sm font-semibold">
                         -{discount}%
                       </span>
@@ -135,10 +143,10 @@ export default function ProductDetailPage() {
                   <div className="grid grid-cols-1 gap-2">
                     {product.variations.map((variation) => (
                       <button
-                        key={variation.id}
+                        key={variation.variation_id} // FIX: Sử dụng variation_id làm key
                         onClick={() => setSelectedVariation(variation)}
                         className={`p-3 border-2 rounded-lg text-left ${
-                          currentVariation?.id === variation.id
+                          currentVariation?.variation_id === variation.variation_id // FIX: So sánh variation_id
                             ? "border-blue-600 bg-blue-50"
                             : "border-gray-200 hover:border-gray-300"
                         }`}
@@ -147,7 +155,7 @@ export default function ProductDetailPage() {
                           {variation.processor} / {variation.ram} / {variation.storage}
                         </div>
                         <div className="text-sm text-gray-600 mt-1">
-                          {formatPrice(variation.price * (1 - (variation.discount_percentage || 0) / 100))}
+                          {formatPrice(Number(variation.price) * (1 - (Number(product.discount_percentage) || 0) / 100))}
                         </div>
                       </button>
                     ))}
@@ -212,13 +220,13 @@ export default function ProductDetailPage() {
             </div>
           </div>
         </div>
-
+        {/* ... (Phần Recommended Products giữ nguyên) */}
         {recommended?.products?.length > 0 && (
           <div>
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Sản phẩm tương tự</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {recommended.products.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard key={product.product_id} product={product} />
               ))}
             </div>
           </div>
