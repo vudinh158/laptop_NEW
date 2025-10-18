@@ -111,7 +111,9 @@ exports.getRecommendedProducts = async (req, res, next) => {
       include: [
         { model: Category, as: "category", attributes: ["category_id", "category_name"] },
         { model: Brand, as: "brand", attributes: ["brand_id", "brand_name", "logo_url"] },
-        { model: ProductImage, as: "images", where: { is_primary: true }, required: false },
+        // ĐÃ SỬA: BẮT BUỘC INCLUDE VARIATIONS VÀ IMAGES
+        { model: ProductVariation, as: "variations", attributes: ["variation_id", "price", "stock_quantity", "discount_percentage"], limit: 1 }, 
+        { model: ProductImage, as: "images", where: { is_primary: true }, required: false, attributes: ["image_url"] },
       ],
       limit: Number.parseInt(limit),
       order: [
