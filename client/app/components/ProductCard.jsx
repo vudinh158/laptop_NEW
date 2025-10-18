@@ -17,8 +17,9 @@ export default function ProductCard({ product }) {
       const defaultVariation = product.variations[0]
       dispatch(
         addItem({
-          product_id: product.id,
-          variation_id: defaultVariation.id,
+          // SỬA: Dùng product.product_id và defaultVariation.variation_id
+          product_id: product.product_id,
+          variation_id: defaultVariation.variation_id,
           quantity: 1,
           product: {
             ...product,
@@ -29,30 +30,42 @@ export default function ProductCard({ product }) {
     }
   }
 
+  const productId = product.product_id; 
+  const productName = product.product_name; 
+
   const defaultVariation = product.variations?.[0]
   const price = defaultVariation?.price || 0
-  const discount = defaultVariation?.discount_percentage || 0
+  // Lấy discount từ Product (base) hoặc Variation (nếu có)
+  const discount = product.discount_percentage || defaultVariation?.discount_percentage || 0
   const finalPrice = price * (1 - discount / 100)
-  const imageUrl = product.images?.[0]?.image_url || "/modern-laptop-workspace.png"
+  
+  // FIX HIỂN THỊ ẢNH: Lấy ảnh từ mảng images hoặc thumbnail_url
+  const imageUrl = product.images?.[0]?.image_url || product.thumbnail_url || "/placeholder.svg" 
+
+  // Dữ liệu rating hiện chưa được API trả về đầy đủ, sử dụng giá trị mock an toàn
+  const average_rating = product.rating_average || 0; 
+  const review_count = product.review_count || 0;
 
   return (
-    <Link to={`/products/${product.id}`} className="group">
+    // SỬA: Dùng productId cho Link
+    <Link to={`/products/${productId}`} className="group"> 
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
         <div className="relative aspect-square overflow-hidden bg-gray-100">
           <img
-            src={imageUrl || "/placeholder.svg"}
-            alt={product.name}
+            src={imageUrl} // DÙNG URL ĐÃ FIX
+            alt={productName}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
           {discount > 0 && (
-            <div className="absolute top-2 right-2 bg-orange-500 text-white px-2 py-1 rounded-md text-sm font-semibold">
-              -{discount}%
+            <div className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded-md text-sm font-semibold">
+              Giảm {Math.round(discount)}% {/* HIỂN THỊ % GIẢM */}
             </div>
           )}
         </div>
 
         <div className="p-4">
-          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600">{product.name}</h3>
+          {/* FIX HIỂN THỊ TÊN SẢN PHẨM */}
+          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600">{productName}</h3> 
 
           <div className="flex items-center gap-1 mb-2">
             <div className="flex">
@@ -60,12 +73,12 @@ export default function ProductCard({ product }) {
                 <Star
                   key={i}
                   className={`w-4 h-4 ${
-                    i < Math.floor(product.average_rating || 0) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+                    i < Math.floor(average_rating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
                   }`}
                 />
               ))}
             </div>
-            <span className="text-sm text-gray-600">({product.review_count || 0})</span>
+            <span className="text-sm text-gray-600">({review_count})</span>
           </div>
 
           <div className="mb-3">
