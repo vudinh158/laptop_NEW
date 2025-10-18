@@ -67,7 +67,7 @@ export default function Header() {
                   <span>Đơn hàng</span>
                 </Link>
 
-                {user?.roles?.some((role) => role.name === "admin") && (
+                {user?.roles?.includes("admin") && (
                   <Link to="/admin" className="text-gray-700 hover:text-blue-600">
                     Admin
                   </Link>
@@ -128,7 +128,7 @@ export default function Header() {
                   <Link to="/orders" className="text-gray-700 hover:text-blue-600">
                     Đơn hàng
                   </Link>
-                  {user?.roles?.some((role) => role.name === "admin") && (
+                  {user?.roles?.includes("admin") && (
                     <Link to="/admin" className="text-gray-700 hover:text-blue-600">
                       Admin
                     </Link>

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import api from "../services/api"
+import api, { adminAPI } from "../services/api"
 
 export function useProducts(filters = {}) {
   return useQuery({
@@ -7,7 +7,7 @@ export function useProducts(filters = {}) {
     queryFn: async () => {
       const params = new URLSearchParams()
 
-      if (filters.search) params.append("search", filters.search)
+      if (filters.search) params.append("search", filters.search) 
       if (filters.category) params.append("category", filters.category)
       if (filters.brand) params.append("brand", filters.brand)
       if (filters.minPrice) params.append("min_price", filters.minPrice)
@@ -43,12 +43,103 @@ export function useRecommendedProducts(productId) {
   })
 }
 
+// category
+
+export function useAdminCategories() {
+  return useQuery({
+    queryKey: ["admin-categories"],
+    queryFn: async () => {
+      const { data } = await adminAPI.getCategories()
+      return data
+    },
+  })
+}
+
+export function useCreateCategory() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (categoryData) => {
+      const { data } = await adminAPI.createCategory(categoryData)
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-categories"] })
+    },
+  })
+}
+
+export function useUpdateCategory() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ id, ...categoryData }) => {
+      const { data } = await adminAPI.updateCategory(id, categoryData)
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-categories"] })
+    },
+  })
+}
+
+export function useDeleteCategory() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (id) => {
+      const { data } = await adminAPI.deleteCategory(id)
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-categories"] })
+    },
+  })
+}
+
+export function useCategories() {
+  return useQuery({
+    queryKey: ["admin-categories"],
+    queryFn: async () => {
+      // Dùng public API route vì nó trả về danh sách đầy đủ
+      const { data } = await api.get("/products/categories") 
+      return data
+    },
+    staleTime: Infinity, 
+  })
+}
+
+export function useBrands() {
+  return useQuery({
+    queryKey: ["admin-brands"],
+    queryFn: async () => {
+      // API endpoint: /products/brands
+      const { data } = await api.get("/products/brands")
+      return data
+    },
+    staleTime: Infinity, // Dữ liệu ít thay đổi, có thể cache lâu hơn
+  })
+}
+
+export function useAdminProduct(id) {
+  return useQuery({
+    queryKey: ["admin-product", id],
+    queryFn: async () => {
+      // Dùng API getProductDetail hiện có, giả định nó trả về đủ data cho form
+      const { data } = await api.get(`/products/${id}`) 
+      return data
+    },
+    // Chỉ chạy query nếu ID có giá trị
+    enabled: !!id, 
+  })
+}
+
 export function useCreateProduct() {
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: async (productData) => {
-      const { data } = await api.post("/admin/products", productData)
+      const { data } = await adminAPI.createProduct(productData)
       return data
     },
     onSuccess: () => {
@@ -62,12 +153,13 @@ export function useUpdateProduct() {
 
   return useMutation({
     mutationFn: async ({ id, ...productData }) => {
-      const { data } = await api.put(`/admin/products/${id}`, productData)
+      // Dùng adminAPI.updateProduct
+      const { data } = await adminAPI.updateProduct(id, productData) 
       return data
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["products"] })
-      queryClient.invalidateQueries({ queryKey: ["product", variables.id] })
+      queryClient.invalidateQueries({ queryKey: ["admin-product", variables.id] }) // Cập nhật cache Admin
     },
   })
 }

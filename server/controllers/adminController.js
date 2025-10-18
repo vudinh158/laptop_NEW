@@ -264,6 +264,19 @@ exports.updateUserStatus = async (req, res, next) => {
 }
 
 // Category Management
+
+exports.getAllCategories = async (req, res, next) => {
+  try {
+    const categories = await Category.findAll({
+      order: [["display_order", "ASC"]],
+    })
+
+    res.json({ categories })
+  } catch (error) {
+    next(error)
+  }
+}
+
 exports.createCategory = async (req, res, next) => {
   try {
     const category = await Category.create(req.body)
@@ -292,6 +305,29 @@ exports.updateCategory = async (req, res, next) => {
       message: "Category updated successfully",
       category,
     })
+  } catch (error) {
+    next(error)
+  }
+}
+
+exports.deleteCategory = async (req, res, next) => {
+  try {
+    const { category_id } = req.params
+
+    const category = await Category.findByPk(category_id)
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" })
+    }
+
+    // Kiểm tra xem có sản phẩm nào thuộc category này không (Nếu có, bạn nên ngăn chặn hoặc chuyển sản phẩm)
+    const productCount = await category.countProducts()
+    if (productCount > 0) {
+        return res.status(400).json({ message: "Cannot delete category with associated products" })
+    }
+
+    await category.destroy()
+
+    res.json({ message: "Category deleted successfully" })
   } catch (error) {
     next(error)
   }

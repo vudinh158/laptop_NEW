@@ -8,7 +8,7 @@ export default function AdminRoute({ children }) {
     return <Navigate to="/login" replace />
   }
 
-  const isAdmin = user?.roles?.some((role) => role.name === "admin")
+  const isAdmin = user?.roles?.includes("admin")
 
   if (!isAdmin) {
     return <Navigate to="/" replace />

@@ -25,8 +25,10 @@ router.get("/users", adminController.getAllUsers)
 router.put("/users/:user_id/status", adminController.updateUserStatus)
 
 // Category management
+router.get("/categories", adminController.getAllCategories) // DÒNG MỚI: Get all categories
 router.post("/categories", adminController.createCategory)
 router.put("/categories/:category_id", adminController.updateCategory)
+router.delete("/categories/:category_id", adminController.deleteCategory)
 
 // Brand management
 router.post("/brands", adminController.createBrand)
