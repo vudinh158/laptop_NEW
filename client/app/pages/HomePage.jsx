@@ -9,24 +9,35 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 
 export default function HomePage() {
   const [filters, setFilters] = useState({
-    brands: [],
-    categories: [],
-    price: { min: "", max: "" },
+    // THAY ĐỔI: Bắt đầu với giá trị trống thay vì mảng, trừ khi cần xử lý đa giá trị phức tạp
+    brand_id: "", 
+    category_id: "", 
+    minPrice: "",
+    maxPrice: "",
+    search: "", // Thêm trường search nếu cần
     page: 1,
     limit: 12,
   })
 
   const { data, isLoading, error } = useProducts(filters)
+  
 
   const handleFilterChange = (newFilters) => {
-    setFilters({ ...newFilters, page: 1 })
+    // SỬA: Đảm bảo chỉ cập nhật các giá trị đã thay đổi và reset page
+    setFilters((prev) => ({ 
+        ...prev, 
+        ...newFilters, 
+        page: 1 
+    }));
   }
 
   const handleClearFilters = () => {
     setFilters({
-      brands: [],
-      categories: [],
-      price: { min: "", max: "" },
+      brand_id: "",
+      category_id: "",
+      minPrice: "",
+      maxPrice: "",
+      search: "",
       page: 1,
       limit: 12,
     })
@@ -49,7 +60,7 @@ export default function HomePage() {
     <div className="bg-gray-50 min-h-screen">
       <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-balance">Laptop Chất Lượng Cao</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-balance">Laptop LÊ SƠN</h1>
           <p className="text-xl text-blue-100 text-pretty">
             Tìm chiếc laptop hoàn hảo cho công việc và giải trí của bạn
           </p>
@@ -59,7 +70,21 @@ export default function HomePage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <aside className="lg:col-span-1">
-            <ProductFilter filters={filters} onFilterChange={handleFilterChange} onClearFilters={handleClearFilters} />
+            <ProductFilter 
+                filters={{
+                    brands: filters.brand_id ? [filters.brand_id] : [],
+                    categories: filters.category_id ? [filters.category_id] : [],
+                    price: { min: filters.minPrice, max: filters.maxPrice },
+                }} 
+                onFilterChange={(f) => handleFilterChange({
+                    // Chuyển mảng filters về id đơn nếu chỉ chọn 1
+                    brand_id: f.brands[0] || "",
+                    category_id: f.categories[0] || "",
+                    minPrice: f.price.min,
+                    maxPrice: f.price.max,
+                })}
+                onClearFilters={handleClearFilters}
+            />
           </aside>
 
           <main className="lg:col-span-3">
@@ -71,7 +96,7 @@ export default function HomePage() {
               <>
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-gray-900">Tất cả sản phẩm</h2>
-                  <p className="text-gray-600">{data?.total || 0} sản phẩm</p>
+                  <p className="text-gray-600">{data?.products.length || 0} sản phẩm</p>
                 </div>
 
                 {data?.products?.length === 0 ? (
@@ -80,11 +105,12 @@ export default function HomePage() {
                   </div>
                 ) : (
                   <>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {data?.products?.map((product) => (
-                        <ProductCard key={product.id} product={product} />
-                      ))}
-                    </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {data?.products?.map((product) => (
+                      // FIX: Truyền product.product_id làm key để đảm bảo tính duy nhất
+                      <ProductCard key={product.product_id} product={product} /> 
+                    ))}
+                  </div>
 
                     {data?.totalPages > 1 && (
                       <div className="flex items-center justify-center gap-2 mt-8">

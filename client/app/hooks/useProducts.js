@@ -8,8 +8,8 @@ export function useProducts(filters = {}) {
       const params = new URLSearchParams()
 
       if (filters.search) params.append("search", filters.search) 
-      if (filters.category) params.append("category", filters.category)
-      if (filters.brand) params.append("brand", filters.brand)
+      if (filters.category_id) params.append("category_id", filters.category_id) // Sửa category -> category_id
+      if (filters.brand_id) params.append("brand_id", filters.brand_id)
       if (filters.minPrice) params.append("min_price", filters.minPrice)
       if (filters.maxPrice) params.append("max_price", filters.maxPrice)
       if (filters.page) params.append("page", filters.page)

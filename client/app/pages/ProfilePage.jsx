@@ -4,6 +4,15 @@ import { User, Mail, Phone, Calendar } from "lucide-react"
 export default function ProfilePage() {
   const { user } = useSelector((state) => state.auth)
 
+  const formatRoleName = (roleName) => {
+    if (roleName === "admin") return "Quản trị viên Hệ thống"
+    if (roleName === "manager") return "Quản lý"
+    return roleName.charAt(0).toUpperCase() + roleName.slice(1);
+}
+
+const userRoles = user?.roles || [];
+const rolesDisplay = userRoles.map(formatRoleName).join(", ") || "Khách hàng";
+
   return (
     <div className="bg-gray-50 min-h-screen py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -15,8 +24,8 @@ export default function ProfilePage() {
               <User className="w-10 h-10 text-blue-600" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">{user?.full_name}</h2>
-              <p className="text-gray-600">{user?.roles?.map((role) => role.name).join(", ") || "Khách hàng"}</p>
+            <h2 className="text-2xl font-bold text-gray-900">{user?.full_name}</h2>
+              <p className="text-gray-600">{rolesDisplay}</p>
             </div>
           </div>
 
