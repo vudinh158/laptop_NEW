@@ -1,7 +1,8 @@
+//#client/app/pages/HomePage.jsx
 "use client";
 
 import { useState } from "react";
-import { useProducts, customerUseBrands, customerUseCategories } from "../hooks/useProducts"
+import { useProducts, useBrands, useCategories } from "../hooks/useProducts"
 import ProductCard from "../components/ProductCard";
 import ProductFilter from "../components/ProductFilter";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -19,8 +20,8 @@ export default function HomePage() {
     limit: 30,
   });
 
-  const { data: brandsData } = customerUseBrands();
-  const { data: categoriesData } = customerUseCategories();
+  const { data: brandsData } = useBrands();
+  const { data: categoriesData } = useCategories();
 
   const { data, isLoading, error } = useProducts(filters);
 
