@@ -1,58 +1,85 @@
 const { Product, ProductVariation, ProductImage, Category, Brand, Tag } = require("../models")
 const { Op } = require("sequelize")
 
+// helper: nhận string CSV, array, hoặc single → trả về mảng số
+const parseIdList = (input) => {
+  if (!input) return []
+  if (Array.isArray(input)) return input.map((x) => Number(x)).filter(Boolean)
+  return String(input)
+    .split(",")
+    .map((x) => Number(x.trim()))
+    .filter(Boolean)
+}
 // Get all products with filters
 exports.getProducts = async (req, res, next) => {
   try {
-    const {
-      page = 1,
-      limit = 12,
-      category_id,
-      brand_id,
-      min_price,
-      max_price,
-      search,
-      sort = "created_at",
-      order = "DESC",
-    } = req.query
-
+    // ép kiểu & mặc định an toàn
+    const page = Math.max(1, Number.parseInt(req.query.page ?? 1))
+    const limit = Math.max(1, Number.parseInt(req.query.limit ?? 12))
     const offset = (page - 1) * limit
+
+    // whitelist sort/order để tránh SQL injection
+    const allowedSort = new Set(["created_at", "base_price", "rating_average", "view_count", "product_name"])
+    const allowedOrder = new Set(["ASC", "DESC"])
+    const sort = allowedSort.has(req.query.sort) ? req.query.sort : "created_at"
+    const order = allowedOrder.has((req.query.order ?? "").toUpperCase()) ? req.query.order.toUpperCase() : "DESC"
+
+    // nhận đa giá trị: chấp nhận "id1,id2" hoặc "id[]=1&id[]=2"
+    const categoryIds = parseIdList(req.query.category_id || req.query["category_id[]"])
+    const brandIds    = parseIdList(req.query.brand_id   || req.query["brand_id[]"])
+
+    const minPrice = req.query.min_price != null ? Number(req.query.min_price) : undefined
+    const maxPrice = req.query.max_price != null ? Number(req.query.max_price) : undefined
+    const search   = (req.query.search || "").trim()
+
     const where = { is_active: true }
 
-    // Filters
-    if (category_id) where.category_id = category_id
-    if (brand_id) where.brand_id = brand_id
+    // category filter
+    if (categoryIds.length === 1) where.category_id = categoryIds[0]
+    else if (categoryIds.length > 1) where.category_id = { [Op.in]: categoryIds }
+
+    // brand filter
+    if (brandIds.length === 1) where.brand_id = brandIds[0]
+    else if (brandIds.length > 1) where.brand_id = { [Op.in]: brandIds }
+
+    // search (Postgres → iLike; nếu MySQL dùng Op.like)
     if (search) {
-      where.product_name = { [Op.like]: `%${search}%` }
+      where.product_name = { [Op.iLike]: `%${search}%` }
     }
-    if (min_price || max_price) {
+
+    // price range
+    if (minPrice != null || maxPrice != null) {
       where.base_price = {}
-      if (min_price) where.base_price[Op.gte] = min_price
-      if (max_price) where.base_price[Op.lte] = max_price
+      if (minPrice != null) where.base_price[Op.gte] = minPrice
+      if (maxPrice != null) where.base_price[Op.lte] = maxPrice
     }
 
     const { count, rows } = await Product.findAndCountAll({
       where,
       include: [
         { model: Category, as: "category", attributes: ["category_id", "category_name", "slug"] },
-        { model: Brand, as: "brand", attributes: ["brand_id", "brand_name", "slug", "logo_url"] },
+        { model: Brand,    as: "brand",    attributes: ["brand_id", "brand_name", "slug", "logo_url"] },
         { model: ProductVariation, as: "variations", attributes: ["variation_id", "price", "stock_quantity"] },
-        { model: ProductImage, as: "images", where: { is_primary: true }, required: false },
+        { model: ProductImage,     as: "images", where: { is_primary: true }, required: false, attributes: ["image_url"] },
       ],
-      limit: Number.parseInt(limit),
-      offset: Number.parseInt(offset),
+      limit,
+      offset,
       order: [[sort, order]],
-      distinct: true,
+      distinct: true, // count đúng khi có include
     })
 
     res.json({
       products: rows,
+      // GIỮ NGUYÊN format bạn đang dùng
       pagination: {
         total: count,
-        page: Number.parseInt(page),
-        limit: Number.parseInt(limit),
+        page,
+        limit,
         totalPages: Math.ceil(count / limit),
       },
+      // (tuỳ chọn) thêm alias để FE nào đọc thẳng cũng ok
+      total: count,
+      totalPages: Math.ceil(count / limit),
     })
   } catch (error) {
     next(error)
