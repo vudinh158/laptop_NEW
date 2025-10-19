@@ -12,9 +12,16 @@ export default function CartPage() {
   const { items } = useSelector((state) => state.cart)
   const { isAuthenticated } = useSelector((state) => state.auth)
 
-  const handleUpdateQuantity = (itemId, newQuantity) => {
-    if (newQuantity < 1) return
-    dispatch(updateQuantity({ itemId, quantity: newQuantity }))
+  const handleUpdateQuantity = (itemId, currentQuantity, newQuantity) => {
+    // Nếu newQuantity là 0, gọi hàm xóa
+    if (newQuantity === 0) {
+      handleRemoveItem(itemId)
+      return
+    }
+    
+    if (newQuantity < 1) return 
+    
+    dispatch(updateQuantity({ variation_id: itemId, quantity: newQuantity })) // Dùng variation_id nếu API yêu cầu, nhưng Redux slice dùng ID của CartItem
   }
 
   const handleRemoveItem = (itemId) => {
@@ -36,8 +43,10 @@ export default function CartPage() {
   }
 
   const subtotal = items.reduce((total, item) => {
-    const price = item.product?.variation?.price || 0
-    const discount = item.product?.variation?.discount_percentage || 0
+    // FIX: Lấy price từ item.product.variation.price, discount từ item.product.discount_percentage
+    const price = Number(item.product?.variation?.price || 0)
+    // Discount percentage nằm ở level Product
+    const discount = Number(item.product?.discount_percentage || 0) 
     const finalPrice = price * (1 - discount / 100)
     return total + finalPrice * item.quantity
   }, 0)
@@ -73,29 +82,39 @@ export default function CartPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-sm">
-              {items.map((item) => {
-                const variation = item.product?.variation
-                const price = variation?.price || 0
-                const discount = variation?.discount_percentage || 0
-                const finalPrice = price * (1 - discount / 100)
-                const imageUrl = item.product?.images?.[0]?.image_url || "/modern-laptop-workspace.png"
+            {items.map((item) => {
+              // Lỗi key prop có thể đến từ đây, đảm bảo sử dụng item.id
+              const variation = item.product?.variation
+              // FIX: Lấy price từ variation, discount từ product
+              const price = Number(variation?.price || 0) 
+              const discount = Number(item.product?.discount_percentage || 0) 
+              const finalPrice = price * (1 - discount / 100)
+              
+              // FIX: Lấy ảnh
+              const imageUrl = item.product?.images?.[0]?.image_url || item.product?.thumbnail_url || "/placeholder.svg"
 
-                return (
-                  <div key={item.id} className="flex gap-4 p-4 border-b border-gray-200 last:border-b-0">
-                    <Link to={`/products/${item.product_id}`} className="flex-shrink-0">
-                      <img
-                        src={imageUrl || "/placeholder.svg"}
-                        alt={item.product?.name}
-                        className="w-24 h-24 object-cover rounded-lg"
-                      />
-                    </Link>
+              const stockQuantity = Number(variation?.stock_quantity || 0)
+                // Yêu cầu 2: Kiểm tra khả năng tăng số lượng
+              const isMaxQuantity = item.quantity >= stockQuantity
+              // Kiểm tra khả năng giảm số lượng (disabled khi = 1, nhưng ta sẽ dùng logic xóa)
+              const isMinQuantity = item.quantity <= 1
+
+              return (
+                <div key={item.id} className="flex gap-4 p-4 border-b border-gray-200 last:border-b-0">
+                  <Link to={`/products/${item.product_id}`} className="flex-shrink-0">
+                    <img
+                      src={imageUrl} // FIX: Sử dụng imageUrl
+                      alt={item.product?.product_name}
+                      className="w-24 h-24 object-cover rounded-lg"
+                    />
+                  </Link>
 
                     <div className="flex-1">
                       <Link
                         to={`/products/${item.product_id}`}
                         className="font-semibold text-gray-900 hover:text-blue-600 line-clamp-2"
                       >
-                        {item.product?.name}
+                        {item.product?.product_name}
                       </Link>
 
                       {variation && (
@@ -106,19 +125,33 @@ export default function CartPage() {
 
                       <div className="flex items-center justify-between mt-3">
                         <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
-                            className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-50"
-                          >
-                            <Minus className="w-4 h-4" />
-                          </button>
-                          <span className="w-12 text-center font-medium">{item.quantity}</span>
-                          <button
-                            onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
-                            className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-50"
-                          >
-                            <Plus className="w-4 h-4" />
-                          </button>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                              className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-50"
+                            >
+                              <Minus className="w-4 h-4" />
+                            </button>
+                            <span className="w-12 text-center font-medium">{item.quantity}</span>
+                            <button
+                              onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                              disabled={isMaxQuantity}
+                              className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              <Plus className="w-4 h-4" />
+                            </button>
+                          </div>
+                          {/* Yêu cầu 2: Hiển thị thông báo hết hàng */}
+                          {isMaxQuantity && stockQuantity > 0 && (
+                            <p className="text-xs text-red-500 font-medium">
+                              Chỉ còn {stockQuantity} sản phẩm trong kho.
+                            </p>
+                          )}
+                          {stockQuantity === 0 && (
+                              <p className="text-xs text-red-500 font-medium">
+                                Đã hết hàng.
+                              </p>
+                          )}
                         </div>
 
                         <div className="text-right">

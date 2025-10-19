@@ -31,7 +31,9 @@ exports.getCart = async (req, res, next) => {
 
     // Calculate totals
     const subtotal = cart.items.reduce((sum, item) => {
-      return sum + Number.parseFloat(item.price_at_add) * item.quantity
+      // Đảm bảo item.price_at_add là số, mặc dù nó nên có trong DB
+      const price = Number.parseFloat(item.price_at_add) || 0
+      return sum + price * item.quantity
     }, 0)
 
     res.json({
