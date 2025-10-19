@@ -1,21 +1,13 @@
+//#client/app/hooks/useProducts.js
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import api, { adminAPI } from "../services/api"
-
-// --- Helpers: chuẩn hóa object về { id, name } ---
-const mapBrand = (b) => ({
-  id: Number(b?.brand_id ?? b?.id),
-  name: b?.brand_name ?? b?.name ?? "",
-})
-const mapCategory = (c) => ({
-  id: Number(c?.category_id ?? c?.id),
-  name: c?.category_name ?? c?.name ?? "",
-})
 
 export function useProducts(filters = {}) {
   return useQuery({
     queryKey: ["products", filters],
     queryFn: async () => {
       const params = new URLSearchParams()
+
       if (filters.search) params.append("search", filters.search) 
       // brand_id & category_id là MẢNG → join thành "1,2,3"
       if (Array.isArray(filters.category_id) && filters.category_id.length)
@@ -121,19 +113,6 @@ export function useCategories() {
   })
 }
 
-// ✅ LẤY CATEGORIES (trả về mảng [{id, name}])
- export function customerUseCategories() {
-   return useQuery({
-    queryKey: ["categories"],
-     queryFn: async () => {
-      const { data } = await api.get("/products/categories")
-      const arr = data?.categories ?? data?.data ?? data ?? []
-      return arr.map(mapCategory)
-     },
-     staleTime: Infinity, 
-   })
- }
-
 export function useBrands() {
   return useQuery({
     queryKey: ["admin-brands"],
@@ -145,18 +124,6 @@ export function useBrands() {
     staleTime: Infinity, // Dữ liệu ít thay đổi, có thể cache lâu hơn
   })
 }
-
- export function customerUseBrands() {
-   return useQuery({
-    queryKey: ["brands"],
-     queryFn: async () => {
-      const { data } = await api.get("/products/brands")
-      const arr = data?.brands ?? data?.data ?? data ?? []
-      return arr.map(mapBrand)
-     },
-     staleTime: Infinity,
-   })
- }
 
 export function useAdminProduct(id) {
   return useQuery({
