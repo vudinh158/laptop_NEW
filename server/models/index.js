@@ -93,6 +93,7 @@ Answer.belongsTo(User, { foreignKey: "user_id", as: "user" })
 User.hasMany(Notification, { foreignKey: "user_id", as: "notifications" })
 Notification.belongsTo(User, { foreignKey: "user_id" })
 
+
 module.exports = {
   sequelize,
   User,

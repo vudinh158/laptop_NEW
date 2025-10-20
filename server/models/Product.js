@@ -19,7 +19,7 @@ const Product = sequelize.define(
       unique: true,
     },
     description: {
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT('long'),
     },
     category_id: {
       type: DataTypes.INTEGER,
@@ -61,6 +61,11 @@ const Product = sequelize.define(
     review_count: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
+    },
+    specs: {
+    type: DataTypes.JSONB,            // thêm dòng này
+    allowNull: true,
+    defaultValue: {}
     },
   },
   {
