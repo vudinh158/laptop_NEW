@@ -54,6 +54,32 @@
   .badge-info {
     @apply bg-blue-100 text-blue-800;
   }
+  .product-desc img{
+  display:block;
+  width:100%;
+  height:auto;            /* giữ tỷ lệ; đổi thành 360px nếu muốn chiều cao cố định */
+  object-fit: cover;      /* nếu muốn “nằm gọn không cắt”, dùng: contain; background:#f9fafb; */
+  border-radius: 12px;
+}
+
+.product-desc figure{ margin: 1rem 0 1.25rem; }
+.product-desc figcaption{
+  color:#6b7280;          /* text-gray-500 */
+  font-size:.875rem;
+  text-align:center;
+  margin-top:.5rem;
+}
+
+.product-desc details summary{
+  cursor:pointer;
+  list-style:none;
+  font-weight:600;
+  padding:.5rem .75rem;
+  background:#f3f4f6;     /* gray-100 */
+  border-radius:.5rem;
+}
+.product-desc details[open] summary{ background:#e5e7eb; } /* gray-200 */
+ 
 }
 
 @layer utilities {

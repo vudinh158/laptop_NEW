@@ -1,7 +1,15 @@
 /** @type {import('tailwindcss').Config} */
+import typography from '@tailwindcss/typography'
+import forms from '@tailwindcss/forms'
+import lineClamp from '@tailwindcss/line-clamp'
 export default {
   content: ["./index.html", "./app/**/*.{js,jsx}", "./src/**/*.{js,jsx}"],
   theme: {
+    container: {
+      center: true,
+      padding: { DEFAULT: "1rem", lg: "2rem" },
+      screens: { "2xl": "1280px" },
+    },
     extend: {
       colors: {
         primary: {
@@ -33,7 +41,15 @@ export default {
         sans: ["Inter", "system-ui", "sans-serif"],
         display: ["Poppins", "system-ui", "sans-serif"],
       },
+      typography: (theme) => ({
+        DEFAULT: {
+          css: {
+            maxWidth: 'none',
+            img: { borderRadius: theme('borderRadius.lg') },
+          },
+        },
+      }),
     },
   },
-  plugins: [],
-}
+  plugins: [typography, forms, lineClamp],
+};
