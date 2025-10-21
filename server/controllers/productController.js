@@ -23,12 +23,12 @@ const parseIdList = (input) => {
 // Get all products with filters
 exports.getProducts = async (req, res, next) => {
   try {
-    // ép kiểu & mặc định an toàn
+    // Ép kiểu và giá trị mặc định cho phân trang và sắp xếp
     const page = Math.max(1, Number.parseInt(req.query.page ?? 1));
     const limit = Math.max(1, Number.parseInt(req.query.limit ?? 12));
     const offset = (page - 1) * limit;
 
-    // whitelist sort/order để tránh SQL injection
+    // Whitelist sort/order để chống SQL Injection
     const allowedSort = new Set([
       "created_at",
       "base_price",
@@ -44,7 +44,7 @@ exports.getProducts = async (req, res, next) => {
       ? req.query.order.toUpperCase()
       : "DESC";
 
-    // nhận đa giá trị: chấp nhận "id1,id2" hoặc "id[]=1&id[]=2"
+    // Lấy các tham số lọc
     const categoryIds = parseIdList(
       req.query.category_id || req.query["category_id[]"]
     );
@@ -54,25 +54,28 @@ exports.getProducts = async (req, res, next) => {
       req.query.min_price != null ? Number(req.query.min_price) : undefined;
     const maxPrice =
       req.query.max_price != null ? Number(req.query.max_price) : undefined;
+    
+    // ĐỌC THAM SỐ TÌM KIẾM TỪ HEADER (search query)
     const search = (req.query.search || "").trim();
 
     const where = { is_active: true };
 
-    // category filter
+    // Lọc theo Danh mục
     if (categoryIds.length === 1) where.category_id = categoryIds[0];
     else if (categoryIds.length > 1)
       where.category_id = { [Op.in]: categoryIds };
 
-    // brand filter
+    // Lọc theo Thương hiệu
     if (brandIds.length === 1) where.brand_id = brandIds[0];
     else if (brandIds.length > 1) where.brand_id = { [Op.in]: brandIds };
 
-    // search (Postgres → iLike; nếu MySQL dùng Op.like)
+    // LỌC THEO TỪ KHÓA TÌM KIẾM
     if (search) {
+      // Sử dụng Op.iLike (case-insensitive LIKE cho PostgreSQL) để tìm kiếm
       where.product_name = { [Op.iLike]: `%${search}%` };
     }
 
-    // price range
+    // Lọc theo khoảng giá
     if (minPrice != null || maxPrice != null) {
       where.base_price = {};
       if (minPrice != null) where.base_price[Op.gte] = minPrice;
@@ -80,7 +83,7 @@ exports.getProducts = async (req, res, next) => {
     }
 
     const { count, rows } = await Product.findAndCountAll({
-      where,
+      where, // Áp dụng tất cả các điều kiện lọc (bao gồm tìm kiếm)
       include: [
         {
           model: Category,
@@ -108,19 +111,17 @@ exports.getProducts = async (req, res, next) => {
       limit,
       offset,
       order: [[sort, order]],
-      distinct: true, // count đúng khi có include
+      distinct: true, 
     });
 
     res.json({
       products: rows,
-      // GIỮ NGUYÊN format bạn đang dùng
       pagination: {
         total: count,
         page,
         limit,
         totalPages: Math.ceil(count / limit),
       },
-      // (tuỳ chọn) thêm alias để FE nào đọc thẳng cũng ok
       total: count,
       totalPages: Math.ceil(count / limit),
     });
@@ -204,6 +205,50 @@ exports.getProductDetail = async (req, res, next) => {
     if (json.specs == null) json.specs = {};
 
     return res.json({ product: json });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getSearchSuggestions = async (req, res, next) => {
+  try {
+    const search = (req.query.q || "").trim();
+    if (search.length < 2) {
+      return res.json({ products: [] });
+    }
+
+    const products = await Product.findAll({
+      where: {
+        is_active: true,
+        product_name: { [Op.iLike]: `%${search}%` },
+      },
+      attributes: [
+        "product_id",
+        "product_name",
+        "slug",
+        "thumbnail_url",
+        "base_price",
+        "discount_percentage",
+      ],
+      include: [
+        {
+          model: ProductVariation,
+          as: "variations",
+          attributes: ["price"],
+          limit: 1, // Lấy variation đầu tiên để tính giá
+        },
+        {
+          model: ProductImage,
+          as: "images",
+          where: { is_primary: true },
+          required: false,
+          attributes: ["image_url"],
+        },
+      ],
+      limit: 5, // Chỉ giới hạn 5 kết quả gợi ý
+    });
+
+    res.json({ products });
   } catch (error) {
     next(error);
   }

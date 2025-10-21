@@ -16,7 +16,9 @@ export function useProducts(filters = {}) {
     queryKey: ["products", filters],
     queryFn: async () => {
       const params = new URLSearchParams();
+      // Chức năng cốt lõi: Gửi giá trị search tới API
       if (filters.search) params.append("search", filters.search);
+      
       // brand_id & category_id là MẢNG → join thành "1,2,3"
       if (Array.isArray(filters.category_id) && filters.category_id.length)
         params.append("category_id", filters.category_id.join(","));
@@ -41,6 +43,21 @@ export function useProduct(id) {
       return data;
     },
     enabled: !!id,
+  });
+}
+
+export function useSearchSuggestions(query) {
+  return useQuery({
+    // Sử dụng query làm key để cache riêng cho từng từ khóa
+    queryKey: ["search-suggestions", query],
+    queryFn: async () => {
+      if (!query || query.length < 2) return { products: [] };
+      // Gọi API search-suggestions đã cấu hình ở Backend
+      const { data } = await api.get(`/products/search-suggestions?q=${query}`);
+      return data;
+    },
+    enabled: !!query && query.length >= 2, // Chỉ chạy query nếu có từ 2 ký tự trở lên
+    staleTime: 5 * 60 * 1000, // Có thể giữ cache lâu hơn cho gợi ý
   });
 }
 

@@ -4,6 +4,7 @@ const productController = require("../controllers/productController")
 const { authenticateToken } = require("../middleware/auth")
 
 // Public routes
+router.get("/search-suggestions", productController.getSearchSuggestions)
 router.get("/", productController.getProducts)
 router.get("/categories", productController.getCategories)
 router.get("/brands", productController.getBrands)

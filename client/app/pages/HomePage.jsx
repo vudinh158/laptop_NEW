@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
+// THÊM: useSearchParams để đọc URL query string
+import { useSearchParams } from "react-router-dom"; 
 import { useProducts, customerUseBrands, customerUseCategories } from "../hooks/useProducts"
 import ProductCard from "../components/ProductCard";
 import ProductFilter from "../components/ProductFilter";
@@ -8,25 +10,37 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function HomePage() {
-  const [filters, setFilters] = useState({
-    // THAY ĐỔI: Bắt đầu với giá trị trống thay vì mảng, trừ khi cần xử lý đa giá trị phức tạp
+  // BƯỚC 1: Đọc tham số search từ URL
+  const [searchParams] = useSearchParams();
+  const urlSearchQuery = searchParams.get("search") || "";
+
+  // BƯỚC 2: Khởi tạo/Cập nhật filters dựa trên URL và state
+  const [localFilters, setLocalFilters] = useState({
     brand_id: [],
     category_id: [],
     minPrice: "",
     maxPrice: "",
-    search: "", // Thêm trường search nếu cần
     page: 1,
     limit: 30,
   });
 
+  // Gộp filters: localFilters luôn có ưu tiên cao hơn, nhưng urlSearchQuery
+  // được dùng để khởi tạo và đồng bộ với Header search.
+  const filters = useMemo(() => ({
+    ...localFilters,
+    search: urlSearchQuery,
+  }), [localFilters, urlSearchQuery]);
+
+
   const { data: brandsData } = customerUseBrands();
   const { data: categoriesData } = customerUseCategories();
 
+  // Gọi API với filters đã được đồng bộ
   const { data, isLoading, error } = useProducts(filters);
 
   const handleFilterChange = (newFilters) => {
     // SỬA: Đảm bảo chỉ cập nhật các giá trị đã thay đổi và reset page
-    setFilters((prev) => ({
+    setLocalFilters((prev) => ({
       ...prev,
       ...newFilters,
       page: 1,
@@ -34,19 +48,21 @@ export default function HomePage() {
   };
 
   const handleClearFilters = () => {
-    setFilters({
+    // Để giữ lại URL search query, chỉ reset các localFilters
+    setLocalFilters({
       brand_id: [],
       category_id: [],
       minPrice: "",
       maxPrice: "",
-      search: "",
       page: 1,
       limit: 30,
     });
+    // LƯU Ý: Nếu muốn xóa luôn thanh search URL, cần dùng setSearchParams
+    // navigate("/", { replace: true });
   };
 
   const handlePageChange = (newPage) => {
-    setFilters({ ...filters, page: newPage });
+    setLocalFilters({ ...localFilters, page: newPage });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -85,10 +101,11 @@ export default function HomePage() {
               brands={brandsData?.data ?? brandsData ?? []}
               categories={categoriesData?.data ?? categoriesData ?? []}
               filters={{
-                brands: filters.brand_id,
-                categories: filters.category_id,
-                price: { min: filters.minPrice, max: filters.maxPrice },
-                search: filters.search,
+                brands: localFilters.brand_id,
+                categories: localFilters.category_id,
+                price: { min: localFilters.minPrice, max: localFilters.maxPrice },
+                // Luôn hiển thị search query đang hoạt động
+                search: urlSearchQuery, 
               }}
               onFilterChange={(f) =>
                 handleFilterChange({
@@ -96,7 +113,8 @@ export default function HomePage() {
                   category_id: f.categories,
                   minPrice: f.price?.min ?? "",
                   maxPrice: f.price?.max ?? "",
-                  search: f.search ?? "",
+                  // KHÔNG THAY ĐỔI URL search query TỪ BỘ LỌC
+                  // search: f.search ?? "", 
                 })
               }
               onClearFilters={handleClearFilters}
@@ -113,6 +131,7 @@ export default function HomePage() {
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-gray-900">
                     Tất cả sản phẩm
+                    {urlSearchQuery && <span className="text-blue-600 ml-2">({urlSearchQuery})</span>}
                   </h2>
                   <p className="text-gray-600">
                     {data?.products.length || 0} sản phẩm
