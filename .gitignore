@@ -1,9 +1,9 @@
-recommendation_service/backup
+recommendation_service/backup/
 
 # Node modules
-client/node_modules/
-server/node_modules/
+/client/node_modules/
+/server/node_modules/
 
 # Python virtual env & cache
-__pycache__/
+/__pycache__/
 *.pyc
