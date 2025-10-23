@@ -1,0 +1,1687 @@
+[
+  {
+    "Device Name": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+    "Median Score": 16536.76,
+    "Number of Benchmarks": 64
+  },
+  {
+    "Device Name": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+    "Median Score": 15838.17,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "NVIDIA RTX Pro 6000 Blackwell DC-48Q",
+    "Median Score": 15760.54,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+    "Median Score": 15184.61,
+    "Number of Benchmarks": 12
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 5090",
+    "Median Score": 14918.08,
+    "Number of Benchmarks": 564
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 5090 D",
+    "Median Score": 14859.74,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 5090 D V2",
+    "Median Score": 12873.82,
+    "Number of Benchmarks": 21
+  },
+  {
+    "Device Name": "NVIDIA RTX Pro 6000 Blackwell DC-12Q",
+    "Median Score": 11959.31,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 4090 D",
+    "Median Score": 11247.6,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 4090",
+    "Median Score": 11024.46,
+    "Number of Benchmarks": 247
+  },
+  {
+    "Device Name": "NVIDIA Graphics Device",
+    "Median Score": 10712.19,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "NVIDIA RTX5880-Ada-48Q",
+    "Median Score": 10502.81,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA L20",
+    "Median Score": 9639.75,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA RTX 6000 Ada Generation",
+    "Median Score": 9597.07,
+    "Number of Benchmarks": 15
+  },
+  {
+    "Device Name": "NVIDIA L40S-48Q",
+    "Median Score": 9343.16,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 5080",
+    "Median Score": 9156.8,
+    "Number of Benchmarks": 532
+  },
+  {
+    "Device Name": "NVIDIA L40S-24Q",
+    "Median Score": 9107.19,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 4080 SUPER",
+    "Median Score": 8420.52,
+    "Number of Benchmarks": 115
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 4080",
+    "Median Score": 8322.92,
+    "Number of Benchmarks": 101
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 5090 Laptop GPU",
+    "Median Score": 7964.98,
+    "Number of Benchmarks": 74
+  },
+  {
+    "Device Name": "NVIDIA L40S",
+    "Median Score": 7944.43,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "NVIDIA RTX PRO 4500 Blackwell",
+    "Median Score": 7930.87,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 5070 Ti",
+    "Median Score": 7629.05,
+    "Number of Benchmarks": 455
+  },
+  {
+    "Device Name": "Apple M3 Ultra (GPU - 80 cores)",
+    "Median Score": 7493.24,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 4070 Ti SUPER",
+    "Median Score": 7134.47,
+    "Number of Benchmarks": 103
+  },
+  {
+    "Device Name": "NVIDIA H100 80GB HBM3",
+    "Median Score": 6945.6,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 4090 Laptop GPU",
+    "Median Score": 6806.65,
+    "Number of Benchmarks": 36
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 5080 Laptop GPU",
+    "Median Score": 6699.48,
+    "Number of Benchmarks": 55
+  },
+  {
+    "Device Name": "Apple M3 Ultra (GPU - 60 cores)",
+    "Median Score": 6505.85,
+    "Number of Benchmarks": 14
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 4070 Ti",
+    "Median Score": 6328.76,
+    "Number of Benchmarks": 79
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 4070 SUPER",
+    "Median Score": 6186.33,
+    "Number of Benchmarks": 149
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 5070",
+    "Median Score": 6148.63,
+    "Number of Benchmarks": 330
+  },
+  {
+    "Device Name": "NVIDIA H100",
+    "Median Score": 5929.51,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA RTX 5000 Ada Generation Laptop GPU",
+    "Median Score": 5795.38,
+    "Number of Benchmarks": 13
+  },
+  {
+    "Device Name": "NVIDIA RTX 4500 Ada Generation",
+    "Median Score": 5707.99,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "NVIDIA H100 NVL",
+    "Median Score": 5675.64,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA RTX 5000 Ada Generation",
+    "Median Score": 5654.19,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 3090 Ti",
+    "Median Score": 5424.04,
+    "Number of Benchmarks": 83
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 3090",
+    "Median Score": 5414.96,
+    "Number of Benchmarks": 287
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 3080 Ti",
+    "Median Score": 5340.92,
+    "Number of Benchmarks": 84
+  },
+  {
+    "Device Name": "NVIDIA RTXA6000-24Q",
+    "Median Score": 5308.76,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Apple M4 Max (GPU - 40 cores)",
+    "Median Score": 5274.64,
+    "Number of Benchmarks": 54
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 4080 Laptop GPU",
+    "Median Score": 5231.48,
+    "Number of Benchmarks": 48
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 4070",
+    "Median Score": 5153.64,
+    "Number of Benchmarks": 95
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+    "Median Score": 5010.28,
+    "Number of Benchmarks": 75
+  },
+  {
+    "Device Name": "NVIDIA RTX A6000",
+    "Median Score": 4963.67,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "NVIDIA RTX PRO 3000 Blackwell Generation Laptop GPU",
+    "Median Score": 4813.2,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 3080",
+    "Median Score": 4525.55,
+    "Number of Benchmarks": 234
+  },
+  {
+    "Device Name": "Apple M4 Max (GPU - 32 cores)",
+    "Median Score": 4465.85,
+    "Number of Benchmarks": 39
+  },
+  {
+    "Device Name": "NVIDIA RTX 4000 Ada Generation",
+    "Median Score": 4450.75,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "NVIDIA RTX 4000 Ada Generation Laptop GPU",
+    "Median Score": 4401.59,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Radeon RX 7900 XTX",
+    "Median Score": 4392.67,
+    "Number of Benchmarks": 118
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 5060 Ti",
+    "Median Score": 4309.29,
+    "Number of Benchmarks": 235
+  },
+  {
+    "Device Name": "Apple M3 Max (GPU - 40 cores)",
+    "Median Score": 4238.72,
+    "Number of Benchmarks": 24
+  },
+  {
+    "Device Name": "NVIDIA RTX 3500 Ada Generation Laptop GPU",
+    "Median Score": 4157.06,
+    "Number of Benchmarks": 8
+  },
+  {
+    "Device Name": "NVIDIA A40",
+    "Median Score": 4093.22,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 5070 Laptop GPU",
+    "Median Score": 4050.07,
+    "Number of Benchmarks": 86
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 4060 Ti",
+    "Median Score": 3941.3,
+    "Number of Benchmarks": 169
+  },
+  {
+    "Device Name": "NVIDIA RTX A5000",
+    "Median Score": 3918.54,
+    "Number of Benchmarks": 13
+  },
+  {
+    "Device Name": "NVIDIA RTX A4500",
+    "Median Score": 3880.75,
+    "Number of Benchmarks": 9
+  },
+  {
+    "Device Name": "NVIDIA A100-SXM4-80GB",
+    "Median Score": 3706.55,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA RTX 4000 SFF Ada Generation",
+    "Median Score": 3702.53,
+    "Number of Benchmarks": 11
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 5060",
+    "Median Score": 3684.12,
+    "Number of Benchmarks": 142
+  },
+  {
+    "Device Name": "AMD Radeon RX 7900 XT",
+    "Median Score": 3645.49,
+    "Number of Benchmarks": 54
+  },
+  {
+    "Device Name": "NVIDIA A100-SXM4-40GB",
+    "Median Score": 3616.47,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA RTX PRO 2000 Blackwell Generation Laptop GPU",
+    "Median Score": 3616.28,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "NVIDIA A40-12Q",
+    "Median Score": 3574.17,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA RTX5880-Ada-16Q",
+    "Median Score": 3552.13,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+    "Median Score": 3549.94,
+    "Number of Benchmarks": 74
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+    "Median Score": 3541.16,
+    "Number of Benchmarks": 107
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 3070 Ti",
+    "Median Score": 3469.29,
+    "Number of Benchmarks": 62
+  },
+  {
+    "Device Name": "Apple M3 Max (GPU - 30 cores)",
+    "Median Score": 3458.3,
+    "Number of Benchmarks": 15
+  },
+  {
+    "Device Name": "NVIDIA L4",
+    "Median Score": 3446.99,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Apple M2 Ultra (GPU - 76 cores)",
+    "Median Score": 3393.4,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "Median Score": 3334.3,
+    "Number of Benchmarks": 333
+  },
+  {
+    "Device Name": "NVIDIA TITAN RTX",
+    "Median Score": 3325.22,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 3080 Ti Laptop GPU",
+    "Median Score": 3241.93,
+    "Number of Benchmarks": 12
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 3070",
+    "Median Score": 3183.92,
+    "Number of Benchmarks": 156
+  },
+  {
+    "Device Name": "NVIDIA B200",
+    "Median Score": 3176.54,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD Radeon RX 9070 XT",
+    "Median Score": 3169.44,
+    "Number of Benchmarks": 276
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 4060",
+    "Median Score": 3115.53,
+    "Number of Benchmarks": 99
+  },
+  {
+    "Device Name": "NVIDIA A10G",
+    "Median Score": 3100.15,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD Radeon AI PRO R9700",
+    "Median Score": 3100.09,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "NVIDIA RTX A4500 Laptop GPU",
+    "Median Score": 3068.75,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "NVIDIA RTX A4000",
+    "Median Score": 2993.91,
+    "Number of Benchmarks": 12
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 5050 Laptop GPU",
+    "Median Score": 2935.79,
+    "Number of Benchmarks": 32
+  },
+  {
+    "Device Name": "NVIDIA Quadro RTX 8000",
+    "Median Score": 2926.41,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA RTX A5500 Laptop GPU",
+    "Median Score": 2912.11,
+    "Number of Benchmarks": 12
+  },
+  {
+    "Device Name": "NVIDIA RTX A5000 Laptop GPU",
+    "Median Score": 2885.11,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 5050",
+    "Median Score": 2875.98,
+    "Number of Benchmarks": 24
+  },
+  {
+    "Device Name": "AMD Radeon RX 7900 GRE",
+    "Median Score": 2867.79,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "AMD Radeon PRO W7800 48GB",
+    "Median Score": 2866.77,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 3080 Laptop GPU",
+    "Median Score": 2850.34,
+    "Number of Benchmarks": 28
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 2080 Ti",
+    "Median Score": 2827.86,
+    "Number of Benchmarks": 71
+  },
+  {
+    "Device Name": "Apple M2 Ultra (GPU - 60 cores)",
+    "Median Score": 2824.58,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "NVIDIA RTX PRO 1000 Blackwell Generation Laptop GPU",
+    "Median Score": 2791.06,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Radeon RX 9070",
+    "Median Score": 2749.55,
+    "Number of Benchmarks": 45
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 3060 Ti",
+    "Median Score": 2746.05,
+    "Number of Benchmarks": 88
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 3070 Laptop GPU",
+    "Median Score": 2729.99,
+    "Number of Benchmarks": 56
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 3070 Ti Laptop GPU",
+    "Median Score": 2712.1,
+    "Number of Benchmarks": 21
+  },
+  {
+    "Device Name": "NVIDIA RTX 2000 Ada Generation",
+    "Median Score": 2706.07,
+    "Number of Benchmarks": 13
+  },
+  {
+    "Device Name": "AMD Radeon RX 6950 XT",
+    "Median Score": 2614.85,
+    "Number of Benchmarks": 21
+  },
+  {
+    "Device Name": "AMD Radeon RX 6900 XT",
+    "Median Score": 2594.11,
+    "Number of Benchmarks": 26
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "Median Score": 2584.44,
+    "Number of Benchmarks": 220
+  },
+  {
+    "Device Name": "Apple M4 Pro (GPU - 20 cores)",
+    "Median Score": 2571.8,
+    "Number of Benchmarks": 52
+  },
+  {
+    "Device Name": "NVIDIA RTX A4000 Laptop GPU",
+    "Median Score": 2570.24,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD  Radeon RX 7800 XT",
+    "Median Score": 2543.57,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "NVIDIA RTX 2000 Ada Generation Laptop GPU",
+    "Median Score": 2493.54,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "AMD Radeon RX 7800 XT",
+    "Median Score": 2491.98,
+    "Number of Benchmarks": 44
+  },
+  {
+    "Device Name": "Intel Arc A770 Graphics",
+    "Median Score": 2481.88,
+    "Number of Benchmarks": 23
+  },
+  {
+    "Device Name": "AMD Radeon RX 6800 XT",
+    "Median Score": 2417.42,
+    "Number of Benchmarks": 20
+  },
+  {
+    "Device Name": "Apple M4 Pro (GPU - 16 cores)",
+    "Median Score": 2377.14,
+    "Number of Benchmarks": 40
+  },
+  {
+    "Device Name": "Intel Arc B580 Graphics",
+    "Median Score": 2362.72,
+    "Number of Benchmarks": 51
+  },
+  {
+    "Device Name": "NVIDIA RTX 2000E Ada Generation",
+    "Median Score": 2329.03,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Arc A750 Graphics",
+    "Median Score": 2320.73,
+    "Number of Benchmarks": 41
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 2080 SUPER",
+    "Median Score": 2300,
+    "Number of Benchmarks": 17
+  },
+  {
+    "Device Name": "AMD Radeon RX 9070 GRE",
+    "Median Score": 2290.9,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 2080",
+    "Median Score": 2279.89,
+    "Number of Benchmarks": 20
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 2070 SUPER",
+    "Median Score": 2210.61,
+    "Number of Benchmarks": 45
+  },
+  {
+    "Device Name": "NVIDIA RTX A3000 12GB Laptop GPU",
+    "Median Score": 2201.43,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 2080 Super",
+    "Median Score": 2170.18,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 3060",
+    "Median Score": 2151.05,
+    "Number of Benchmarks": 257
+  },
+  {
+    "Device Name": "Intel Arc A580 Graphics",
+    "Median Score": 2138.58,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 3060 Laptop GPU",
+    "Median Score": 2122.82,
+    "Number of Benchmarks": 75
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 2070",
+    "Median Score": 2106.65,
+    "Number of Benchmarks": 23
+  },
+  {
+    "Device Name": "AMD Radeon RX 7700 XT",
+    "Median Score": 2098.14,
+    "Number of Benchmarks": 9
+  },
+  {
+    "Device Name": "NVIDIA Quadro RTX 4000",
+    "Median Score": 2096.55,
+    "Number of Benchmarks": 9
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 2070 Super",
+    "Median Score": 2090.07,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA Tesla V100-SXM2-16GB",
+    "Median Score": 2080.08,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "NVIDIA RTX 1000 Ada Generation Laptop GPU",
+    "Median Score": 2061.74,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA Quadro RTX 4000 with Max-Q Design",
+    "Median Score": 2042.93,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 2060 SUPER",
+    "Median Score": 2038.04,
+    "Number of Benchmarks": 61
+  },
+  {
+    "Device Name": "NVIDIA CMP 100-210",
+    "Median Score": 1980.38,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Radeon RX 7800M",
+    "Median Score": 1935.88,
+    "Number of Benchmarks": 12
+  },
+  {
+    "Device Name": "AMD Radeon PRO W6800",
+    "Median Score": 1923.88,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "NVIDIA RTX A3000 Laptop GPU",
+    "Median Score": 1920.04,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD Radeon RX 6800",
+    "Median Score": 1897.42,
+    "Number of Benchmarks": 18
+  },
+  {
+    "Device Name": "Intel Arc B570 Graphics",
+    "Median Score": 1843.07,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "NVIDIA TITAN V",
+    "Median Score": 1818.84,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 2080 with Max-Q Design",
+    "Median Score": 1796.27,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Apple M2 Max (GPU - 38 cores)",
+    "Median Score": 1794.58,
+    "Number of Benchmarks": 12
+  },
+  {
+    "Device Name": "Apple M3 Pro (GPU - 18 cores)",
+    "Median Score": 1768.52,
+    "Number of Benchmarks": 10
+  },
+  {
+    "Device Name": "AMD Radeon Pro W6800",
+    "Median Score": 1765.33,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA RTX A2000 12GB",
+    "Median Score": 1760.54,
+    "Number of Benchmarks": 15
+  },
+  {
+    "Device Name": "NVIDIA RTX A2000",
+    "Median Score": 1750.23,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Apple M5 (GPU - 10 cores)",
+    "Median Score": 1732.52,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Apple M1 Ultra (GPU - 64 cores)",
+    "Median Score": 1683.65,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA Quadro RTX 5000",
+    "Median Score": 1661.13,
+    "Number of Benchmarks": 10
+  },
+  {
+    "Device Name": "Apple M3 Pro (GPU - 14 cores)",
+    "Median Score": 1650.94,
+    "Number of Benchmarks": 10
+  },
+  {
+    "Device Name": "NVIDIA RTX 500 Ada Generation Laptop GPU",
+    "Median Score": 1627.11,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "AMD Radeon RX 9060 XT",
+    "Median Score": 1584.3,
+    "Number of Benchmarks": 95
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 2060",
+    "Median Score": 1577.26,
+    "Number of Benchmarks": 49
+  },
+  {
+    "Device Name": "AMD Radeon RX 6750 XT",
+    "Median Score": 1550.1,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "Intel Arc Pro B50 Graphics",
+    "Median Score": 1547.66,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 2070 with Max-Q Design",
+    "Median Score": 1531.67,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "NVIDIA Tesla T4",
+    "Median Score": 1501.58,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Radeon RX 6700 XT",
+    "Median Score": 1466.37,
+    "Number of Benchmarks": 44
+  },
+  {
+    "Device Name": "NVIDIA Tesla T10",
+    "Median Score": 1445.73,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Apple M1 Ultra (GPU - 48 cores)",
+    "Median Score": 1440.3,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Apple M2 Max (GPU - 30 cores)",
+    "Median Score": 1436.09,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "AMD Radeon RX 6750 GRE 10GB",
+    "Median Score": 1403.51,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 3050 A Laptop GPU",
+    "Median Score": 1393.25,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA Quadro RTX 3000",
+    "Median Score": 1377.78,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "AMD Radeon RX 6800M",
+    "Median Score": 1374.6,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 3050 OEM",
+    "Median Score": 1355.15,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Radeon 8060S Graphics",
+    "Median Score": 1303.29,
+    "Number of Benchmarks": 18
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 3050 Ti Laptop GPU",
+    "Median Score": 1301.8,
+    "Number of Benchmarks": 26
+  },
+  {
+    "Device Name": "AMD Radeon RX 6700",
+    "Median Score": 1296.41,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 3050",
+    "Median Score": 1296.33,
+    "Number of Benchmarks": 68
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 2060 with Max-Q Design",
+    "Median Score": 1284.28,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "NVIDIA RTX A2000 8GB Laptop GPU",
+    "Median Score": 1261.55,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Radeon RX 7600 XT",
+    "Median Score": 1260.52,
+    "Number of Benchmarks": 18
+  },
+  {
+    "Device Name": "NVIDIA RTX A1000",
+    "Median Score": 1232.34,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Radeon 8050S Graphics",
+    "Median Score": 1188.98,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA CMP 40HX",
+    "Median Score": 1164.31,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Radeon Pro VII [ZLUDA]",
+    "Median Score": 1127.73,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+    "Median Score": 1124.12,
+    "Number of Benchmarks": 59
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 3050 Laptop GPU",
+    "Median Score": 1122.25,
+    "Number of Benchmarks": 105
+  },
+  {
+    "Device Name": "AMD Radeon RX 7600M XT",
+    "Median Score": 1099.45,
+    "Number of Benchmarks": 10
+  },
+  {
+    "Device Name": "AMD Radeon RX 7600",
+    "Median Score": 1086.51,
+    "Number of Benchmarks": 40
+  },
+  {
+    "Device Name": "AMD Radeon RX 6650 XT",
+    "Median Score": 1079.61,
+    "Number of Benchmarks": 12
+  },
+  {
+    "Device Name": "Apple M4 (GPU - 10 cores)",
+    "Median Score": 1078.82,
+    "Number of Benchmarks": 97
+  },
+  {
+    "Device Name": "NVIDIA Tesla P100-PCIE-16GB",
+    "Median Score": 1061.09,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Radeon RX 6600 XT",
+    "Median Score": 1051.81,
+    "Number of Benchmarks": 20
+  },
+  {
+    "Device Name": "Apple M4 (GPU - 8 cores)",
+    "Median Score": 1049.76,
+    "Number of Benchmarks": 20
+  },
+  {
+    "Device Name": "NVIDIA RTX A1000 Laptop GPU",
+    "Median Score": 988.01,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Radeon RX 6800S",
+    "Median Score": 987.94,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Radeon RX 7600S",
+    "Median Score": 986.44,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD Radeon RX 5700 XT",
+    "Median Score": 959.1,
+    "Number of Benchmarks": 29
+  },
+  {
+    "Device Name": "Apple M1 Max (GPU - 32 cores)",
+    "Median Score": 956.01,
+    "Number of Benchmarks": 17
+  },
+  {
+    "Device Name": "AMD Radeon PRO W6600",
+    "Median Score": 953.42,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA RTX A1000 6GB Laptop GPU",
+    "Median Score": 952.59,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Radeon RX 7700S",
+    "Median Score": 943.77,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD Radeon RX 6600",
+    "Median Score": 937.63,
+    "Number of Benchmarks": 43
+  },
+  {
+    "Device Name": "NVIDIA TITAN Xp",
+    "Median Score": 917.02,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Apple M3 (GPU - 10 cores)",
+    "Median Score": 915.59,
+    "Number of Benchmarks": 10
+  },
+  {
+    "Device Name": "AMD Radeon Pro W5700",
+    "Median Score": 914.44,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Apple M2 Pro (GPU - 19 cores)",
+    "Median Score": 899.2,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "AMD Radeon RX 6600M",
+    "Median Score": 898.24,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Apple M3 (GPU - 8 cores)",
+    "Median Score": 869.81,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA A16",
+    "Median Score": 843.69,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA P102-100",
+    "Median Score": 836.1,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA A16-16Q",
+    "Median Score": 833.52,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 1080 Ti",
+    "Median Score": 826.26,
+    "Number of Benchmarks": 37
+  },
+  {
+    "Device Name": "AMD Radeon RX 5700",
+    "Median Score": 824.54,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Arc Pro",
+    "Median Score": 813.63,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Apple M1 Max (GPU - 24 cores)",
+    "Median Score": 791.05,
+    "Number of Benchmarks": 9
+  },
+  {
+    "Device Name": "Apple M2 Pro (GPU - 16 cores)",
+    "Median Score": 781.76,
+    "Number of Benchmarks": 10
+  },
+  {
+    "Device Name": "Intel Arc 140T GPU (16GB)",
+    "Median Score": 778.95,
+    "Number of Benchmarks": 10
+  },
+  {
+    "Device Name": "AMD Radeon RX 5600 XT",
+    "Median Score": 773.38,
+    "Number of Benchmarks": 10
+  },
+  {
+    "Device Name": "NVIDIA CMP 30HX",
+    "Median Score": 758.89,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 1660 SUPER",
+    "Median Score": 756.79,
+    "Number of Benchmarks": 32
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 1660 Ti",
+    "Median Score": 742.15,
+    "Number of Benchmarks": 19
+  },
+  {
+    "Device Name": "AMD Radeon RX 6650M",
+    "Median Score": 733.23,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 1660 Ti with Max-Q Design",
+    "Median Score": 725.17,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "NVIDIA GeForce RTX 2050",
+    "Median Score": 713.22,
+    "Number of Benchmarks": 23
+  },
+  {
+    "Device Name": "NVIDIA RTX A500 Laptop GPU",
+    "Median Score": 648.28,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 1660",
+    "Median Score": 642.95,
+    "Number of Benchmarks": 10
+  },
+  {
+    "Device Name": "Intel Arc 140V GPU (16GB)",
+    "Median Score": 626.37,
+    "Number of Benchmarks": 8
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 1080",
+    "Median Score": 599.71,
+    "Number of Benchmarks": 43
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 1070 Ti",
+    "Median Score": 583.66,
+    "Number of Benchmarks": 9
+  },
+  {
+    "Device Name": "Intel Arc 130V GPU (8GB)",
+    "Median Score": 575.55,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Arc A380 Graphics",
+    "Median Score": 563.52,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "NVIDIA Tesla M40 24GB",
+    "Median Score": 561.37,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 1070 with Max-Q Design",
+    "Median Score": 559.96,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "GRID T4-8Q",
+    "Median Score": 559.73,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Radeon RX 6500 XT",
+    "Median Score": 540.7,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX TITAN X",
+    "Median Score": 533.22,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Arc Graphics",
+    "Median Score": 527.28,
+    "Number of Benchmarks": 26
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 1070",
+    "Median Score": 520.01,
+    "Number of Benchmarks": 30
+  },
+  {
+    "Device Name": "NVIDIA Quadro P4200",
+    "Median Score": 511.85,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "AMD Radeon RX 5500 XT",
+    "Median Score": 511.33,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 980 Ti",
+    "Median Score": 504.62,
+    "Number of Benchmarks": 8
+  },
+  {
+    "Device Name": "NVIDIA Quadro P5000",
+    "Median Score": 489.87,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Apple M1 Pro (GPU - 16 cores)",
+    "Median Score": 484.25,
+    "Number of Benchmarks": 20
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 1650 SUPER",
+    "Median Score": 459.25,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 1650 Ti",
+    "Median Score": 458.62,
+    "Number of Benchmarks": 13
+  },
+  {
+    "Device Name": "NVIDIA Quadro P4000",
+    "Median Score": 448.63,
+    "Number of Benchmarks": 12
+  },
+  {
+    "Device Name": "Apple M1 Pro (GPU - 14 cores)",
+    "Median Score": 440.98,
+    "Number of Benchmarks": 13
+  },
+  {
+    "Device Name": "NVIDIA Tesla M40",
+    "Median Score": 430.73,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 1650",
+    "Median Score": 426.92,
+    "Number of Benchmarks": 65
+  },
+  {
+    "Device Name": "NVIDIA T1000 8GB",
+    "Median Score": 422.84,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA Quadro P3200",
+    "Median Score": 391.08,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 1650 Ti with Max-Q Design",
+    "Median Score": 387.97,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Radeon RX 6500M",
+    "Median Score": 384.34,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "NVIDIA Tesla P4",
+    "Median Score": 381.4,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA Quadro T1000 with Max-Q Design",
+    "Median Score": 380.68,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA P106-100",
+    "Median Score": 376.22,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA Quadro T1000",
+    "Median Score": 373.3,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 1650 with Max-Q Design",
+    "Median Score": 365.46,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 1060 6GB",
+    "Median Score": 361.47,
+    "Number of Benchmarks": 20
+  },
+  {
+    "Device Name": "NVIDIA T600 Laptop GPU",
+    "Median Score": 359.13,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA Quadro T2000",
+    "Median Score": 355.4,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "Apple M2 (GPU - 10 cores)",
+    "Median Score": 354.12,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "NVIDIA Quadro T2000 with Max-Q Design",
+    "Median Score": 351.31,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 1060",
+    "Median Score": 349.26,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "Intel Arc A310 LP Graphics",
+    "Median Score": 347.24,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Graphics",
+    "Median Score": 344.7,
+    "Number of Benchmarks": 18
+  },
+  {
+    "Device Name": "AMD Radeon RX 5500M",
+    "Median Score": 343.48,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Radeon RX 6400",
+    "Median Score": 338.55,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 1060 with Max-Q Design",
+    "Median Score": 326.89,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA Quadro M5000",
+    "Median Score": 324.39,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Radeon RX 6500",
+    "Median Score": 320.53,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA T600",
+    "Median Score": 315.15,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Radeon 890M Graphics",
+    "Median Score": 307.95,
+    "Number of Benchmarks": 16
+  },
+  {
+    "Device Name": "Apple M2 (GPU - 8 cores)",
+    "Median Score": 303.28,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 980",
+    "Median Score": 292.8,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "GRID T4-4Q",
+    "Median Score": 280.49,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 1060 3GB",
+    "Median Score": 268.7,
+    "Number of Benchmarks": 9
+  },
+  {
+    "Device Name": "Apple M1 (GPU - 8 cores)",
+    "Median Score": 265.8,
+    "Number of Benchmarks": 11
+  },
+  {
+    "Device Name": "NVIDIA Quadro M5000M",
+    "Median Score": 258.87,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 970",
+    "Median Score": 258.2,
+    "Number of Benchmarks": 8
+  },
+  {
+    "Device Name": "AMD Radeon 780M Graphics",
+    "Median Score": 246.01,
+    "Number of Benchmarks": 14
+  },
+  {
+    "Device Name": "NVIDIA Quadro P2200",
+    "Median Score": 240.07,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD Radeon 680M",
+    "Median Score": 232.84,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "NVIDIA GeForce MX450",
+    "Median Score": 232.46,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Apple M1 (GPU - 7 cores)",
+    "Median Score": 231.26,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD Radeon Graphics",
+    "Median Score": 225.78,
+    "Number of Benchmarks": 161
+  },
+  {
+    "Device Name": "NVIDIA Quadro M4000M",
+    "Median Score": 225.18,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Radeon  860M Graphics",
+    "Median Score": 218.54,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Radeon RX 6300",
+    "Median Score": 211.25,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Radeon PRO Graphics",
+    "Median Score": 210.91,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 1050 Ti",
+    "Median Score": 207.87,
+    "Number of Benchmarks": 41
+  },
+  {
+    "Device Name": "AMD Radeon 760M Graphics",
+    "Median Score": 205.97,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "NVIDIA Quadro M4000",
+    "Median Score": 205.55,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 780",
+    "Median Score": 205.05,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Radeon 860M Graphics",
+    "Median Score": 198.36,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "NVIDIA P106-090",
+    "Median Score": 186.3,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 970M",
+    "Median Score": 184.42,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA Quadro K4200",
+    "Median Score": 181.56,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA Quadro P2000",
+    "Median Score": 180.74,
+    "Number of Benchmarks": 8
+  },
+  {
+    "Device Name": "AMD Radeon 780M",
+    "Median Score": 179.17,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Radeon 880M Graphics",
+    "Median Score": 177.22,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "NVIDIA Quadro M3000M",
+    "Median Score": 176.75,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 1050",
+    "Median Score": 176.1,
+    "Number of Benchmarks": 23
+  },
+  {
+    "Device Name": "NVIDIA Tesla K20c",
+    "Median Score": 157.16,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA T400 4GB",
+    "Median Score": 155.36,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "NVIDIA Quadro K2200",
+    "Median Score": 154.42,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA Quadro M2200",
+    "Median Score": 152.82,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD Custom GPU 0405",
+    "Median Score": 148.83,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA Quadro M1200",
+    "Median Score": 143.34,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 960",
+    "Median Score": 141.97,
+    "Number of Benchmarks": 11
+  },
+  {
+    "Device Name": "NVIDIA Quadro K5000",
+    "Median Score": 139.28,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 660",
+    "Median Score": 131.75,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "NVIDIA Quadro P1000",
+    "Median Score": 128.6,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "NVIDIA Quadro M2000M",
+    "Median Score": 124.79,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Radeon 5",
+    "Median Score": 122.23,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Radeon 840M Graphics",
+    "Median Score": 122.02,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "NVIDIA Quadro M2000",
+    "Median Score": 121.1,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Ryzen 5",
+    "Median Score": 119.1,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 950",
+    "Median Score": 117.64,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 750 Ti",
+    "Median Score": 102.66,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 950M",
+    "Median Score": 97.34,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Radeon 740M Graphics",
+    "Median Score": 94.71,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce MX350",
+    "Median Score": 92.96,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "NVIDIA Quadro M1000M",
+    "Median Score": 87.87,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 750",
+    "Median Score": 86.8,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA Quadro P600",
+    "Median Score": 85.05,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce MX250",
+    "Median Score": 84.75,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "NVIDIA GeForce 930MX",
+    "Median Score": 84.27,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA Quadro P620",
+    "Median Score": 80.08,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA Quadro P520",
+    "Median Score": 77.95,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA GeForce MX150",
+    "Median Score": 76.88,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "NVIDIA Quadro M620",
+    "Median Score": 73.6,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA GeForce GT 755M",
+    "Median Score": 67.86,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 760M",
+    "Median Score": 61.72,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Radeon 610M",
+    "Median Score": 55.1,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "NVIDIA GeForce GT 1030",
+    "Median Score": 53.43,
+    "Number of Benchmarks": 11
+  },
+  {
+    "Device Name": "NVIDIA GeForce GTX 645",
+    "Median Score": 50.11,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce 930M",
+    "Median Score": 45.55,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA Quadro P400",
+    "Median Score": 40.34,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce GT 750M",
+    "Median Score": 40.02,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce MX230",
+    "Median Score": 37.27,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "NVIDIA GeForce 940MX",
+    "Median Score": 35.37,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA Quadro P500",
+    "Median Score": 32.04,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce GT 650M",
+    "Median Score": 19.95,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "NVIDIA GeForce GT 710",
+    "Median Score": 9.54,
+    "Number of Benchmarks": 1
+  }
+]
