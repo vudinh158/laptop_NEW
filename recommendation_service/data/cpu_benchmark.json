@@ -1,0 +1,4187 @@
+[
+  {
+    "Device Name": "2X AMD EPYC 9965 192-Core Processor",
+    "Median Score": 9671.4,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "2X AMD EPYC 9755 128-Core Processor",
+    "Median Score": 7184.66,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "2X AMD Eng Sample: 100-000001535-05",
+    "Median Score": 6859.14,
+    "Number of Benchmarks": 8
+  },
+  {
+    "Device Name": "2X AMD EPYC 9B45 128-Core Processor",
+    "Median Score": 5818.96,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "2X AMD EPYC 9B45",
+    "Median Score": 5761.33,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD EPYC 9965 192-Core Processor",
+    "Median Score": 4077.55,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "2X AMD EPYC 9734 112-Core Processor",
+    "Median Score": 3986.64,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper PRO 7995WX 96-Cores",
+    "Median Score": 3447.94,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper PRO 9995WX 96-Cores",
+    "Median Score": 3085.91,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD EPYC 9655P 96-Core Processor",
+    "Median Score": 2769.59,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD EPYC 9754 128-Core Processor",
+    "Median Score": 2659.44,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Eng Sample: 100-000000894-03",
+    "Median Score": 2474.37,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper PRO 9985WX 64-Cores",
+    "Median Score": 2433.38,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper 9980X 64-Cores",
+    "Median Score": 1949.41,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "AMD EPYC 9654 96-Core Processor",
+    "Median Score": 1796.89,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper 7980X 64-Cores",
+    "Median Score": 1794.32,
+    "Number of Benchmarks": 44
+  },
+  {
+    "Device Name": "2X AMD EPYC 7K62 48-Core Processor",
+    "Median Score": 1613.53,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "2X AMD EPYC 9334 32-Core Processor",
+    "Median Score": 1556.26,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon 6741P",
+    "Median Score": 1426.74,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon w9-3595X",
+    "Median Score": 1360.38,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper 7970X 32-Cores",
+    "Median Score": 1306.82,
+    "Number of Benchmarks": 135
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper PRO 9975WX 32-Cores",
+    "Median Score": 1229.66,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper 9970X 32-Cores",
+    "Median Score": 1169.21,
+    "Number of Benchmarks": 10
+  },
+  {
+    "Device Name": "Intel Xeon w9-3495X",
+    "Median Score": 1164.67,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper PRO 5995WX 64-Cores",
+    "Median Score": 1148.86,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "Intel Xeon Platinum 8468",
+    "Median Score": 1141.98,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "2X Intel Xeon 6724P",
+    "Median Score": 1130.24,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper PRO 7975WX 32-Cores",
+    "Median Score": 1127.61,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "AMD EPYC 7C13 64-Core Processor",
+    "Median Score": 1110.63,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper PRO 3995WX 64-Cores",
+    "Median Score": 1095.55,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "2X Intel Xeon Platinum 8369B CPU @ 2.70GHz",
+    "Median Score": 1040.86,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper 3990X 64-Core Processor",
+    "Median Score": 1026.9,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "2X Intel Xeon Gold 6342 CPU @ 2.80GHz",
+    "Median Score": 983.44,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper PRO 9965WX 24-Cores",
+    "Median Score": 897.27,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper 9960X 24-Cores",
+    "Median Score": 895.01,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Xeon w7-3565X",
+    "Median Score": 881.08,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD EPYC 7K62 48-Core Processor",
+    "Median Score": 819.14,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "2X Intel Xeon Platinum 8369HC CPU @ 3.30GHz",
+    "Median Score": 797.44,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper 7960X 24-Cores",
+    "Median Score": 769.98,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper PRO 7965WX 24-Cores",
+    "Median Score": 768.17,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "INTEL XEON GOLD 6530",
+    "Median Score": 764.88,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD EPYC 4585PX 16-Core Processor",
+    "Median Score": 750.47,
+    "Number of Benchmarks": 10
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper PRO 5975WX 32-Cores",
+    "Median Score": 742.85,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "AMD EPYC 7702P 64-Core Processor",
+    "Median Score": 742.4,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon w9-3475X",
+    "Median Score": 724.82,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Apple M3 Ultra",
+    "Median Score": 716.62,
+    "Number of Benchmarks": 18
+  },
+  {
+    "Device Name": "2X Intel Xeon Platinum 8173M CPU @ 2.00GHz",
+    "Median Score": 712.17,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper PRO 5965WX 24-Cores",
+    "Median Score": 698.46,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon CPU Max 9462",
+    "Median Score": 694.53,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "2X AMD EPYC 7313 16-Core Processor",
+    "Median Score": 691.19,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "2X INTEL XEON SILVER 4514Y",
+    "Median Score": 690.9,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "2X Intel Xeon Gold 6230R CPU @ 2.10GHz",
+    "Median Score": 690.15,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon W-3175X CPU @ 3.10GHz",
+    "Median Score": 684.14,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU E5-2699 v4 @ 2.20GHz",
+    "Median Score": 681.19,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 9 9950X3D 16-Core Processor",
+    "Median Score": 680.54,
+    "Number of Benchmarks": 741
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper 3970X 32-Core Processor",
+    "Median Score": 677.33,
+    "Number of Benchmarks": 19
+  },
+  {
+    "Device Name": "2X Intel Xeon Platinum 8249C CPU @ 2.10GHz",
+    "Median Score": 677,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon w7-2575X",
+    "Median Score": 622.43,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 9 9950X 16-Core Processor",
+    "Median Score": 618.29,
+    "Number of Benchmarks": 252
+  },
+  {
+    "Device Name": "AMD EPYC 4584PX 16-Core Processor",
+    "Median Score": 615.7,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD EPYC 7453 28-Core Processor",
+    "Median Score": 581.66,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD EPYC 9135 16-Core Processor",
+    "Median Score": 574.5,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU E5-2697 v4 @ 2.30GHz",
+    "Median Score": 573.47,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU E5-2696 v4 @ 2.20GHz",
+    "Median Score": 570.4,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU E5-2686 v4 @ 2.30GHz",
+    "Median Score": 559.23,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 9 9955HX 16-Core Processor",
+    "Median Score": 555.94,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "Intel Core Ultra 9 285K",
+    "Median Score": 555.49,
+    "Number of Benchmarks": 126
+  },
+  {
+    "Device Name": "Intel Core i9-14900KS",
+    "Median Score": 549.15,
+    "Number of Benchmarks": 19
+  },
+  {
+    "Device Name": "AMD Ryzen 9 7950X 16-Core Processor",
+    "Median Score": 546.48,
+    "Number of Benchmarks": 106
+  },
+  {
+    "Device Name": "2X Intel Xeon Gold 6148 CPU @ 2.40GHz",
+    "Median Score": 544.71,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "2X Intel Xeon Silver 4314 CPU @ 2.40GHz",
+    "Median Score": 544.7,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 9 9955HX3D 16-Core Processor",
+    "Median Score": 543.82,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "AMD Ryzen 9 7950X3D 16-Core Processor",
+    "Median Score": 541.96,
+    "Number of Benchmarks": 93
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU E5-2697A v4 @ 2.60GHz",
+    "Median Score": 541.28,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD RYZEN AI MAX+ 395 w/ Radeon 8060S",
+    "Median Score": 541.24,
+    "Number of Benchmarks": 17
+  },
+  {
+    "Device Name": "Intel Core Ultra 9 285",
+    "Median Score": 530.32,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD EPYC 4545P 16-Core Processor",
+    "Median Score": 528.45,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Apple M2 Ultra",
+    "Median Score": 524.92,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD Eng Sample: 100-000000870-32_Y",
+    "Median Score": 522.44,
+    "Number of Benchmarks": 9
+  },
+  {
+    "Device Name": "AMD Ryzen 9 7900X 12-Core Processor",
+    "Median Score": 510.23,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "13th Gen Intel Core i9-13900KS",
+    "Median Score": 505.29,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper 2990WX 32-Core Processor",
+    "Median Score": 500.99,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper 3960X 24-Core Processor",
+    "Median Score": 498.39,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "Intel Core Ultra 9 285HX",
+    "Median Score": 497.69,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i9-14900K",
+    "Median Score": 494.88,
+    "Number of Benchmarks": 78
+  },
+  {
+    "Device Name": "Intel Core i9-14900KF",
+    "Median Score": 493.42,
+    "Number of Benchmarks": 29
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU E5-2698 v4 @ 2.20GHz",
+    "Median Score": 493.07,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "13th Gen Intel Core i9-13900KF",
+    "Median Score": 489.37,
+    "Number of Benchmarks": 22
+  },
+  {
+    "Device Name": "AMD Ryzen 9 7945HX with Radeon Graphics",
+    "Median Score": 483.24,
+    "Number of Benchmarks": 38
+  },
+  {
+    "Device Name": "AMD Ryzen 9 9900X3D 12-Core Processor",
+    "Median Score": 482.28,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "AMD EPYC 9115 16-Core Processor",
+    "Median Score": 480.82,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Xeon W-3275 CPU @ 2.50GHz",
+    "Median Score": 479.2,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "13th Gen Intel Core i9-13900K",
+    "Median Score": 478.55,
+    "Number of Benchmarks": 42
+  },
+  {
+    "Device Name": "Intel Core Ultra 7 265K",
+    "Median Score": 478.04,
+    "Number of Benchmarks": 123
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU E5-2682 v4 @ 2.50GHz",
+    "Median Score": 477.26,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "13th Gen Intel Core i9-13900",
+    "Median Score": 474.33,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core Ultra 7 265KF",
+    "Median Score": 474.26,
+    "Number of Benchmarks": 24
+  },
+  {
+    "Device Name": "AMD Ryzen 9 7940HX with Radeon Graphics",
+    "Median Score": 472.77,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD Ryzen 9 8945HX with Radeon Graphics",
+    "Median Score": 468.57,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core Ultra 9 275HX",
+    "Median Score": 468.08,
+    "Number of Benchmarks": 82
+  },
+  {
+    "Device Name": "AMD Ryzen 9 9900X 12-Core Processor",
+    "Median Score": 466.64,
+    "Number of Benchmarks": 119
+  },
+  {
+    "Device Name": "AMD Ryzen 9 8940HX with Radeon Graphics",
+    "Median Score": 464.51,
+    "Number of Benchmarks": 14
+  },
+  {
+    "Device Name": "Intel Core i7-14700KF",
+    "Median Score": 460.15,
+    "Number of Benchmarks": 64
+  },
+  {
+    "Device Name": "Apple M4 Max",
+    "Median Score": 458.77,
+    "Number of Benchmarks": 62
+  },
+  {
+    "Device Name": "AMD EPYC 9124 16-Core Processor",
+    "Median Score": 451.78,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper PRO 7945WX 12-Cores",
+    "Median Score": 451.21,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 9 9850HX 12-Core Processor",
+    "Median Score": 449.83,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU E5-2699 v3 @ 2.30GHz",
+    "Median Score": 448.01,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon Platinum 8275CL CPU @ 3.00GHz",
+    "Median Score": 440.12,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Apple M1 Ultra",
+    "Median Score": 433.68,
+    "Number of Benchmarks": 10
+  },
+  {
+    "Device Name": "Intel Core i7-14700K",
+    "Median Score": 427.07,
+    "Number of Benchmarks": 39
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU E5-2698 v3 @ 2.30GHz",
+    "Median Score": 418.53,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 9 7900X 12-Core Processor",
+    "Median Score": 416.38,
+    "Number of Benchmarks": 57
+  },
+  {
+    "Device Name": "Intel Core Ultra 7 255HX",
+    "Median Score": 412.41,
+    "Number of Benchmarks": 12
+  },
+  {
+    "Device Name": "Intel Xeon w5-3435X",
+    "Median Score": 412.17,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper 2970WX 24-Core Processor",
+    "Median Score": 411.94,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core Ultra 7 265HX",
+    "Median Score": 407.19,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "Apple M3 Max",
+    "Median Score": 405.85,
+    "Number of Benchmarks": 22
+  },
+  {
+    "Device Name": "13th Gen Intel Core i9-13900F",
+    "Median Score": 405.79,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD Ryzen 9 7900X3D 12-Core Processor",
+    "Median Score": 405.55,
+    "Number of Benchmarks": 16
+  },
+  {
+    "Device Name": "4X Intel Xeon Platinum 8358 CPU @ 2.60GHz",
+    "Median Score": 401.4,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 9 7900 12-Core Processor",
+    "Median Score": 400.97,
+    "Number of Benchmarks": 57
+  },
+  {
+    "Device Name": "AMD RYZEN AI MAX+ PRO 395 w/ Radeon 8060S",
+    "Median Score": 398.01,
+    "Number of Benchmarks": 9
+  },
+  {
+    "Device Name": "AMD Ryzen 9 5950X 16-Core Processor",
+    "Median Score": 394.67,
+    "Number of Benchmarks": 215
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU E5-2680 v4 @ 2.40GHz",
+    "Median Score": 386.77,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i9-10980XE CPU @ 3.00GHz",
+    "Median Score": 384.41,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "2X Intel Xeon Gold 6140 CPU @ 2.30GHz",
+    "Median Score": 383.66,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "13th Gen Intel Core i7-13700K",
+    "Median Score": 382.75,
+    "Number of Benchmarks": 32
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU E5-2690 v4 @ 2.60GHz",
+    "Median Score": 380.6,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "13th Gen Intel Core i7-13700KF",
+    "Median Score": 380.08,
+    "Number of Benchmarks": 20
+  },
+  {
+    "Device Name": "13th Gen Intel Core i9-13900HX",
+    "Median Score": 376.27,
+    "Number of Benchmarks": 78
+  },
+  {
+    "Device Name": "Intel Core i9-7980XE CPU @ 2.60GHz",
+    "Median Score": 376.16,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core Ultra 7 265",
+    "Median Score": 375.6,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD Ryzen 9 5900XT 16-Core Processor",
+    "Median Score": 374.71,
+    "Number of Benchmarks": 15
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU E5-2697 v3 @ 2.60GHz",
+    "Median Score": 369.93,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 9 3950X 16-Core Processor",
+    "Median Score": 361.03,
+    "Number of Benchmarks": 10
+  },
+  {
+    "Device Name": "Intel Core i9-12900KS",
+    "Median Score": 360.1,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "Intel Core Ultra 7 265F",
+    "Median Score": 356.91,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Xeon Gold 6238R CPU @ 2.20GHz",
+    "Median Score": 354.75,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD RYZEN AI MAX 390 w/ Radeon 8050S",
+    "Median Score": 351.85,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD EPYC 9455P 48-Core Processor",
+    "Median Score": 346.34,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i9-12900K",
+    "Median Score": 345.79,
+    "Number of Benchmarks": 23
+  },
+  {
+    "Device Name": "AMD RYZEN AI MAX PRO 390 w/ Radeon 8050S",
+    "Median Score": 345.73,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i9-12900KF",
+    "Median Score": 343.97,
+    "Number of Benchmarks": 10
+  },
+  {
+    "Device Name": "Intel Core i7-14700HX",
+    "Median Score": 343.58,
+    "Number of Benchmarks": 73
+  },
+  {
+    "Device Name": "Apple M4 Pro",
+    "Median Score": 342.69,
+    "Number of Benchmarks": 85
+  },
+  {
+    "Device Name": "AMD Ryzen 7 9800X3D 8-Core Processor",
+    "Median Score": 334.74,
+    "Number of Benchmarks": 538
+  },
+  {
+    "Device Name": "AMD EPYC 7313 16-Core Processor",
+    "Median Score": 333.83,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i9-14900HX",
+    "Median Score": 332.33,
+    "Number of Benchmarks": 41
+  },
+  {
+    "Device Name": "13th Gen Intel Core i7-13700F",
+    "Median Score": 330.24,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "Intel Core Ultra 5 245K",
+    "Median Score": 325.55,
+    "Number of Benchmarks": 9
+  },
+  {
+    "Device Name": "4X Intel Xeon CPU E7- 4860  @ 2.27GHz",
+    "Median Score": 323.87,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen AI 9 HX 375 w/ Radeon 890M",
+    "Median Score": 322.69,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU E5-2683 v3 @ 2.00GHz",
+    "Median Score": 316.18,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon w5-2455X",
+    "Median Score": 316.17,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "13th Gen Intel Core i9-13980HX",
+    "Median Score": 314.82,
+    "Number of Benchmarks": 12
+  },
+  {
+    "Device Name": "Intel Xeon W-3245 CPU @ 3.20GHz",
+    "Median Score": 314.32,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD Ryzen 7 9700X 8-Core Processor",
+    "Median Score": 312.27,
+    "Number of Benchmarks": 214
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2696 v4 @ 2.20GHz",
+    "Median Score": 312.02,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD Ryzen AI 9 HX PRO 370 w/ Radeon 890M",
+    "Median Score": 310.55,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU E5-2687W v3 @ 3.10GHz",
+    "Median Score": 310.29,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2699A v4 @ 2.40GHz",
+    "Median Score": 308.59,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "13th Gen Intel Core i7-13700T",
+    "Median Score": 307.76,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Intel Core i5-14600KF",
+    "Median Score": 306.44,
+    "Number of Benchmarks": 33
+  },
+  {
+    "Device Name": "Intel Core i5-14600K",
+    "Median Score": 305.42,
+    "Number of Benchmarks": 40
+  },
+  {
+    "Device Name": "Intel Xeon Gold 6254 CPU @ 3.10GHz",
+    "Median Score": 303.18,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen AI 9 H 365 w/ Radeon 880M",
+    "Median Score": 301.59,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core Ultra 5 235",
+    "Median Score": 301.59,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "13th Gen Intel Core i5-13600K",
+    "Median Score": 299.51,
+    "Number of Benchmarks": 15
+  },
+  {
+    "Device Name": "13th Gen Intel Core i7-13700",
+    "Median Score": 298.15,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen 9 5900X 12-Core Processor",
+    "Median Score": 296.59,
+    "Number of Benchmarks": 100
+  },
+  {
+    "Device Name": "13th Gen Intel Core i5-13600KF",
+    "Median Score": 294.78,
+    "Number of Benchmarks": 18
+  },
+  {
+    "Device Name": "AMD Ryzen AI 9 HX 370 w/ Radeon 890M",
+    "Median Score": 294.61,
+    "Number of Benchmarks": 38
+  },
+  {
+    "Device Name": "Intel Core i9-12900F",
+    "Median Score": 293.98,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i7-12700KF",
+    "Median Score": 293.92,
+    "Number of Benchmarks": 20
+  },
+  {
+    "Device Name": "AMD EPYC 4345P 8-Core Processor",
+    "Median Score": 293.59,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-14650HX",
+    "Median Score": 292.7,
+    "Number of Benchmarks": 33
+  },
+  {
+    "Device Name": "Intel Core i9-14900F",
+    "Median Score": 290.29,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Intel Xeon 6507P",
+    "Median Score": 289.96,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-12700K",
+    "Median Score": 289.08,
+    "Number of Benchmarks": 36
+  },
+  {
+    "Device Name": "Intel Core i7-14700F",
+    "Median Score": 288.7,
+    "Number of Benchmarks": 17
+  },
+  {
+    "Device Name": "AMD Ryzen 9 3900XT 12-Core Processor",
+    "Median Score": 287.46,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "2X Intel Xeon Gold 5118 CPU @ 2.30GHz",
+    "Median Score": 286.36,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i9-7960X CPU @ 2.80GHz",
+    "Median Score": 285.4,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD Ryzen 5 9600X 6-Core Processor",
+    "Median Score": 284.47,
+    "Number of Benchmarks": 176
+  },
+  {
+    "Device Name": "AMD Ryzen 7 7700X 8-Core Processor",
+    "Median Score": 278.62,
+    "Number of Benchmarks": 76
+  },
+  {
+    "Device Name": "AMD Ryzen AI 9 HX PRO 375 w/ Radeon 890M",
+    "Median Score": 277.41,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Apple M5",
+    "Median Score": 276.74,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper PRO 3955WX 16-Cores",
+    "Median Score": 276.68,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper 1950X 16-Core Processor",
+    "Median Score": 276,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "Intel Core i9-12950HX",
+    "Median Score": 273.78,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i5-12600KF",
+    "Median Score": 272.38,
+    "Number of Benchmarks": 65
+  },
+  {
+    "Device Name": "Intel Core i9-7920X CPU @ 2.90GHz",
+    "Median Score": 272.04,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-14700",
+    "Median Score": 271.49,
+    "Number of Benchmarks": 14
+  },
+  {
+    "Device Name": "Intel Core i9-9960X CPU @ 3.10GHz",
+    "Median Score": 271.18,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 7 7700 8-Core Processor",
+    "Median Score": 270.79,
+    "Number of Benchmarks": 72
+  },
+  {
+    "Device Name": "AMD Ryzen 9 7845HX with Radeon Graphics",
+    "Median Score": 269.44,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Xeon Gold 6138 CPU @ 2.00GHz",
+    "Median Score": 268.08,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper 2950X 16-Core Processor",
+    "Median Score": 268.07,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "13th Gen Intel Core i9-13950HX",
+    "Median Score": 267.46,
+    "Number of Benchmarks": 11
+  },
+  {
+    "Device Name": "Intel Core Ultra 7 265H",
+    "Median Score": 266.18,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "2X Intel Xeon Gold 6234 CPU @ 3.30GHz",
+    "Median Score": 264.7,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-12700F",
+    "Median Score": 264.24,
+    "Number of Benchmarks": 13
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU E5-2697 v2 @ 2.70GHz",
+    "Median Score": 263.92,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD RYZEN AI MAX PRO 385 w/ Radeon 8050S",
+    "Median Score": 263.52,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 7 7800X3D 8-Core Processor",
+    "Median Score": 263.31,
+    "Number of Benchmarks": 152
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2699 v3 @ 2.30GHz",
+    "Median Score": 262.66,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "AMD Ryzen 7 7840HS with Radeon 780M Graphics",
+    "Median Score": 261.82,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper PRO 3945WX 12-Cores",
+    "Median Score": 261.11,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Apple M2 Max",
+    "Median Score": 260.83,
+    "Number of Benchmarks": 15
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2698 v4 @ 2.20GHz",
+    "Median Score": 259.59,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Snapdragon X 12-core X1E80100 @ 3.40 GHz",
+    "Median Score": 256.33,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "AMD Ryzen 7 7745HX with Radeon Graphics",
+    "Median Score": 254.14,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Intel Core i9-12900E",
+    "Median Score": 252.41,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD EPYC 7282 16-Core Processor",
+    "Median Score": 251.94,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Snapdragon X Elite - X1E78100 - Qualcomm Oryon CPU",
+    "Median Score": 251.9,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen 9 8945HS w/ Radeon 780M Graphics",
+    "Median Score": 251.52,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU E5-2696 v2 @ 2.50GHz",
+    "Median Score": 251.49,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core 9 270H",
+    "Median Score": 251.44,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i9-10920X CPU @ 3.50GHz",
+    "Median Score": 251.4,
+    "Number of Benchmarks": 9
+  },
+  {
+    "Device Name": "AMD Ryzen 9 3900X 12-Core Processor",
+    "Median Score": 250.61,
+    "Number of Benchmarks": 52
+  },
+  {
+    "Device Name": "AMD Ryzen 7 8700G w/ Radeon 780M Graphics",
+    "Median Score": 249.91,
+    "Number of Benchmarks": 8
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU E5-2660 v3 @ 2.60GHz",
+    "Median Score": 249.28,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i7-12850HX",
+    "Median Score": 248.13,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "13th Gen Intel Core i7-13700HX",
+    "Median Score": 247.86,
+    "Number of Benchmarks": 13
+  },
+  {
+    "Device Name": "AMD Ryzen 7 8700F 8-Core Processor",
+    "Median Score": 245.62,
+    "Number of Benchmarks": 11
+  },
+  {
+    "Device Name": "AMD Ryzen 9 3900 12-Core Processor",
+    "Median Score": 242.51,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Xeon Gold 6226R CPU @ 2.90GHz",
+    "Median Score": 242.37,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 7 5700X 8-Core Processor",
+    "Median Score": 240.91,
+    "Number of Benchmarks": 186
+  },
+  {
+    "Device Name": "2X Intel Xeon Gold 6146 CPU @ 3.20GHz",
+    "Median Score": 239.79,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i9-7940X CPU @ 3.10GHz",
+    "Median Score": 239.66,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "13th Gen Intel Core i5-13500",
+    "Median Score": 238.66,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "Intel Xeon Silver 4314 CPU @ 2.40GHz",
+    "Median Score": 238,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 9 7940H w/ Radeon 780M Graphics",
+    "Median Score": 237.95,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "8X Intel Core Ultra 7 265K",
+    "Median Score": 237.85,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 5 9600 6-Core Processor",
+    "Median Score": 237.33,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i9-10900K CPU @ 3.70GHz",
+    "Median Score": 236.08,
+    "Number of Benchmarks": 17
+  },
+  {
+    "Device Name": "AMD Ryzen 7 H 260 w/ Radeon 780M Graphics",
+    "Median Score": 234.32,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 7 255 w/ Radeon 780M Graphics",
+    "Median Score": 233.92,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "Intel Core Ultra 9 285H",
+    "Median Score": 232.54,
+    "Number of Benchmarks": 35
+  },
+  {
+    "Device Name": "AMD Ryzen 9 8945H w/ Radeon 780M Graphics",
+    "Median Score": 232.48,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i5-12600K",
+    "Median Score": 232.19,
+    "Number of Benchmarks": 18
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2697A v4 @ 2.60GHz",
+    "Median Score": 231.64,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2696 v3 @ 2.30GHz",
+    "Median Score": 230.66,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD Ryzen 7 260 w/ Radeon 780M Graphics",
+    "Median Score": 230.32,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU E5-2680 v2 @ 2.80GHz",
+    "Median Score": 229.56,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i9-10900KF CPU @ 3.70GHz",
+    "Median Score": 229.38,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD Ryzen 7 7840U w/ Radeon  780M Graphics",
+    "Median Score": 228.98,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "13th Gen Intel Core i5-13600",
+    "Median Score": 228.61,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon Silver 4410Y",
+    "Median Score": 228.09,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Apple M3 Pro",
+    "Median Score": 227.75,
+    "Number of Benchmarks": 19
+  },
+  {
+    "Device Name": "Intel Core Ultra 5 225",
+    "Median Score": 227.54,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen 9 270 w/ Radeon 780M Graphics",
+    "Median Score": 226.41,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen 7 H 255 w/ Radeon 780M Graphics",
+    "Median Score": 225.91,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Eng Sample: 100-000000954-50_Y",
+    "Median Score": 224.31,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD Ryzen 9 7940HS w/ Radeon 780M Graphics",
+    "Median Score": 223.58,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "AMD Ryzen AI 9 365 w/ Radeon 880M",
+    "Median Score": 222.23,
+    "Number of Benchmarks": 11
+  },
+  {
+    "Device Name": "Intel Core i7-12800HX",
+    "Median Score": 222.16,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "AMD EPYC 7281 16-Core Processor",
+    "Median Score": 221.8,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Apple M4",
+    "Median Score": 221.78,
+    "Number of Benchmarks": 133
+  },
+  {
+    "Device Name": "13th Gen Intel Core i5-13400",
+    "Median Score": 221.55,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Intel Core Ultra 7 255H",
+    "Median Score": 221.13,
+    "Number of Benchmarks": 10
+  },
+  {
+    "Device Name": "Intel Core Ultra 5 230F",
+    "Median Score": 220.87,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "AMD Ryzen 5 9500F 6-Core Processor",
+    "Median Score": 220.59,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU E5-2640 v3 @ 2.60GHz",
+    "Median Score": 220.55,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "Intel Core Ultra 9 185H",
+    "Median Score": 218.59,
+    "Number of Benchmarks": 14
+  },
+  {
+    "Device Name": "Intel Core i7-12700",
+    "Median Score": 217,
+    "Number of Benchmarks": 10
+  },
+  {
+    "Device Name": "Intel Core i9-10850K CPU @ 3.60GHz",
+    "Median Score": 216.43,
+    "Number of Benchmarks": 11
+  },
+  {
+    "Device Name": "Intel Core i9-9900KF CPU @ 3.60GHz",
+    "Median Score": 216.33,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "2X Intel Xeon Silver 4114 CPU @ 2.20GHz",
+    "Median Score": 215.43,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core Ultra 5 225F",
+    "Median Score": 214.25,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD Ryzen 7 250 w/ Radeon 780M Graphics",
+    "Median Score": 214.21,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Apple M1 Max",
+    "Median Score": 212.64,
+    "Number of Benchmarks": 21
+  },
+  {
+    "Device Name": "AMD Ryzen 7 5800XT 8-Core Processor",
+    "Median Score": 212.51,
+    "Number of Benchmarks": 42
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper 1920X 12-Core Processor",
+    "Median Score": 211.6,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Xeon W-3235 CPU @ 3.30GHz",
+    "Median Score": 211.32,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 7 8845HS w/ Radeon 780M Graphics",
+    "Median Score": 211.13,
+    "Number of Benchmarks": 29
+  },
+  {
+    "Device Name": "AMD Ryzen 9 PRO 6950H with Radeon Graphics",
+    "Median Score": 210.67,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 7 5800 8-Core Processor",
+    "Median Score": 210.5,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Snapdragon X 10-core X1P64100 @ 3.40 GHz",
+    "Median Score": 209.24,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD Ryzen 7 5800X3D 8-Core Processor",
+    "Median Score": 209.03,
+    "Number of Benchmarks": 69
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2698 v3 @ 2.30GHz",
+    "Median Score": 208.06,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i5-14400",
+    "Median Score": 206.49,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "AMD Ryzen 7 7840HS w/ Radeon 780M Graphics",
+    "Median Score": 205.26,
+    "Number of Benchmarks": 20
+  },
+  {
+    "Device Name": "AMD Ryzen 7 5800X 8-Core Processor",
+    "Median Score": 204.52,
+    "Number of Benchmarks": 150
+  },
+  {
+    "Device Name": "Apple M2 Pro",
+    "Median Score": 203.68,
+    "Number of Benchmarks": 14
+  },
+  {
+    "Device Name": "13th Gen Intel Core i5-13400F",
+    "Median Score": 202.65,
+    "Number of Benchmarks": 36
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2697 v3 @ 2.60GHz",
+    "Median Score": 202.04,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "AMD Ryzen 7 PRO 8840HS w/ Radeon 780M Graphics",
+    "Median Score": 201.58,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 5 7600X 6-Core Processor",
+    "Median Score": 201.45,
+    "Number of Benchmarks": 55
+  },
+  {
+    "Device Name": "13th Gen Intel Core i9-13900HK",
+    "Median Score": 201,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "13th Gen Intel Core i5-13450HX",
+    "Median Score": 200.5,
+    "Number of Benchmarks": 21
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU E5-2690 v2 @ 3.00GHz",
+    "Median Score": 198.75,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "AMD Ryzen 9 PRO 7940HS w/ Radeon 780M Graphics",
+    "Median Score": 198.5,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen AI Z2 Extreme",
+    "Median Score": 198.02,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-11700K @ 3.60GHz",
+    "Median Score": 197.23,
+    "Number of Benchmarks": 8
+  },
+  {
+    "Device Name": "AMD Ryzen 5 7600 6-Core Processor",
+    "Median Score": 197.19,
+    "Number of Benchmarks": 32
+  },
+  {
+    "Device Name": "Intel Core i9-10900X CPU @ 3.70GHz",
+    "Median Score": 197.1,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "13th Gen Intel Core i7-13650HX",
+    "Median Score": 196.88,
+    "Number of Benchmarks": 41
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2680 v4 @ 2.40GHz",
+    "Median Score": 196.24,
+    "Number of Benchmarks": 9
+  },
+  {
+    "Device Name": "Intel Core i5-14500",
+    "Median Score": 196,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 7 7435HS",
+    "Median Score": 195.92,
+    "Number of Benchmarks": 40
+  },
+  {
+    "Device Name": "Intel Core i5-14400F",
+    "Median Score": 195.68,
+    "Number of Benchmarks": 23
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper 2920X 12-Core Processor",
+    "Median Score": 195.18,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen 7 8745HS w/ Radeon 780M Graphics",
+    "Median Score": 194.92,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen 5 7600X3D 6-Core Processor",
+    "Median Score": 194.34,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "Intel Core i5-14500HX",
+    "Median Score": 192.4,
+    "Number of Benchmarks": 9
+  },
+  {
+    "Device Name": "AMD Ryzen 5 7500F 6-Core Processor",
+    "Median Score": 191.56,
+    "Number of Benchmarks": 30
+  },
+  {
+    "Device Name": "Intel Core Ultra 5 235H",
+    "Median Score": 191.49,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core Ultra 7 165H",
+    "Median Score": 191.22,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD Ryzen 7 6800HS Creator Edition",
+    "Median Score": 190.16,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core Ultra 5 225H",
+    "Median Score": 189.73,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 7 5700G with Radeon Graphics",
+    "Median Score": 189.7,
+    "Number of Benchmarks": 24
+  },
+  {
+    "Device Name": "AMD Ryzen 7 5700X3D 8-Core Processor",
+    "Median Score": 188.62,
+    "Number of Benchmarks": 23
+  },
+  {
+    "Device Name": "2X QEMU Virtual CPU version 2.5+",
+    "Median Score": 187.45,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 7 5700",
+    "Median Score": 187.24,
+    "Number of Benchmarks": 9
+  },
+  {
+    "Device Name": "AMD Ryzen 5 8400F 6-Core Processor",
+    "Median Score": 186.16,
+    "Number of Benchmarks": 8
+  },
+  {
+    "Device Name": "AMD Ryzen 7 3800XT 8-Core Processor",
+    "Median Score": 186.07,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Snapdragon X Elite - X1E80100 - Qualcomm Oryon CPU",
+    "Median Score": 185.98,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD Ryzen 5 7640U w/ Radeon 760M Graphics",
+    "Median Score": 185.75,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2687W v4 @ 3.00GHz",
+    "Median Score": 185.69,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 5 7400F 6-Core Processor",
+    "Median Score": 185.22,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen 7 3800X 8-Core Processor",
+    "Median Score": 185.13,
+    "Number of Benchmarks": 9
+  },
+  {
+    "Device Name": "AMD Ryzen 7 7735HS with Radeon Graphics",
+    "Median Score": 184.47,
+    "Number of Benchmarks": 34
+  },
+  {
+    "Device Name": "AMD Ryzen 7 PRO 3700 8-Core Processor",
+    "Median Score": 184.03,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i9-14900",
+    "Median Score": 183.55,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 7 PRO 6850H with Radeon Graphics",
+    "Median Score": 183.35,
+    "Number of Benchmarks": 17
+  },
+  {
+    "Device Name": "13th Gen Intel Core i9-13900H",
+    "Median Score": 182.8,
+    "Number of Benchmarks": 50
+  },
+  {
+    "Device Name": "Intel Core i9-10900 CPU @ 2.80GHz",
+    "Median Score": 182.63,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i7-10700KF CPU @ 3.80GHz",
+    "Median Score": 182.22,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Snapdragon X Plus - X1P42100 - Qualcomm Oryon CPU",
+    "Median Score": 181.98,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen 5 240 w/ Radeon 760M Graphics",
+    "Median Score": 181.21,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2690 v4 @ 2.60GHz",
+    "Median Score": 181.07,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core 7 240H",
+    "Median Score": 180.8,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD Ryzen AI 7 350 w/ Radeon 860M",
+    "Median Score": 180.79,
+    "Number of Benchmarks": 20
+  },
+  {
+    "Device Name": "Apple Silicon",
+    "Median Score": 179.82,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i9-9900KS CPU @ 4.00GHz",
+    "Median Score": 179.41,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i9-11900K @ 3.50GHz",
+    "Median Score": 178.66,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD Ryzen 9 6900HS with Radeon Graphics",
+    "Median Score": 177.47,
+    "Number of Benchmarks": 29
+  },
+  {
+    "Device Name": "Intel Core i5-14450HX",
+    "Median Score": 177.28,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i9-12900HK",
+    "Median Score": 174.66,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Snapdragon X - X126100 - Qualcomm Oryon CPU",
+    "Median Score": 173.4,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "13th Gen Intel Core i5-13490F",
+    "Median Score": 173.03,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD Ryzen 9 5900HX with Radeon Graphics",
+    "Median Score": 171.65,
+    "Number of Benchmarks": 15
+  },
+  {
+    "Device Name": "AMD Ryzen 5 8600G w/ Radeon 760M Graphics",
+    "Median Score": 170.63,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "Intel Core i7-12700H",
+    "Median Score": 170.58,
+    "Number of Benchmarks": 21
+  },
+  {
+    "Device Name": "AMD Ryzen 7 3700X 8-Core Processor",
+    "Median Score": 170.49,
+    "Number of Benchmarks": 43
+  },
+  {
+    "Device Name": "Intel Core i9-12900H",
+    "Median Score": 169.44,
+    "Number of Benchmarks": 17
+  },
+  {
+    "Device Name": "AMD Ryzen AI 5 340 w/ Radeon 840M",
+    "Median Score": 168.83,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen 9 6900HX with Radeon Graphics",
+    "Median Score": 167.81,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "2X Intel Xeon Silver 4110 CPU @ 2.10GHz",
+    "Median Score": 166.79,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 7 6800H with Radeon Graphics",
+    "Median Score": 165.73,
+    "Number of Benchmarks": 18
+  },
+  {
+    "Device Name": "Intel Core i7-10700K CPU @ 3.80GHz",
+    "Median Score": 165.69,
+    "Number of Benchmarks": 11
+  },
+  {
+    "Device Name": "Intel Core i9-9900K CPU @ 3.60GHz",
+    "Median Score": 165.46,
+    "Number of Benchmarks": 22
+  },
+  {
+    "Device Name": "Intel Xeon W-2140B CPU @ 3.20GHz",
+    "Median Score": 165.02,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-10700F CPU @ 2.90GHz",
+    "Median Score": 164.87,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i7-6950X CPU @ 3.00GHz",
+    "Median Score": 164.32,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen AI 7 PRO 350 w/ Radeon 860M",
+    "Median Score": 164.18,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen 7 8840U w/ Radeon 780M Graphics",
+    "Median Score": 163.66,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD EPYC 7R13 Processor",
+    "Median Score": 162.19,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-12650HX",
+    "Median Score": 162.02,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 5 7640HS w/ Radeon 760M Graphics",
+    "Median Score": 161.83,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD Ryzen 5 8645HS w/ Radeon 760M Graphics",
+    "Median Score": 161.47,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "Apple M1 Pro",
+    "Median Score": 161.45,
+    "Number of Benchmarks": 33
+  },
+  {
+    "Device Name": "AMD Ryzen 5 5600X 6-Core Processor",
+    "Median Score": 160.61,
+    "Number of Benchmarks": 122
+  },
+  {
+    "Device Name": "AMD Ryzen 5 5600X3D 6-Core Processor",
+    "Median Score": 159.8,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "13th Gen Intel Core i7-13620H",
+    "Median Score": 159.63,
+    "Number of Benchmarks": 28
+  },
+  {
+    "Device Name": "AMD Ryzen 5 5600XT 6-Core Processor",
+    "Median Score": 159.55,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2670 v3 @ 2.30GHz",
+    "Median Score": 159.04,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "13th Gen Intel Core i7-13700H",
+    "Median Score": 158.91,
+    "Number of Benchmarks": 15
+  },
+  {
+    "Device Name": "AMD Ryzen 5 5600GT with Radeon Graphics",
+    "Median Score": 158.52,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "Intel Core i9-10900F CPU @ 2.80GHz",
+    "Median Score": 158.49,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i7-9700KF CPU @ 3.60GHz",
+    "Median Score": 157.2,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Xeon W-2245 CPU @ 3.90GHz",
+    "Median Score": 156.07,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 7 6800U with Radeon Graphics",
+    "Median Score": 154.87,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "13th Gen Intel Core i5-13500HX",
+    "Median Score": 154.65,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core Ultra 5 228V",
+    "Median Score": 154.56,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "13th Gen Intel Core i5-13500H",
+    "Median Score": 153.53,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "Intel Core Ultra 5 125H",
+    "Median Score": 153.12,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Intel Core i7-7820X CPU @ 3.60GHz",
+    "Median Score": 153.09,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-10700 CPU @ 2.90GHz",
+    "Median Score": 153.06,
+    "Number of Benchmarks": 11
+  },
+  {
+    "Device Name": "Intel Core i9-11900KF @ 3.50GHz",
+    "Median Score": 152.94,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Intel Core i5-12500",
+    "Median Score": 152.89,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Intel Core i5-12600HX",
+    "Median Score": 151.83,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD Ryzen 5 8500G w/ Radeon 740M Graphics",
+    "Median Score": 150.06,
+    "Number of Benchmarks": 8
+  },
+  {
+    "Device Name": "Intel Core i5-12400F",
+    "Median Score": 149.46,
+    "Number of Benchmarks": 36
+  },
+  {
+    "Device Name": "Intel Core i5-12400",
+    "Median Score": 149.33,
+    "Number of Benchmarks": 14
+  },
+  {
+    "Device Name": "AMD Ryzen 5 5600 6-Core Processor",
+    "Median Score": 149.09,
+    "Number of Benchmarks": 43
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2689 v4 @ 3.10GHz",
+    "Median Score": 148.71,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core Ultra 7 155H",
+    "Median Score": 148.06,
+    "Number of Benchmarks": 39
+  },
+  {
+    "Device Name": "AMD Ryzen 7 5825U with Radeon Graphics",
+    "Median Score": 147.59,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD Ryzen AI 5 PRO 340 w/ Radeon 840M",
+    "Median Score": 147.33,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 7 2700 Eight-Core Processor",
+    "Median Score": 147.2,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "Intel Core i7-12650H",
+    "Median Score": 146.17,
+    "Number of Benchmarks": 17
+  },
+  {
+    "Device Name": "Genuine Intel 0000",
+    "Median Score": 146.16,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "AMD Ryzen 5 5500GT with Radeon Graphics",
+    "Median Score": 146.15,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-1660 v3 @ 3.00GHz",
+    "Median Score": 146.12,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 5 5600G with Radeon Graphics",
+    "Median Score": 145.91,
+    "Number of Benchmarks": 115
+  },
+  {
+    "Device Name": "Intel Core i7-11700F @ 2.50GHz",
+    "Median Score": 145.77,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD Ryzen 5 5500X3D 6-Core Processor",
+    "Median Score": 145.35,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i7-11700 @ 2.50GHz",
+    "Median Score": 145.28,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2680 v3 @ 2.50GHz",
+    "Median Score": 145.25,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i9-11950H @ 2.60GHz",
+    "Median Score": 144.94,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD Ryzen 7 PRO 4750GE with Radeon Graphics",
+    "Median Score": 144.38,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 5 5600T 6-Core Processor",
+    "Median Score": 144.31,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2630 v4 @ 2.20GHz",
+    "Median Score": 143.44,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen AI 7 PRO 360 w/ Radeon 880M",
+    "Median Score": 142.81,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2678 v3 @ 2.50GHz",
+    "Median Score": 142.57,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 7 5800H with Radeon Graphics",
+    "Median Score": 141.87,
+    "Number of Benchmarks": 32
+  },
+  {
+    "Device Name": "AMD Ryzen 7 2700X Eight-Core Processor",
+    "Median Score": 141.54,
+    "Number of Benchmarks": 19
+  },
+  {
+    "Device Name": "Virtual CPU @ 3.41GHz",
+    "Median Score": 141.37,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-11600K @ 3.90GHz",
+    "Median Score": 141.07,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "13th Gen Intel Core i5-13500T",
+    "Median Score": 141.06,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon Gold 5118 CPU @ 2.30GHz",
+    "Median Score": 140.71,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-12800H",
+    "Median Score": 140.39,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon W-11865MRE @ 2.60GHz",
+    "Median Score": 140.39,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD Ryzen Z1 Extreme",
+    "Median Score": 139.29,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Intel Core i5-10500 CPU @ 3.10GHz",
+    "Median Score": 139.15,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD Ryzen 7 4800H with Radeon Graphics",
+    "Median Score": 138.9,
+    "Number of Benchmarks": 18
+  },
+  {
+    "Device Name": "Intel Core i7-8086K CPU @ 4.00GHz",
+    "Median Score": 138.83,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen 7 1800X Eight-Core Processor",
+    "Median Score": 138.8,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen Threadripper 1900X 8-Core Processor",
+    "Median Score": 138.55,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2676 v3 @ 2.40GHz",
+    "Median Score": 137.79,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen 5 5500",
+    "Median Score": 137.12,
+    "Number of Benchmarks": 35
+  },
+  {
+    "Device Name": "2X Genuine Intel CPU  @ 2.90GHz",
+    "Median Score": 137.09,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 5 3600X 6-Core Processor",
+    "Median Score": 136.62,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "Intel Core i9-9980HK CPU @ 2.40GHz",
+    "Median Score": 136.33,
+    "Number of Benchmarks": 10
+  },
+  {
+    "Device Name": "AMD Ryzen 7 5800HS with Radeon Graphics",
+    "Median Score": 136.07,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 5 PRO 5650G with Radeon Graphics",
+    "Median Score": 135.99,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i9-11900H @ 2.50GHz",
+    "Median Score": 135.93,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2667 v4 @ 3.20GHz",
+    "Median Score": 135.65,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Intel Core i5-12450HX",
+    "Median Score": 135.41,
+    "Number of Benchmarks": 17
+  },
+  {
+    "Device Name": "Intel Core i5-12500H",
+    "Median Score": 135.39,
+    "Number of Benchmarks": 45
+  },
+  {
+    "Device Name": "Intel Core Ultra 7 256V",
+    "Median Score": 135,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i7-9700K CPU @ 3.60GHz",
+    "Median Score": 134.8,
+    "Number of Benchmarks": 17
+  },
+  {
+    "Device Name": "AMD Ryzen 9 5900HS with Radeon Graphics",
+    "Median Score": 134.45,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "Intel Core i5-11500 @ 2.70GHz",
+    "Median Score": 134.26,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 7 7730U with Radeon Graphics",
+    "Median Score": 134.1,
+    "Number of Benchmarks": 12
+  },
+  {
+    "Device Name": "AMD Ryzen 5 220 w/ Radeon 740M Graphics",
+    "Median Score": 134.09,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen 7 8840HS w/ Radeon 780M Graphics",
+    "Median Score": 133.66,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen 5 PRO 7540U w/ Radeon 740M Graphics",
+    "Median Score": 133.44,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen Z1",
+    "Median Score": 133.44,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i9-9880H CPU @ 2.30GHz",
+    "Median Score": 132.92,
+    "Number of Benchmarks": 13
+  },
+  {
+    "Device Name": "AMD Ryzen 9 4900HS with Radeon Graphics",
+    "Median Score": 132.89,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "Intel Core i7-11850H @ 2.50GHz",
+    "Median Score": 132.25,
+    "Number of Benchmarks": 11
+  },
+  {
+    "Device Name": "13th Gen Intel Core i3-13100F",
+    "Median Score": 131.97,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 5 4600G with Radeon Graphics",
+    "Median Score": 130.74,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD Ryzen 7 7840H with Radeon 780M Graphics",
+    "Median Score": 130.66,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 7 5800U with Radeon Graphics",
+    "Median Score": 130.65,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i9-11980HK @ 2.60GHz",
+    "Median Score": 130.5,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core Ultra 5 225U",
+    "Median Score": 129.91,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU           X5680  @ 3.33GHz",
+    "Median Score": 129.85,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "13th Gen Intel Core i5-1340P",
+    "Median Score": 129.51,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i9-9900T CPU @ 2.10GHz",
+    "Median Score": 129.27,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core Ultra 7 258V",
+    "Median Score": 128.15,
+    "Number of Benchmarks": 17
+  },
+  {
+    "Device Name": "Intel Core 5 210H",
+    "Median Score": 126.96,
+    "Number of Benchmarks": 8
+  },
+  {
+    "Device Name": "AMD Ryzen 5 7535HS with Radeon Graphics",
+    "Median Score": 126.89,
+    "Number of Benchmarks": 10
+  },
+  {
+    "Device Name": "13th Gen Intel Core i7-1360P",
+    "Median Score": 126.65,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Apple M3",
+    "Median Score": 125.79,
+    "Number of Benchmarks": 22
+  },
+  {
+    "Device Name": "AMD Ryzen 5 3600 6-Core Processor",
+    "Median Score": 125.65,
+    "Number of Benchmarks": 72
+  },
+  {
+    "Device Name": "AMD Ryzen 7 1700X Eight-Core Processor",
+    "Median Score": 125.65,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD Ryzen 9 5980HX with Radeon Graphics",
+    "Median Score": 125.34,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "QEMU Virtual CPU version 2.5+",
+    "Median Score": 123.9,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-10870H CPU @ 2.20GHz",
+    "Median Score": 123.56,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "Intel Core i7-1270P",
+    "Median Score": 123.11,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 5 PRO 4650G with Radeon Graphics",
+    "Median Score": 122.36,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "13th Gen Intel Core i5-13420H",
+    "Median Score": 122.34,
+    "Number of Benchmarks": 19
+  },
+  {
+    "Device Name": "AMD Ryzen 5 4500 6-Core Processor",
+    "Median Score": 122.3,
+    "Number of Benchmarks": 8
+  },
+  {
+    "Device Name": "AMD Ryzen 7 PRO 4750U with Radeon Graphics",
+    "Median Score": 122.06,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU           X5660  @ 2.80GHz",
+    "Median Score": 121.82,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-10600KF CPU @ 4.10GHz",
+    "Median Score": 121.41,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i5-10600K CPU @ 4.10GHz",
+    "Median Score": 121.19,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i7-1280P",
+    "Median Score": 120.98,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i7-8700K CPU @ 3.70GHz",
+    "Median Score": 120.61,
+    "Number of Benchmarks": 14
+  },
+  {
+    "Device Name": "Intel Core i7-10875H CPU @ 2.30GHz",
+    "Median Score": 120.52,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen 5 5600H with Radeon Graphics",
+    "Median Score": 120.21,
+    "Number of Benchmarks": 25
+  },
+  {
+    "Device Name": "Intel Core i7-11800H @ 2.30GHz",
+    "Median Score": 120.07,
+    "Number of Benchmarks": 34
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2697 v2 @ 2.70GHz",
+    "Median Score": 119.77,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "AMD Ryzen 5 PRO 5675U with Radeon Graphics",
+    "Median Score": 119.72,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-11400F @ 2.60GHz",
+    "Median Score": 119.71,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "AMD Ryzen 7 1700 Eight-Core Processor",
+    "Median Score": 119.35,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i5-11400 @ 2.60GHz",
+    "Median Score": 118.46,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i3-14100F",
+    "Median Score": 118.08,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i3-14100",
+    "Median Score": 118.04,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i7-9700F CPU @ 3.00GHz",
+    "Median Score": 118,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-1650 v4 @ 3.60GHz",
+    "Median Score": 117.85,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD Ryzen 7 PRO 5850U with Radeon Graphics",
+    "Median Score": 117.73,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Intel Core i7-5960X CPU @ 3.00GHz",
+    "Median Score": 117.29,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i5-10400 CPU @ 2.90GHz",
+    "Median Score": 117.08,
+    "Number of Benchmarks": 9
+  },
+  {
+    "Device Name": "AMD Ryzen 5 5560U with Radeon Graphics",
+    "Median Score": 116.31,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Xeon W-11855M CPU @ 3.20GHz",
+    "Median Score": 116.2,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen 5 4600U with Radeon Graphics",
+    "Median Score": 115.97,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i7-8700 CPU @ 3.20GHz",
+    "Median Score": 113.97,
+    "Number of Benchmarks": 8
+  },
+  {
+    "Device Name": "Intel Core i9-9900 CPU @ 3.10GHz",
+    "Median Score": 113.19,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core Ultra 9 288V",
+    "Median Score": 112.72,
+    "Number of Benchmarks": 8
+  },
+  {
+    "Device Name": "Intel Core i5-10400F CPU @ 2.90GHz",
+    "Median Score": 112.71,
+    "Number of Benchmarks": 16
+  },
+  {
+    "Device Name": "Intel Core i7-9700 CPU @ 3.00GHz",
+    "Median Score": 112.41,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "AMD Ryzen 7 PRO 8840U w/ Radeon 780M Graphics",
+    "Median Score": 112.36,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core Ultra 7 268V",
+    "Median Score": 112.25,
+    "Number of Benchmarks": 8
+  },
+  {
+    "Device Name": "AMD Ryzen 5 7535U with Radeon Graphics",
+    "Median Score": 112.09,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 7 5700U with Radeon Graphics",
+    "Median Score": 111.99,
+    "Number of Benchmarks": 10
+  },
+  {
+    "Device Name": "AMD Ryzen 5 6600H with Radeon Graphics",
+    "Median Score": 111.19,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "AMD Ryzen 7 PRO 7840U w/ Radeon 780M Graphics",
+    "Median Score": 110.53,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Intel Core i9-11900 @ 2.50GHz",
+    "Median Score": 109.97,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i7-5930K CPU @ 3.50GHz",
+    "Median Score": 109.58,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen 5 7430U with Radeon Graphics",
+    "Median Score": 109.27,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2695 v2 @ 2.40GHz",
+    "Median Score": 108.71,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Apple M2",
+    "Median Score": 108.49,
+    "Number of Benchmarks": 27
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2696 v2 @ 2.50GHz",
+    "Median Score": 108.46,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-12450H",
+    "Median Score": 107.52,
+    "Number of Benchmarks": 17
+  },
+  {
+    "Device Name": "Intel Core Ultra 5 226V",
+    "Median Score": 107.01,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i3-12100F",
+    "Median Score": 106.79,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "Intel Xeon W-2135 CPU @ 3.70GHz",
+    "Median Score": 106.7,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "13th Gen Intel Core i3-13100",
+    "Median Score": 106.48,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD BC-250",
+    "Median Score": 105.83,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "AMD Ryzen 5 2600 Six-Core Processor",
+    "Median Score": 105.12,
+    "Number of Benchmarks": 24
+  },
+  {
+    "Device Name": "Intel Core i5-10600 CPU @ 3.30GHz",
+    "Median Score": 104.48,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 5 2600X Six-Core Processor",
+    "Median Score": 104.34,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "Intel Core i5-9400 CPU @ 2.90GHz",
+    "Median Score": 104.02,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-11260H @ 2.60GHz",
+    "Median Score": 102.97,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen 5 5600U with Radeon Graphics",
+    "Median Score": 102.81,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU           X5675  @ 3.07GHz",
+    "Median Score": 102.42,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i5-11400H @ 2.70GHz",
+    "Median Score": 101.85,
+    "Number of Benchmarks": 43
+  },
+  {
+    "Device Name": "Intel Core i7-9750H CPU @ 2.60GHz",
+    "Median Score": 101.74,
+    "Number of Benchmarks": 41
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2680 v2 @ 2.80GHz",
+    "Median Score": 101.67,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen 5 4600H with Radeon Graphics",
+    "Median Score": 101.61,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "Intel Core i5-9600K CPU @ 3.70GHz",
+    "Median Score": 101.51,
+    "Number of Benchmarks": 18
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU           E5645  @ 2.40GHz",
+    "Median Score": 100.99,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2667 v3 @ 3.20GHz",
+    "Median Score": 100.24,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Apple M1",
+    "Median Score": 99.55,
+    "Number of Benchmarks": 48
+  },
+  {
+    "Device Name": "2X Intel Xeon Bronze 3106 CPU @ 1.70GHz",
+    "Median Score": 98.82,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-1650 v3 @ 3.50GHz",
+    "Median Score": 98.62,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "13th Gen Intel Core i7-1355U",
+    "Median Score": 98.32,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD Ryzen 5 1600X Six-Core Processor",
+    "Median Score": 96.96,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 5 1600 Six-Core Processor",
+    "Median Score": 95.76,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU           X5650  @ 2.67GHz",
+    "Median Score": 95.69,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i7-5820K CPU @ 3.30GHz",
+    "Median Score": 95.56,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD Ryzen 5 PRO 5650U with Radeon Graphics",
+    "Median Score": 95.54,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i9-10885H CPU @ 2.40GHz",
+    "Median Score": 94.82,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Intel Core i7-10850H CPU @ 2.70GHz",
+    "Median Score": 94.73,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-8700T CPU @ 2.40GHz",
+    "Median Score": 92.37,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i3-12100",
+    "Median Score": 91.99,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i5-8600K CPU @ 3.60GHz",
+    "Median Score": 91.75,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i7-1265U",
+    "Median Score": 91.66,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i7-10750H CPU @ 2.60GHz",
+    "Median Score": 90.25,
+    "Number of Benchmarks": 13
+  },
+  {
+    "Device Name": "Intel Xeon E-2176M  CPU @ 2.70GHz",
+    "Median Score": 89.76,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-8700B CPU @ 3.20GHz",
+    "Median Score": 88.23,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon CPU E3-1275 v5 @ 3.60GHz",
+    "Median Score": 87.38,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 3 3300X 4-Core Processor",
+    "Median Score": 87.31,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i7-7700K CPU @ 4.20GHz",
+    "Median Score": 87.13,
+    "Number of Benchmarks": 15
+  },
+  {
+    "Device Name": "Intel Xeon CPU E3-1270 v5 @ 3.60GHz",
+    "Median Score": 86.9,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 5 5500U with Radeon Graphics",
+    "Median Score": 86.56,
+    "Number of Benchmarks": 11
+  },
+  {
+    "Device Name": "Intel Core i7-9850H CPU @ 2.60GHz",
+    "Median Score": 85.61,
+    "Number of Benchmarks": 10
+  },
+  {
+    "Device Name": "Intel Core i5-8400 CPU @ 2.80GHz",
+    "Median Score": 85.37,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2650 v3 @ 2.30GHz",
+    "Median Score": 85.31,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-8600 CPU @ 3.10GHz",
+    "Median Score": 85.17,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core Ultra 5 125U",
+    "Median Score": 85.11,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "Intel Xeon E-2276M  CPU @ 2.80GHz",
+    "Median Score": 85,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 5 3500X 6-Core Processor",
+    "Median Score": 84.66,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i5-1245UE",
+    "Median Score": 83.9,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i7-8850H CPU @ 2.60GHz",
+    "Median Score": 83.6,
+    "Number of Benchmarks": 8
+  },
+  {
+    "Device Name": "Intel Core i7-8750H CPU @ 2.20GHz",
+    "Median Score": 83.39,
+    "Number of Benchmarks": 20
+  },
+  {
+    "Device Name": "Intel Core i7-6700K CPU @ 4.00GHz",
+    "Median Score": 82.06,
+    "Number of Benchmarks": 16
+  },
+  {
+    "Device Name": "Intel Core i5-9500 CPU @ 3.00GHz",
+    "Median Score": 81.62,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 5 PRO 4650U with Radeon Graphics",
+    "Median Score": 79.93,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD Ryzen 3 PRO 4350G with Radeon Graphics",
+    "Median Score": 79.49,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-11370H @ 3.30GHz",
+    "Median Score": 78.63,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD Ryzen 5 7235HS",
+    "Median Score": 78.29,
+    "Number of Benchmarks": 12
+  },
+  {
+    "Device Name": "AMD Ryzen 3 7330U with Radeon Graphics",
+    "Median Score": 78.06,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-8500 CPU @ 3.00GHz",
+    "Median Score": 77.58,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "Intel Core 5 120U",
+    "Median Score": 77.33,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core Ultra 5 115U",
+    "Median Score": 77.13,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon W-2133 CPU @ 3.60GHz",
+    "Median Score": 76.85,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i5-9400F CPU @ 2.90GHz",
+    "Median Score": 76.7,
+    "Number of Benchmarks": 11
+  },
+  {
+    "Device Name": "Intel Core i7-1255U",
+    "Median Score": 76.39,
+    "Number of Benchmarks": 14
+  },
+  {
+    "Device Name": "AMD Ryzen 5 5625U with Radeon Graphics",
+    "Median Score": 75.92,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "AMD Ryzen 3 3100 4-Core Processor",
+    "Median Score": 75.35,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-11300H @ 3.10GHz",
+    "Median Score": 75.19,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i3-10100 CPU @ 3.60GHz",
+    "Median Score": 75.1,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "Intel Core i5-10500H CPU @ 2.50GHz",
+    "Median Score": 74.76,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Xeon W-2223 CPU @ 3.60GHz",
+    "Median Score": 74.59,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "4X 12th Gen Intel Core i5-12400",
+    "Median Score": 74.09,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 5 7530U with Radeon Graphics",
+    "Median Score": 73.92,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i5-10400T CPU @ 2.00GHz",
+    "Median Score": 72.66,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD EPYC 74F3 24-Core Processor",
+    "Median Score": 72.41,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core Ultra 5 235U",
+    "Median Score": 72.23,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-1650 v2 @ 3.50GHz",
+    "Median Score": 72.1,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD EPYC 7543P 32-Core Processor",
+    "Median Score": 71.99,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i7-7700 CPU @ 3.60GHz",
+    "Median Score": 71.92,
+    "Number of Benchmarks": 29
+  },
+  {
+    "Device Name": "Intel Xeon w3-2423",
+    "Median Score": 71.78,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-4770K CPU @ 3.50GHz",
+    "Median Score": 71.76,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "Intel Core i5-8259U CPU @ 2.30GHz",
+    "Median Score": 71.71,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-1260P",
+    "Median Score": 71.5,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "Intel Xeon CPU E3-1240 v5 @ 3.50GHz",
+    "Median Score": 71.47,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Intel Core i5-9400T CPU @ 1.80GHz",
+    "Median Score": 71.28,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-10810U CPU @ 1.10GHz",
+    "Median Score": 71.1,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i3-10105 CPU @ 3.70GHz",
+    "Median Score": 70.64,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core Ultra 7 155U",
+    "Median Score": 70.33,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i7-9700T CPU @ 2.00GHz",
+    "Median Score": 70.1,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i3-10100F CPU @ 3.60GHz",
+    "Median Score": 70.09,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 5 3400G with Radeon Vega Graphics",
+    "Median Score": 69.83,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "AMD Ryzen 5 4500U with Radeon Graphics",
+    "Median Score": 69.46,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Intel Core i5-8500T CPU @ 2.10GHz",
+    "Median Score": 69.35,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-4790K CPU @ 4.00GHz",
+    "Median Score": 68.4,
+    "Number of Benchmarks": 8
+  },
+  {
+    "Device Name": "AMD Ryzen 5 2500X Quad-Core Processor",
+    "Median Score": 68.33,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Custom APU 0932",
+    "Median Score": 68.32,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Intel Core Ultra 5 135H",
+    "Median Score": 68.25,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core 7 150U",
+    "Median Score": 67.76,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-6700 CPU @ 3.40GHz",
+    "Median Score": 67.75,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "Intel Core i5-8400T CPU @ 1.70GHz",
+    "Median Score": 67.62,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-1035G4 CPU @ 1.10GHz",
+    "Median Score": 67.57,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD Custom APU 0405",
+    "Median Score": 67.52,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "Intel Core i5-9300H CPU @ 2.40GHz",
+    "Median Score": 67.45,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Intel Xeon W-2125 CPU @ 4.00GHz",
+    "Median Score": 66.92,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 3 PRO 4450U with Radeon Graphics",
+    "Median Score": 66.86,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 5 2400G with Radeon Vega Graphics",
+    "Median Score": 66.5,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-4650 0 @ 2.70GHz",
+    "Median Score": 65.47,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 7 7735U with Radeon Graphics",
+    "Median Score": 65.07,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-8557U CPU @ 1.70GHz",
+    "Median Score": 64.62,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-4770 CPU @ 3.40GHz",
+    "Median Score": 63.88,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "Intel Core i5-10300H CPU @ 2.50GHz",
+    "Median Score": 63.77,
+    "Number of Benchmarks": 19
+  },
+  {
+    "Device Name": "Intel Core i7-1185G7 @ 3.00GHz",
+    "Median Score": 63.76,
+    "Number of Benchmarks": 11
+  },
+  {
+    "Device Name": "Intel Core i7-4700HQ CPU @ 2.40GHz",
+    "Median Score": 63.74,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-3930K CPU @ 3.20GHz",
+    "Median Score": 63.4,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon W-2123 CPU @ 3.60GHz",
+    "Median Score": 63.3,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i7-7700HQ CPU @ 2.80GHz",
+    "Median Score": 62.81,
+    "Number of Benchmarks": 13
+  },
+  {
+    "Device Name": "Intel Core i5-1038NG7 CPU @ 2.00GHz",
+    "Median Score": 62.75,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "Intel Core i5-6600K CPU @ 3.50GHz",
+    "Median Score": 62.57,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "Intel Core i5-1245U",
+    "Median Score": 62.54,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-4790 CPU @ 3.60GHz",
+    "Median Score": 62.48,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "Intel Core i5-1235U",
+    "Median Score": 62.41,
+    "Number of Benchmarks": 12
+  },
+  {
+    "Device Name": "Intel Core i3-10100T CPU @ 3.00GHz",
+    "Median Score": 61.73,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-11320H @ 3.20GHz",
+    "Median Score": 61.66,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Apple silicon",
+    "Median Score": 61.48,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "13th Gen Intel Core i3-1315U",
+    "Median Score": 61.17,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD Ryzen Embedded V1756B with Radeon Vega Gfx",
+    "Median Score": 60.93,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-1620 v3 @ 3.50GHz",
+    "Median Score": 60.61,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i5-8300H CPU @ 2.30GHz",
+    "Median Score": 60.59,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Intel Core i5-7600K CPU @ 3.80GHz",
+    "Median Score": 60.43,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "AMD Ryzen 7 PRO 7730U with Radeon Graphics",
+    "Median Score": 60.08,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 7 Microsoft Surface Edition",
+    "Median Score": 59.92,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i7-6700T CPU @ 2.80GHz",
+    "Median Score": 59.76,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Intel Xeon CPU E3-1535M v6 @ 3.10GHz",
+    "Median Score": 59.61,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon CPU E3-1246 v3 @ 3.50GHz",
+    "Median Score": 58.52,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-7700T CPU @ 2.90GHz",
+    "Median Score": 58.3,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-2650 0 @ 2.00GHz",
+    "Median Score": 57.79,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon E-2124G CPU @ 3.40GHz",
+    "Median Score": 57.69,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-4870HQ CPU @ 2.50GHz",
+    "Median Score": 57.5,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD Ryzen 5 PRO 2400G with Radeon Vega Graphics",
+    "Median Score": 57.47,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon CPU E3-1276 v3 @ 3.60GHz",
+    "Median Score": 57.47,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i3-9100 CPU @ 3.60GHz",
+    "Median Score": 57.22,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i3-1215U",
+    "Median Score": 57.17,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Xeon CPU E3-1535M v5 @ 2.90GHz",
+    "Median Score": 57.13,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "13th Gen Intel Core i5-1335U",
+    "Median Score": 56.82,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i7-4720HQ CPU @ 2.60GHz",
+    "Median Score": 55.57,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon CPU           X5670  @ 2.93GHz",
+    "Median Score": 55.05,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 5 PRO 3500U w/ Radeon Vega Mobile Gfx",
+    "Median Score": 54.73,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "2X Intel Xeon CPU           E5620  @ 2.40GHz",
+    "Median Score": 54.72,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-4690K CPU @ 3.50GHz",
+    "Median Score": 54.24,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD Ryzen 7 3700U with Radeon Vega Mobile Gfx",
+    "Median Score": 53.45,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-9300HF CPU @ 2.40GHz",
+    "Median Score": 53.44,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen 5 3550H with Radeon Vega Mobile Gfx",
+    "Median Score": 52.83,
+    "Number of Benchmarks": 13
+  },
+  {
+    "Device Name": "Intel Core i7-4930K CPU @ 3.40GHz",
+    "Median Score": 52.66,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i3-9100F CPU @ 3.60GHz",
+    "Median Score": 52.51,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "Intel Core i7-1165G7 @ 2.80GHz",
+    "Median Score": 52.43,
+    "Number of Benchmarks": 55
+  },
+  {
+    "Device Name": "Intel Core i5-5575R CPU @ 2.80GHz",
+    "Median Score": 52.34,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i5-7300HQ CPU @ 2.50GHz",
+    "Median Score": 52.27,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Xeon CPU           X5675  @ 3.07GHz",
+    "Median Score": 52.18,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i3-1220P",
+    "Median Score": 52.06,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-4702MQ CPU @ 2.20GHz",
+    "Median Score": 51.3,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD FX(tm)-8350 Eight-Core Processor",
+    "Median Score": 51.24,
+    "Number of Benchmarks": 9
+  },
+  {
+    "Device Name": "Intel Core i5-7500 CPU @ 3.40GHz",
+    "Median Score": 51.17,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i3-8100B CPU @ 3.60GHz",
+    "Median Score": 50.27,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-7820HQ CPU @ 2.90GHz",
+    "Median Score": 50.06,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "13th Gen Intel Core i5-1334U",
+    "Median Score": 50.02,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Intel Core i7-1068NG7 CPU @ 2.30GHz",
+    "Median Score": 49.8,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen 5 1400 Quad-Core Processor",
+    "Median Score": 48.82,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i5-8265U CPU @ 1.60GHz",
+    "Median Score": 48.74,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "AMD EPYC 7452 32-Core Processor",
+    "Median Score": 47.9,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-1145G7 @ 2.60GHz",
+    "Median Score": 47.81,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-3720QM CPU @ 2.60GHz",
+    "Median Score": 47.81,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-3770 CPU @ 3.40GHz",
+    "Median Score": 47.77,
+    "Number of Benchmarks": 10
+  },
+  {
+    "Device Name": "Intel Core i7-8650U CPU @ 1.90GHz",
+    "Median Score": 47.7,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "AMD Ryzen 7 3700C  with Radeon Vega Mobile Gfx",
+    "Median Score": 47.51,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i7-8665U CPU @ 1.90GHz",
+    "Median Score": 47.5,
+    "Number of Benchmarks": 33
+  },
+  {
+    "Device Name": "Intel Core i7-2600K CPU @ 3.40GHz",
+    "Median Score": 47.05,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Intel Core i7-3770K CPU @ 3.50GHz",
+    "Median Score": 47.05,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "AMD Ryzen 7 4700U with Radeon Graphics",
+    "Median Score": 47.02,
+    "Number of Benchmarks": 28
+  },
+  {
+    "Device Name": "Intel Core i5-1135G7 @ 2.40GHz",
+    "Median Score": 46.8,
+    "Number of Benchmarks": 42
+  },
+  {
+    "Device Name": "Intel Core i5-7400 CPU @ 3.00GHz",
+    "Median Score": 46.51,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "Intel Core i7-4820K CPU @ 3.70GHz",
+    "Median Score": 46.43,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-8257U CPU @ 1.40GHz",
+    "Median Score": 46.42,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i5-6500 CPU @ 3.20GHz",
+    "Median Score": 45.89,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "Intel Core i5-4570 CPU @ 3.20GHz",
+    "Median Score": 45.61,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i7-8565U CPU @ 1.80GHz",
+    "Median Score": 45.14,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen 3 3200G with Radeon Vega Graphics",
+    "Median Score": 45.1,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "AMD Ryzen 3 5300U with Radeon Graphics",
+    "Median Score": 44.68,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon CPU E3-1225 v5 @ 3.30GHz",
+    "Median Score": 44.64,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 3 2200G with Radeon Vega Graphics",
+    "Median Score": 44.63,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i5-4590 CPU @ 3.30GHz",
+    "Median Score": 44.62,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i7-8569U CPU @ 2.80GHz",
+    "Median Score": 44.57,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i3-8100T CPU @ 3.10GHz",
+    "Median Score": 43.89,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i7-10610U CPU @ 1.80GHz",
+    "Median Score": 43.58,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i7-2600 CPU @ 3.40GHz",
+    "Median Score": 43.51,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD FX-8370 Eight-Core Processor",
+    "Median Score": 43.44,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD FX(tm)-8150 Eight-Core Processor",
+    "Median Score": 43.41,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-8365U CPU @ 1.60GHz",
+    "Median Score": 42.86,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon CPU E5-1607 v4 @ 3.10GHz",
+    "Median Score": 42.84,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 5 7520U with Radeon Graphics",
+    "Median Score": 42.82,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "Intel Core i5-6600 CPU @ 3.30GHz",
+    "Median Score": 42.66,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i7-3770S CPU @ 3.10GHz",
+    "Median Score": 42.61,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-8550U CPU @ 1.80GHz",
+    "Median Score": 42.44,
+    "Number of Benchmarks": 10
+  },
+  {
+    "Device Name": "Intel Core i7-4770HQ CPU @ 2.20GHz",
+    "Median Score": 42.2,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-4700MQ CPU @ 2.40GHz",
+    "Median Score": 42.19,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-3615QM CPU @ 2.30GHz",
+    "Median Score": 41.57,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-6500T CPU @ 2.50GHz",
+    "Median Score": 41.14,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Ryzen 5 3500U with Radeon Vega Mobile Gfx",
+    "Median Score": 40.65,
+    "Number of Benchmarks": 31
+  },
+  {
+    "Device Name": "Intel Core i7-4765T CPU @ 2.00GHz",
+    "Median Score": 40.51,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-4670 CPU @ 3.40GHz",
+    "Median Score": 40.39,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i5-6300HQ CPU @ 2.30GHz",
+    "Median Score": 40.16,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i7-10510U CPU @ 1.80GHz",
+    "Median Score": 40.14,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i7-3820QM CPU @ 2.70GHz",
+    "Median Score": 39.84,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-7440HQ CPU @ 2.80GHz",
+    "Median Score": 39.8,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon CPU           W3530  @ 2.80GHz",
+    "Median Score": 39.53,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-1035G1 CPU @ 1.00GHz",
+    "Median Score": 38.75,
+    "Number of Benchmarks": 42
+  },
+  {
+    "Device Name": "Intel Core i5-4440 CPU @ 3.10GHz",
+    "Median Score": 37.53,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD FX-8320E Eight-Core Processor",
+    "Median Score": 37.37,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i3-7100 CPU @ 3.90GHz",
+    "Median Score": 37.12,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-10310U CPU @ 1.70GHz",
+    "Median Score": 36.82,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i7-1065G7 CPU @ 1.30GHz",
+    "Median Score": 36.82,
+    "Number of Benchmarks": 11
+  },
+  {
+    "Device Name": "Intel Core i3-9100T CPU @ 3.10GHz",
+    "Median Score": 36.54,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-3612QM CPU @ 2.10GHz",
+    "Median Score": 36.53,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-10200H CPU @ 2.40GHz",
+    "Median Score": 36.43,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7 CPU         940  @ 2.93GHz",
+    "Median Score": 36.36,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "Intel Core i7-3610QM CPU @ 2.30GHz",
+    "Median Score": 36.11,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD FX(tm)-8120 Eight-Core Processor",
+    "Median Score": 35.98,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-6820HQ CPU @ 2.70GHz",
+    "Median Score": 35.53,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i5-3570K CPU @ 3.40GHz",
+    "Median Score": 35.31,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i5-10210U CPU @ 1.60GHz",
+    "Median Score": 35.24,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "Intel Core i7-2630QM CPU @ 2.00GHz",
+    "Median Score": 34.99,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-3570 CPU @ 3.40GHz",
+    "Median Score": 34.29,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Xeon CPU E3-1230 V2 @ 3.30GHz",
+    "Median Score": 34.13,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Xeon CPU E3-1220 v3 @ 3.10GHz",
+    "Median Score": 34.01,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i7 CPU         870  @ 2.93GHz",
+    "Median Score": 33.64,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i3-4330 CPU @ 3.50GHz",
+    "Median Score": 33.53,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i5-3330 CPU @ 3.00GHz",
+    "Median Score": 33.48,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel N150",
+    "Median Score": 33,
+    "Number of Benchmarks": 10
+  },
+  {
+    "Device Name": "Intel Core i7-7600U CPU @ 2.80GHz",
+    "Median Score": 32.8,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Xeon Platinum",
+    "Median Score": 32.59,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "Intel Core i3-8100 CPU @ 3.60GHz",
+    "Median Score": 32.47,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i5-8250U CPU @ 1.60GHz",
+    "Median Score": 32.22,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Intel Core i5-6400 CPU @ 2.70GHz",
+    "Median Score": 31.98,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-3470 CPU @ 3.20GHz",
+    "Median Score": 31.9,
+    "Number of Benchmarks": 8
+  },
+  {
+    "Device Name": "AMD FX(tm)-6300 Six-Core Processor",
+    "Median Score": 31.8,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i3-6100 CPU @ 3.70GHz",
+    "Median Score": 30.9,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i5-7360U CPU @ 2.30GHz",
+    "Median Score": 30.09,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "Intel Core i5-4570S CPU @ 2.90GHz",
+    "Median Score": 30,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-3550 CPU @ 3.30GHz",
+    "Median Score": 29.63,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Pentium Gold 7505 @ 2.00GHz",
+    "Median Score": 29.31,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel N95",
+    "Median Score": 28.88,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "Intel Core i3-1115G4 @ 3.00GHz",
+    "Median Score": 28.86,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "Intel Core i5-6440HQ CPU @ 2.60GHz",
+    "Median Score": 28.86,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-4590S CPU @ 3.00GHz",
+    "Median Score": 28.83,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD Athlon 3000G with Radeon Vega Graphics",
+    "Median Score": 28.54,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-1030NG7 CPU @ 1.10GHz",
+    "Median Score": 27.81,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-2500K CPU @ 3.30GHz",
+    "Median Score": 27.34,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i3-4130 CPU @ 3.40GHz",
+    "Median Score": 26.46,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel N100",
+    "Median Score": 25.82,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Xeon CPU           E5620  @ 2.40GHz",
+    "Median Score": 25.76,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-4460  CPU @ 3.20GHz",
+    "Median Score": 25.47,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i7-4810MQ CPU @ 2.80GHz",
+    "Median Score": 24.44,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-6200U CPU @ 2.30GHz",
+    "Median Score": 24.27,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "Intel Core i3-4160T CPU @ 3.10GHz",
+    "Median Score": 24.22,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-5200U CPU @ 2.20GHz",
+    "Median Score": 24.22,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i5-5350U CPU @ 1.80GHz",
+    "Median Score": 23.76,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD A10-7800 Radeon R7, 12 Compute Cores 4C+8G",
+    "Median Score": 23.43,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-7300U CPU @ 2.60GHz",
+    "Median Score": 23.19,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "Intel Core i5-4278U CPU @ 2.60GHz",
+    "Median Score": 23.12,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-4310M CPU @ 2.70GHz",
+    "Median Score": 22.68,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-6360U CPU @ 2.00GHz",
+    "Median Score": 22.68,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "Intel Core i3-7130U CPU @ 2.70GHz",
+    "Median Score": 22.53,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-6300U CPU @ 2.40GHz",
+    "Median Score": 22.44,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i3-1005G1 CPU @ 1.20GHz",
+    "Median Score": 22.14,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD A10-7860K Radeon R7, 12 Compute Cores 4C+8G",
+    "Median Score": 21.98,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD A10-5700 APU with Radeon(tm) HD Graphics",
+    "Median Score": 21.7,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD FX(tm)-8300 Eight-Core Processor",
+    "Median Score": 21.61,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 3 2200U with Radeon Vega Mobile Gfx",
+    "Median Score": 21.48,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-2670QM CPU @ 2.20GHz",
+    "Median Score": 21.48,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon Platinum 8259CL CPU @ 2.50GHz",
+    "Median Score": 21.31,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-8350U CPU @ 1.70GHz",
+    "Median Score": 21.08,
+    "Number of Benchmarks": 7
+  },
+  {
+    "Device Name": "Intel Core i5-2540M CPU @ 2.60GHz",
+    "Median Score": 20.94,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i3-7020U CPU @ 2.30GHz",
+    "Median Score": 20.67,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i3-3220T CPU @ 2.80GHz",
+    "Median Score": 20.57,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i3-5005U CPU @ 2.00GHz",
+    "Median Score": 20.08,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD FX(tm)-4130 Quad-Core Processor",
+    "Median Score": 20.04,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7 CPU         950  @ 3.07GHz",
+    "Median Score": 19.73,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-4650U CPU @ 1.70GHz",
+    "Median Score": 19.46,
+    "Number of Benchmarks": 4
+  },
+  {
+    "Device Name": "AMD Ryzen 5 1500X Quad-Core Processor",
+    "Median Score": 18.98,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-7200U CPU @ 2.50GHz",
+    "Median Score": 18.65,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i5-8210Y CPU @ 1.60GHz",
+    "Median Score": 18.61,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-6600U CPU @ 2.60GHz",
+    "Median Score": 18.37,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-6650U CPU @ 2.20GHz",
+    "Median Score": 17.98,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-3230M CPU @ 2.60GHz",
+    "Median Score": 17.71,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Pentium CPU 5405U @ 2.30GHz",
+    "Median Score": 17.56,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Celeron N5105 @ 2.00GHz",
+    "Median Score": 17.54,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i3-3220 CPU @ 3.30GHz",
+    "Median Score": 17.47,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core m3-7Y30 CPU @ 1.00GHz",
+    "Median Score": 16.51,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Ryzen 3 3200U with Radeon Vega Mobile Gfx",
+    "Median Score": 15.89,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5 CPU         750  @ 2.67GHz",
+    "Median Score": 15.48,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Athlon Silver 3050U with Radeon Graphics",
+    "Median Score": 15.05,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i3-3240 CPU @ 3.40GHz",
+    "Median Score": 15.02,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i3-4005U CPU @ 1.70GHz",
+    "Median Score": 14.84,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-5300U CPU @ 2.30GHz",
+    "Median Score": 14.63,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i3-1000NG4 CPU @ 1.10GHz",
+    "Median Score": 14.61,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "AMD A8-6600K APU with Radeon(tm) HD Graphics",
+    "Median Score": 14.3,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-4210U CPU @ 1.70GHz",
+    "Median Score": 14.3,
+    "Number of Benchmarks": 6
+  },
+  {
+    "Device Name": "Intel Celeron J4125 CPU @ 2.00GHz",
+    "Median Score": 14.02,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Xeon CPU @ 2.20GHz",
+    "Median Score": 13.84,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-5250U CPU @ 1.60GHz",
+    "Median Score": 13.76,
+    "Number of Benchmarks": 5
+  },
+  {
+    "Device Name": "Intel Core i3-2130 CPU @ 3.40GHz",
+    "Median Score": 13.64,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Pentium CPU G2030 @ 3.00GHz",
+    "Median Score": 13.47,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD A10-7850K Radeon R7, 12 Compute Cores 4C+8G",
+    "Median Score": 12.14,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i3-5010U CPU @ 2.10GHz",
+    "Median Score": 12.11,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i7-7500U CPU @ 2.70GHz",
+    "Median Score": 11.55,
+    "Number of Benchmarks": 3
+  },
+  {
+    "Device Name": "Intel Core i5-2410M CPU @ 2.30GHz",
+    "Median Score": 10.38,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i3-6100U CPU @ 2.30GHz",
+    "Median Score": 10.28,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Celeron CPU 1005M @ 1.90GHz",
+    "Median Score": 10,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD A8-6410 APU with AMD Radeon R5 Graphics",
+    "Median Score": 9.7,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Celeron N4120 CPU @ 1.10GHz",
+    "Median Score": 9.3,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Pentium CPU  N3710  @ 1.60GHz",
+    "Median Score": 8.17,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel N200",
+    "Median Score": 7.96,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Pentium 3805U @ 1.90GHz",
+    "Median Score": 7.12,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Core i5-4340M CPU @ 2.90GHz",
+    "Median Score": 5.74,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Celeron N4020 CPU @ 1.10GHz",
+    "Median Score": 4.52,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "Intel Celeron CPU 2950M @ 2.00GHz",
+    "Median Score": 3.58,
+    "Number of Benchmarks": 1
+  },
+  {
+    "Device Name": "AMD Sempron(tm) 2650 APU with Radeon(tm) R3",
+    "Median Score": 2.78,
+    "Number of Benchmarks": 2
+  },
+  {
+    "Device Name": "AMD E1-2100 APU with Radeon HD Graphics",
+    "Median Score": 2.15,
+    "Number of Benchmarks": 1
+  }
+]
