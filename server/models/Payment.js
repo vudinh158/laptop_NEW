@@ -19,7 +19,18 @@ const Payment = sequelize.define(
       },
     },
     payment_method: {
-      type: DataTypes.ENUM("cod", "bank_transfer", "credit_card", "e_wallet"),
+      // ENUM hiện có: 'cod', 'bank_transfer', 'credit_card', 'e_wallet'
+      // Thêm: 'VNPAYQR', 'VNBANK', 'INTCARD', 'INSTALLMENT'
+      type: DataTypes.ENUM(
+        "cod",
+        "bank_transfer",
+        "credit_card",
+        "e_wallet",
+        "VNPAYQR",
+        "VNBANK",
+        "INTCARD",
+        "INSTALLMENT"
+      ),
       allowNull: false,
     },
     payment_status: {
@@ -33,6 +44,25 @@ const Payment = sequelize.define(
     transaction_id: {
       type: DataTypes.STRING(100),
     },
+    provider: {
+      type: DataTypes.STRING(32), // ví dụ 'VNPAY'
+      allowNull: true,
+    },
+    // vnp_TxnRef bạn sinh khi tạo URL
+    txn_ref: {
+      type: DataTypes.STRING(128),
+      allowNull: true,
+    },
+    // lưu nguyên payload return/ipn để trace
+    raw_return: {
+      type: DataTypes.JSONB, // nếu dùng MySQL: DataTypes.JSON
+      allowNull: true,
+    },
+    raw_ipn: {
+      type: DataTypes.JSONB,
+      allowNull: true,
+    },
+
     paid_at: {
       type: DataTypes.DATE,
     },
@@ -42,6 +72,15 @@ const Payment = sequelize.define(
     timestamps: true,
     createdAt: "created_at",
     updatedAt: "updated_at",
+    indexes: [
+      {
+        name: "payments_provider_txnref_uk",
+        unique: true,
+        fields: ["provider", "txn_ref"],
+        // Lưu ý: "where" chỉ hỗ trợ một số dialect;
+        // index partial (WHERE txn_ref IS NOT NULL) sẽ tạo bằng SQL bên dưới.
+      },
+    ],
   },
 )
 

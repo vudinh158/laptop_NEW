@@ -11,6 +11,8 @@ const productRoutes = require("./routes/productRoutes")
 const cartRoutes = require("./routes/cartRoutes")
 const orderRoutes = require("./routes/orderRoutes")
 const adminRoutes = require("./routes/adminRoutes")
+const geoRoutes = require('./routes/geo');
+const vnpayRoutes = require("./routes/vnpayRoutes");
 
 const app = express()
 
@@ -25,6 +27,8 @@ app.use("/api/products", productRoutes)
 app.use("/api/cart", cartRoutes)
 app.use("/api/orders", orderRoutes)
 app.use("/api/admin", adminRoutes)
+app.use('/api', geoRoutes);
+app.use("/api", vnpayRoutes); // hoặc app.use("/api", vnpayRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
