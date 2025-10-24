@@ -1,9 +1,39 @@
-recommendation_service/backup/
+# === Node (root, client, server) ===
+node_modules/
+client/node_modules/
+server/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+client/package-lock.json
 
-# Node modules
-/client/node_modules/
-/server/node_modules/
+# === Vite / React build caches ===
+**/.vite/
+client/.vite/
+dist/
+client/dist/
+server/dist/
 
-# Python virtual env & cache
-/__pycache__/
-*.pyc
+# === Env / local config ===
+.env
+.env.*
+!.env.example
+
+# === OS / IDE rác ===
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.orig
+
+# === Logs & coverage ===
+logs/
+*.log
+coverage/
+.cache/
+
+# === Others you may have ===
+.vscode/
+.idea/
