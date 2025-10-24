@@ -1,3 +1,4 @@
+// client/app/services/api.js
 import axios from "axios"
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api"
@@ -99,5 +100,13 @@ export const adminAPI = {
   updateCategory: (id, data) => api.put(`/admin/categories/${id}`, data),
   deleteCategory: (id) => api.delete(`/admin/categories/${id}`),
 }
+export const geoAPI = {
+  // Trả về nhẹ: chỉ lấy id + name; có thể thêm q, limit nếu BE hỗ trợ
+  getProvinces: (params = {}) =>
+    api.get("/provinces", { params: { fields: "province_id,name", ...params } }),
 
+  // Lấy phường theo province_id
+  getWards: (province_id, params = {}) =>
+    api.get("/wards", { params: { province_id, fields: "ward_id,name,province_id", ...params } }),
+}
 export default api

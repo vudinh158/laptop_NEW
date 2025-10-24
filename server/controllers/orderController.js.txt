@@ -269,7 +269,7 @@ exports.cancelOrder = async (req, res, next) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    if (!["pending", "confirmed","AWAITING_PAYMENT"].includes(order.status)) {
+    if (!["pending", "confirmed"].includes(order.status)) {
       await transaction.rollback();
       return res.status(400).json({ message: "Order cannot be cancelled" });
     }
