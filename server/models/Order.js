@@ -23,15 +23,15 @@ const Order = sequelize.define(
       allowNull: false,
     },
     total_amount: {
-      type: DataTypes.DECIMAL(10, 2),
+      type: DataTypes.DECIMAL(16, 2),
       allowNull: false,
     },
     discount_amount: {
-      type: DataTypes.DECIMAL(10, 2),
+      type: DataTypes.DECIMAL(16, 2),
       defaultValue: 0,
     },
     final_amount: {
-      type: DataTypes.DECIMAL(10, 2),
+      type: DataTypes.DECIMAL(16, 2),
       allowNull: false,
     },
     status: {
@@ -64,6 +64,8 @@ const Order = sequelize.define(
     note: {
       type: DataTypes.TEXT,
     },
+    reserve_expires_at: { type: DataTypes.DATE, allowNull: true },
+
     province_id: { type: DataTypes.INTEGER, allowNull: true },
     ward_id: { type: DataTypes.INTEGER, allowNull: true },
     geo_lat: { type: DataTypes.DECIMAL(10, 6), allowNull: true },

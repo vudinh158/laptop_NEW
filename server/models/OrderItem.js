@@ -30,15 +30,15 @@ const OrderItem = sequelize.define(
       allowNull: false,
     },
     price: {
-      type: DataTypes.DECIMAL(10, 2),
+      type: DataTypes.DECIMAL(16, 2),
       allowNull: false,
     },
     discount_amount: {
-      type: DataTypes.DECIMAL(10, 2),
+      type: DataTypes.DECIMAL(16, 2),
       defaultValue: 0,
     },
     subtotal: {
-      type: DataTypes.DECIMAL(10, 2),
+      type: DataTypes.DECIMAL(16, 2),
       allowNull: false,
     },
   },

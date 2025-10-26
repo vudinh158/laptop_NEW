@@ -1,22 +1,23 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
-import Layout from "./components/Layout"
-import ProtectedRoute from "./components/ProtectedRoute"
-import AdminRoute from "./components/AdminRoute"
-import HomePage from "./pages/HomePage"
-import ProductDetailPage from "./pages/ProductDetailPage"
-import CartPage from "./pages/CartPage"
-import CheckoutPage from "./pages/CheckoutPage"
-import LoginPage from "./pages/LoginPage"
-import RegisterPage from "./pages/RegisterPage"
-import ProfilePage from "./pages/ProfilePage"
-import OrdersPage from "./pages/OrdersPage"
-import AdminDashboard from "./pages/admin/AdminDashboard"
-import AdminProducts from "./pages/admin/AdminProducts"
-import AdminOrders from "./pages/admin/AdminOrders"
-import AdminUsers from "./pages/admin/AdminUsers"
-import AdminCategories from "./pages/admin/AdminCategories"
-import AdminProductNewPage from "./pages/admin/AdminProductNewPage"
-import AdminProductEditPage from "./pages/admin/AdminProductEditPage"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
+import HomePage from "./pages/HomePage";
+import ProductDetailPage from "./pages/ProductDetailPage";
+import CartPage from "./pages/CartPage";
+import CheckoutPage from "./pages/CheckoutPage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import ProfilePage from "./pages/ProfilePage";
+import OrdersPage from "./pages/OrdersPage";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminProducts from "./pages/admin/AdminProducts";
+import AdminOrders from "./pages/admin/AdminOrders";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminCategories from "./pages/admin/AdminCategories";
+import AdminProductNewPage from "./pages/admin/AdminProductNewPage";
+import AdminProductEditPage from "./pages/admin/AdminProductEditPage";
+import VnpayReturn from "./pages/checkout/VnpayReturn";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/checkout/vnpay-return" element={<VnpayReturn />} />
 
           <Route
             path="profile"
@@ -75,19 +77,19 @@ function App() {
           />
 
           <Route
-            path="admin/products/new" 
+            path="admin/products/new"
             element={
               <AdminRoute>
-                <AdminProductNewPage /> 
+                <AdminProductNewPage />
               </AdminRoute>
             }
           />
 
           <Route
-            path="admin/products/edit/:id" 
+            path="admin/products/edit/:id"
             element={
               <AdminRoute>
-                <AdminProductEditPage /> 
+                <AdminProductEditPage />
               </AdminRoute>
             }
           />
@@ -121,7 +123,7 @@ function App() {
         </Route>
       </Routes>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;

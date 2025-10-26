@@ -64,6 +64,8 @@ const Order = sequelize.define(
     note: {
       type: DataTypes.TEXT,
     },
+    reserve_expires_at: { type: DataTypes.DATE, allowNull: true },
+
     province_id: { type: DataTypes.INTEGER, allowNull: true },
     ward_id: { type: DataTypes.INTEGER, allowNull: true },
     geo_lat: { type: DataTypes.DECIMAL(10, 6), allowNull: true },

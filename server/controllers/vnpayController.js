@@ -5,23 +5,36 @@ const { sequelize, Payment, Order, OrderItem, ProductVariation } = require("../m
 
 const VNP_HASHSECRET = process.env.VNP_HASHSECRET;
 
-/** Helpers */
-function sortObject(obj) {
-  const s = {};
-  Object.keys(obj).sort().forEach((k) => (s[k] = obj[k]));
-  return s;
+/** Encode + sort giống mẫu VNPAY (keys & values), space -> '+' */
+function sortObjectForVnp(obj) {
+  const encoded = {};
+  const keys = [];
+  for (const k in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, k)) {
+      keys.push(encodeURIComponent(k));
+    }
+  }
+  keys.sort();
+  for (let i = 0; i < keys.length; i++) {
+    const encKey = keys[i];
+    const rawKey = decodeURIComponent(encKey);
+    const val = obj[rawKey];
+    encoded[encKey] = encodeURIComponent(String(val)).replace(/%20/g, "+");
+  }
+  return encoded;
 }
+
 function hmacSHA512(secret, data) {
   return crypto.createHmac("sha512", secret).update(data, "utf-8").digest("hex");
 }
 
 /**
- * IPN handler (nguồn sự thật):
- * - Verify chữ ký
+ * IPN handler:
+ * - Verify chữ ký (đúng mẫu VNPAY)
  * - Đối soát số tiền
  * - Idempotent
  * - Transaction + row-lock
- * - (Nếu SUCCESS) trừ kho an toàn
+ * - (Nếu SUCCESS) cập nhật thanh toán & đơn
  */
 async function ipn(req, res) {
   try {
@@ -31,22 +44,21 @@ async function ipn(req, res) {
     delete params.vnp_SecureHash;
     if ("vnp_SecureHashType" in params) delete params.vnp_SecureHashType;
 
-    const signData = qs.stringify(sortObject(params), { encode: false });
+    const signData = qs.stringify(sortObjectForVnp(params), { encode: false });
     const check = hmacSHA512(VNP_HASHSECRET, signData);
     if (check !== secureHash) {
       return res.json({ RspCode: "97", Message: "Invalid Checksum" });
     }
 
     // 2) Trích thông tin quan trọng
-    const txnRef = params.vnp_TxnRef; // đã lưu vào payments.txn_ref khi tạo URL
-    const amount = Number(params.vnp_Amount || 0) / 100; // VNPAY *100 đơn vị -> đổi về VND
-    const rspCode = params.vnp_ResponseCode;
+    const txnRef    = params.vnp_TxnRef;
+    const amount    = Number(params.vnp_Amount || 0) / 100; // đổi về VND
+    const rspCode   = params.vnp_ResponseCode;
     const txnStatus = params.vnp_TransactionStatus;
     const isSuccess = rspCode === "00" && txnStatus === "00";
 
-    // 3) Transaction + row-lock toàn bộ cập nhật
+    // 3) Transaction + row-lock
     await sequelize.transaction(async (t) => {
-      // Lấy payment theo (provider, txn_ref) và khoá hàng
       const payment = await Payment.findOne({
         where: { provider: "VNPAY", txn_ref: txnRef },
         transaction: t,
@@ -54,7 +66,7 @@ async function ipn(req, res) {
       });
       if (!payment) throw new Error("Payment not found");
 
-      // Idempotent: đã xử lý thành công trước đó thì xác nhận OK luôn
+      // Idempotent
       if (payment.payment_status === "completed") {
         return;
       }
@@ -62,7 +74,7 @@ async function ipn(req, res) {
       // Đối soát số tiền
       if (Number(payment.amount) !== amount) {
         payment.payment_status = "failed";
-        payment.raw_ipn = req.query; // lưu log thô để trace
+        payment.raw_ipn = req.query;
         await payment.save({ transaction: t });
 
         const order = await Order.findOne({
@@ -77,7 +89,7 @@ async function ipn(req, res) {
         return;
       }
 
-      // Lấy order và khoá dòng
+      // Lấy order
       const order = await Order.findOne({
         where: { order_id: payment.order_id },
         transaction: t,
@@ -86,6 +98,7 @@ async function ipn(req, res) {
       if (!order) throw new Error("Order not found");
 
       if (isSuccess) {
+        // Thành công
         payment.payment_status = "completed";
         payment.transaction_id = params.vnp_TransactionNo || null;
         payment.raw_ipn = req.query;
@@ -94,10 +107,13 @@ async function ipn(req, res) {
 
         order.status = "PAID";
         await order.save({ transaction: t });
-
       } else {
-        // giao dịch thất bại → HOÀN KHO
-        const items = await OrderItem.findAll({ where: { order_id: order.order_id }, transaction: t });
+        // Thất bại → nếu bạn có cơ chế reserve trước đó, hoàn kho ở đây
+        // (Bạn đã bổ sung hoàn kho ở nhánh failed – giữ nguyên)
+        const items = await OrderItem.findAll({
+          where: { order_id: order.order_id },
+          transaction: t,
+        });
         for (const it of items) {
           const v = await ProductVariation.findOne({
             where: { variation_id: it.variation_id },
@@ -109,6 +125,7 @@ async function ipn(req, res) {
             await v.increment("stock_quantity", { by: it.quantity, transaction: t });
           }
         }
+
         payment.payment_status = "failed";
         payment.raw_ipn = req.query;
         await payment.save({ transaction: t });

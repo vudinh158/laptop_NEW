@@ -36,7 +36,7 @@ const Product = sequelize.define(
       },
     },
     base_price: {
-      type: DataTypes.DECIMAL(10, 2),
+      type: DataTypes.DECIMAL(14, 2),
       allowNull: false,
     },
     discount_percentage: {

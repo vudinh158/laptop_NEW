@@ -28,8 +28,8 @@ export default function CheckoutPage() {
   const [location, setLocation] = useState(null); // {lat, lng}
   const [locationConfirmed, setLocationConfirmed] = useState(false);
 
-  // --- Payment ---
-  const [payment, setPayment] = useState({
+// --- Payment ---
+const [payment, setPayment] = useState({
     payment_provider: "COD",
     payment_method: "COD",
   });
@@ -112,8 +112,8 @@ export default function CheckoutPage() {
       shipping_phone: formData.phone,
       shipping_name: formData.full_name,
       notes: formData.notes,
-      payment_provider: payment.payment_provider,
-      payment_method: payment.payment_method,
+      payment_provider: "VNPAY", // ✅ gửi provider
+      payment_method: formData.payment_method, // ✅ VNPAYQR|VNBANK|INTCARD|INSTALLMENT
 
       // gửi thêm để BE lưu/phân tích phí ship
       province_id: +provinceId,
@@ -128,7 +128,6 @@ export default function CheckoutPage() {
       })),
     };
 
-    console.log("PAYLOAD SENT:", orderData);
     try {
       const res = await createOrder.mutateAsync(orderData);
       if (res?.redirect) {
@@ -140,8 +139,7 @@ export default function CheckoutPage() {
       dispatch(clearCart());
       navigate("/orders");
     } catch (error) {
-        console.error("CREATE ORDER ERROR:", error.response?.status, error.response?.data || error.message);
-
+      console.error("Order creation failed:", error);
     }
   };
 

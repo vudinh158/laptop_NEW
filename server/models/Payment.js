@@ -38,7 +38,7 @@ const Payment = sequelize.define(
       defaultValue: "pending",
     },
     amount: {
-      type: DataTypes.DECIMAL(10, 2),
+      type: DataTypes.DECIMAL(16, 2),
       allowNull: false,
     },
     transaction_id: {
