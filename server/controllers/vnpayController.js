@@ -6,7 +6,7 @@ const { sequelize, Payment, Order, OrderItem, ProductVariation } = require("../m
 const VNP_HASHSECRET = process.env.VNP_HASHSECRET;
 
 /** Encode + sort giống mẫu VNPAY (keys & values), space -> '+' */
-function sortObjectForVnp(obj) {
+function sortObjectForVnp(obj) {x
   const encoded = {};
   const keys = [];
   for (const k in obj) {
@@ -135,6 +135,7 @@ async function ipn(req, res) {
       }
     });
 
+    console.log("[VNPAY][IPN] HIT", new Date().toISOString(), req.originalUrl);
     return res.json({ RspCode: "00", Message: "Confirm Success" });
   } catch (e) {
     // lỗi hệ thống → để VNPAY retry
