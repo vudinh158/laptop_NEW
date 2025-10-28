@@ -22,7 +22,7 @@ const Payment = sequelize.define(
       // ENUM hiện có: 'cod', 'bank_transfer', 'credit_card', 'e_wallet'
       // Thêm: 'VNPAYQR', 'VNBANK', 'INTCARD', 'INSTALLMENT'
       type: DataTypes.ENUM(
-        "cod",
+        "COD",
         "bank_transfer",
         "credit_card",
         "e_wallet",

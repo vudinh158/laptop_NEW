@@ -53,12 +53,24 @@ exports.createOrder = async (req, res, next) => {
     }
     if (!payment_method || !VALID[payment_provider].includes(payment_method)) {
       await t.rollback();
+      return res.status(400).json({
+        message: `Invalid payment_method for provider ${payment_provider}`,
+      });
+    }
+    if (!province_id || !ward_id) {
+      await t.rollback();
       return res
         .status(400)
-        .json({
-          message: `Invalid payment_method for provider ${payment_provider}`,
-        });
+        .json({ message: "Vui lòng chọn Tỉnh/Thành và Phường/Xã" });
     }
+    if (geo_lat == null || geo_lng == null) {
+      await t.rollback();
+      return res
+        .status(400)
+        .json({ message: "Vui lòng xác nhận vị trí trên bản đồ" });
+    }
+    const isVnpay = payment_provider === "VNPAY";
+    const txnRef = isVnpay ? `${order.order_id}-${Date.now()}` : null;
 
     // 1) Chuẩn bị itemsForOrder
     let itemsForOrder = [];
@@ -149,7 +161,7 @@ exports.createOrder = async (req, res, next) => {
         total_amount: totalAmount,
         discount_amount: discountAmount,
         final_amount: finalAmount,
-        status: "AWAITING_PAYMENT",
+        status: isVnpay?"AWAITING_PAYMENT":"confirmed",
         shipping_address,
         shipping_phone,
         shipping_name,
@@ -174,19 +186,15 @@ exports.createOrder = async (req, res, next) => {
       });
       if (!v) {
         await t.rollback();
-        return res
-          .status(400)
-          .json({
-            message: `Variation ${it.variation_id} not found during reserve`,
-          });
+        return res.status(400).json({
+          message: `Variation ${it.variation_id} not found during reserve`,
+        });
       }
       if (Number(v.stock_quantity || 0) < it.quantity) {
         await t.rollback();
-        return res
-          .status(400)
-          .json({
-            message: `Out of stock during reserve for ${it.variation_id}`,
-          });
+        return res.status(400).json({
+          message: `Out of stock during reserve for ${it.variation_id}`,
+        });
       }
 
       await v.decrement("stock_quantity", { by: it.quantity, transaction: t });
@@ -210,8 +218,6 @@ exports.createOrder = async (req, res, next) => {
     }
 
     // 5) Payment record
-    const isVnpay = payment_provider === "VNPAY";
-    const txnRef = isVnpay ? `${order.order_id}-${Date.now()}` : null;
 
     await Payment.create(
       {
