@@ -70,7 +70,7 @@ exports.createOrder = async (req, res, next) => {
         .json({ message: "Vui lòng xác nhận vị trí trên bản đồ" });
     }
     const isVnpay = payment_provider === "VNPAY";
-    const txnRef = isVnpay ? `${order.order_id}-${Date.now()}` : null;
+    let txnRef = null;
 
     // 1) Chuẩn bị itemsForOrder
     let itemsForOrder = [];
@@ -105,6 +105,7 @@ exports.createOrder = async (req, res, next) => {
         await t.rollback();
         return res.status(400).json({ message: "Cart is empty" });
       }
+      ``;
 
       const cartItems = await CartItem.findAll({
         where: { cart_id: cart.cart_id },
@@ -161,7 +162,7 @@ exports.createOrder = async (req, res, next) => {
         total_amount: totalAmount,
         discount_amount: discountAmount,
         final_amount: finalAmount,
-        status: isVnpay?"AWAITING_PAYMENT":"confirmed",
+        status: isVnpay ? "AWAITING_PAYMENT" : "confirmed",
         shipping_address,
         shipping_phone,
         shipping_name,
@@ -174,6 +175,10 @@ exports.createOrder = async (req, res, next) => {
       },
       { transaction: t }
     );
+
+    if (isVnpay) {
+      txnRef = `${order.order_id}-${Date.now()}`;
+    }
 
     // 4) Reserve: KHÓA & trừ kho, tạo OrderItem
     for (const it of itemsForOrder) {

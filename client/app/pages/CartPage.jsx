@@ -1,58 +1,108 @@
-"use client"
+"use client";
 
-import { useSelector, useDispatch } from "react-redux"
-import { Link, useNavigate } from "react-router-dom"
-import { removeItem, updateQuantity, clearCart } from "../store/slices/cartSlice"
-import { Trash2, Plus, Minus, ShoppingBag } from "lucide-react"
-import { formatPrice } from "../utils/formatters"
+import { useState, useMemo } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { removeItem, updateQuantity, clearCart } from "../store/slices/cartSlice";
+import { Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
+import { formatPrice } from "../utils/formatters";
 
 export default function CartPage() {
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const { items } = useSelector((state) => state.cart)
-  const { isAuthenticated } = useSelector((state) => state.auth)
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { items } = useSelector((state) => state.cart);
+  const { isAuthenticated } = useSelector((state) => state.auth);
 
-  const handleUpdateQuantity = (itemId, currentQuantity, newQuantity) => {
-    // Nếu newQuantity là 0, gọi hàm xóa
+  // --- Trạng thái tick chọn ---
+  const [selectedIds, setSelectedIds] = useState(() => new Set());
+
+  const isAllSelected = useMemo(() => {
+    return items.length > 0 && selectedIds.size === items.length;
+  }, [items.length, selectedIds]);
+
+  const selectedItems = useMemo(() => {
+    if (selectedIds.size === 0) return [];
+    return items.filter((it) => selectedIds.has(it.id));
+  }, [items, selectedIds]);
+
+  const handleToggleItem = (id) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const handleToggleAll = () => {
+    setSelectedIds((prev) => {
+      if (isAllSelected) return new Set();
+      return new Set(items.map((i) => i.id));
+    });
+  };
+
+  // --- Cập nhật số lượng / xoá ---
+  const handleUpdateQuantity = (id, newQuantity) => {
     if (newQuantity === 0) {
-      handleRemoveItem(itemId)
-      return
+      handleRemoveItem(id);
+      return;
     }
-    
-    if (newQuantity < 1) return 
-    
-    dispatch(updateQuantity({ variation_id: itemId, quantity: newQuantity })) // Dùng variation_id nếu API yêu cầu, nhưng Redux slice dùng ID của CartItem
-  }
+    if (newQuantity < 1) return;
+    // cartSlice.updateQuantity nhận { id, quantity }  (không phải variation_id)
+    dispatch(updateQuantity({ id, quantity: newQuantity })); // :contentReference[oaicite:2]{index=2}
+  };
 
-  const handleRemoveItem = (itemId) => {
-    dispatch(removeItem(itemId))
-  }
+  const handleRemoveItem = (id) => {
+    // Nếu món đang được tick, bỏ tick luôn
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+    dispatch(removeItem(id));
+  };
 
   const handleClearCart = () => {
     if (window.confirm("Bạn có chắc muốn xóa tất cả sản phẩm trong giỏ hàng?")) {
-      dispatch(clearCart())
+      setSelectedIds(new Set());
+      dispatch(clearCart());
     }
-  }
+  };
+
+  // --- Tính tổng chỉ dựa trên item đã tick ---
+  const subtotal = selectedItems.reduce((total, item) => {
+    // Giá đơn vị đã được cartSlice tính sẵn vào item.price (đã trừ discount)
+    const unit = Number(item.price || 0); // :contentReference[oaicite:3]{index=3}
+    return total + unit * item.quantity;
+  }, 0);
+
+  const shipping = subtotal > 0 ? 30000 : 0;
+  const total = subtotal + shipping;
+
+  // --- Thanh toán chỉ khi có tick ---
+  const canCheckout = selectedItems.length > 0;
 
   const handleCheckout = () => {
+    if (!canCheckout) return;
+    const itemsPayload = selectedItems.map((it) => ({
+      variation_id: it.variation_id,
+      quantity: it.quantity,
+    }));
+
     if (!isAuthenticated) {
-      navigate("/login?redirect=/checkout")
-    } else {
-      navigate("/checkout")
+      // chuyển hướng đăng nhập xong quay lại checkout
+      navigate("/login?redirect=/checkout");
+      return;
     }
-  }
 
-  const subtotal = items.reduce((total, item) => {
-    // FIX: Lấy price từ item.product.variation.price, discount từ item.product.discount_percentage
-    const price = Number(item.product?.variation?.price || 0)
-    // Discount percentage nằm ở level Product
-    const discount = Number(item.product?.discount_percentage || 0) 
-    const finalPrice = price * (1 - discount / 100)
-    return total + finalPrice * item.quantity
-  }, 0)
-
-  const shipping = subtotal > 0 ? 30000 : 0
-  const total = subtotal + shipping
+    // Điều hướng với "checkout intent" từ giỏ
+    navigate("/checkout", {
+      state: {
+        mode: "cart",
+        items: itemsPayload,
+      },
+    });
+  };
 
   if (items.length === 0) {
     return (
@@ -66,7 +116,7 @@ export default function CartPage() {
           </Link>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -80,34 +130,55 @@ export default function CartPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Danh sách items */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-sm">
-            {items.map((item) => {
-              // Lỗi key prop có thể đến từ đây, đảm bảo sử dụng item.id
-              const variation = item.product?.variation
-              // FIX: Lấy price từ variation, discount từ product
-              const price = Number(variation?.price || 0) 
-              const discount = Number(item.product?.discount_percentage || 0) 
-              const finalPrice = price * (1 - discount / 100)
-              
-              // FIX: Lấy ảnh
-              const imageUrl = item.product?.images?.[0]?.image_url || item.product?.thumbnail_url || "/placeholder.svg"
+              {/* Hàng chọn tất cả */}
+              <div className="flex items-center gap-3 p-4 border-b border-gray-200">
+                <input
+                  id="select-all"
+                  type="checkbox"
+                  className="w-4 h-4"
+                  checked={isAllSelected}
+                  onChange={handleToggleAll}
+                />
+                <label htmlFor="select-all" className="text-sm text-gray-700 cursor-pointer">
+                  Chọn tất cả ({selectedIds.size}/{items.length})
+                </label>
+              </div>
 
-              const stockQuantity = Number(variation?.stock_quantity || 0)
-                // Yêu cầu 2: Kiểm tra khả năng tăng số lượng
-              const isMaxQuantity = item.quantity >= stockQuantity
-              // Kiểm tra khả năng giảm số lượng (disabled khi = 1, nhưng ta sẽ dùng logic xóa)
-              const isMinQuantity = item.quantity <= 1
+              {items.map((item) => {
+                const variation = item.product?.variation;
+                const unitPrice = Number(item.price || 0); // đã discount từ slice
+                const imageUrl =
+                  item.product?.images?.[0]?.image_url ||
+                  item.product?.thumbnail_url ||
+                  "/placeholder.svg";
 
-              return (
-                <div key={item.id} className="flex gap-4 p-4 border-b border-gray-200 last:border-b-0">
-                  <Link to={`/products/${item.product_id}`} className="flex-shrink-0">
-                    <img
-                      src={imageUrl} // FIX: Sử dụng imageUrl
-                      alt={item.product?.product_name}
-                      className="w-24 h-24 object-cover rounded-lg"
-                    />
-                  </Link>
+                const stockQuantity = Number(variation?.stock_quantity || 0);
+                const isMaxQuantity = item.quantity >= stockQuantity;
+
+                const checked = selectedIds.has(item.id);
+
+                return (
+                  <div key={item.id} className="flex gap-4 p-4 border-b border-gray-200 last:border-b-0">
+                    {/* Checkbox từng item */}
+                    <div className="pt-1">
+                      <input
+                        type="checkbox"
+                        className="w-4 h-4 mt-2"
+                        checked={checked}
+                        onChange={() => handleToggleItem(item.id)}
+                      />
+                    </div>
+
+                    <Link to={`/products/${item.product_id}`} className="flex-shrink-0">
+                      <img
+                        src={imageUrl}
+                        alt={item.product?.product_name}
+                        className="w-24 h-24 object-cover rounded-lg"
+                      />
+                    </Link>
 
                     <div className="flex-1">
                       <Link
@@ -132,7 +203,9 @@ export default function CartPage() {
                             >
                               <Minus className="w-4 h-4" />
                             </button>
+
                             <span className="w-12 text-center font-medium">{item.quantity}</span>
+
                             <button
                               onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
                               disabled={isMaxQuantity}
@@ -141,26 +214,22 @@ export default function CartPage() {
                               <Plus className="w-4 h-4" />
                             </button>
                           </div>
-                          {/* Yêu cầu 2: Hiển thị thông báo hết hàng */}
+
                           {isMaxQuantity && stockQuantity > 0 && (
                             <p className="text-xs text-red-500 font-medium">
                               Chỉ còn {stockQuantity} sản phẩm trong kho.
                             </p>
                           )}
                           {stockQuantity === 0 && (
-                              <p className="text-xs text-red-500 font-medium">
-                                Đã hết hàng.
-                              </p>
+                            <p className="text-xs text-red-500 font-medium">Đã hết hàng.</p>
                           )}
                         </div>
 
                         <div className="text-right">
-                          <div className="font-bold text-blue-600">{formatPrice(finalPrice * item.quantity)}</div>
-                          {discount > 0 && (
-                            <div className="text-sm text-gray-400 line-through">
-                              {formatPrice(price * item.quantity)}
-                            </div>
-                          )}
+                          <div className="font-bold text-blue-600">
+                            {formatPrice(unitPrice * item.quantity)}
+                          </div>
+                          {/* Có thể hiển thị giá gốc nếu muốn, nhưng unitPrice đã là giá sau giảm */}
                         </div>
                       </div>
                     </div>
@@ -172,18 +241,19 @@ export default function CartPage() {
                       <Trash2 className="w-5 h-5" />
                     </button>
                   </div>
-                )
+                );
               })}
             </div>
           </div>
 
+          {/* Tổng kết & Checkout */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-sm p-6 sticky top-20">
               <h2 className="text-xl font-bold text-gray-900 mb-4">Tổng đơn hàng</h2>
 
               <div className="space-y-3 mb-4">
                 <div className="flex justify-between text-gray-600">
-                  <span>Tạm tính</span>
+                  <span>Tạm tính ({selectedItems.length} món đã chọn)</span>
                   <span>{formatPrice(subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-gray-600">
@@ -198,7 +268,9 @@ export default function CartPage() {
 
               <button
                 onClick={handleCheckout}
-                className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-semibold"
+                disabled={!canCheckout}
+                className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                title={!canCheckout ? "Hãy tick chọn ít nhất 1 sản phẩm để thanh toán" : ""}
               >
                 Thanh toán
               </button>
@@ -211,5 +283,5 @@ export default function CartPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

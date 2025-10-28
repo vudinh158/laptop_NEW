@@ -20,8 +20,6 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
 export default function ProductDetailPage() {
-
-
   const { id } = useParams(); // ID này là product_id hoặc slug
   const dispatch = useDispatch();
 
@@ -87,7 +85,14 @@ export default function ProductDetailPage() {
   const matched = (product.variations || []).find((v) =>
     matchVariation(v, sel)
   );
+  // Những key thực sự có option ở sản phẩm hiện tại
+  const requiredKeys = ATTRS.filter((k) => (uniqueOptions[k] || []).length > 0);
 
+  // Người dùng đã chọn đầy đủ các option cần thiết?
+  const allSelected = requiredKeys.every((k) => !!sel[k]);
+
+  // Sẵn sàng "Mua ngay" khi VỪA khớp 1 biến thể, VỪA chọn đủ option
+  const isReady = Boolean(matched) && allSelected;
   const toggleSelect = (k, val) => {
     setSel((prev) => {
       const next = { ...prev, [k]: prev[k] === val ? "" : val };
@@ -207,71 +212,83 @@ export default function ProductDetailPage() {
       alert("Gửi trả lời thất bại");
     }
   };
-// avatar tròn chữ cái đầu
-const Avatar = ({ name }) => {
-  const ch = (name || "").trim()[0]?.toUpperCase() || "U";
-  return (
-    <div className="h-9 w-9 rounded-full bg-emerald-100 text-emerald-700 grid place-items-center font-semibold">
-      {ch}
-    </div>
+  // avatar tròn chữ cái đầu
+  const Avatar = ({ name }) => {
+    const ch = (name || "").trim()[0]?.toUpperCase() || "U";
+    return (
+      <div className="h-9 w-9 rounded-full bg-emerald-100 text-emerald-700 grid place-items-center font-semibold">
+        {ch}
+      </div>
+    );
+  };
+
+  // badge quản trị viên
+  const AdminBadge = () => (
+    <span className="ml-2 inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded bg-rose-100 text-rose-700 border border-rose-200">
+      QTV
+    </span>
   );
-};
 
-// badge quản trị viên
-const AdminBadge = () => (
-  <span className="ml-2 inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded bg-rose-100 text-rose-700 border border-rose-200">
-    QTV
-  </span>
-);
-
-// time-ago đơn giản
-const timeAgo = (d) => {
-  const diff = Math.max(1, Math.floor((Date.now() - new Date(d).getTime()) / 1000));
-  const units = [
-    ["năm", 31536000],
-    ["tháng", 2592000],
-    ["tuần", 604800],
-    ["ngày", 86400],
-    ["giờ", 3600],
-    ["phút", 60],
-    ["giây", 1],
-  ];
-  for (const [label, sec] of units) {
-    if (diff >= sec) return `${Math.floor(diff / sec)} ${label} trước`;
-  }
-  return "vừa xong";
-};
+  // time-ago đơn giản
+  const timeAgo = (d) => {
+    const diff = Math.max(
+      1,
+      Math.floor((Date.now() - new Date(d).getTime()) / 1000)
+    );
+    const units = [
+      ["năm", 31536000],
+      ["tháng", 2592000],
+      ["tuần", 604800],
+      ["ngày", 86400],
+      ["giờ", 3600],
+      ["phút", 60],
+      ["giây", 1],
+    ];
+    for (const [label, sec] of units) {
+      if (diff >= sec) return `${Math.floor(diff / sec)} ${label} trước`;
+    }
+    return "vừa xong";
+  };
 
   const navigate = useNavigate();
   useEffect(() => {
-  if (!selectedVariation && product?.variations?.length) {
-    setSelectedVariation(product.variations[0]);
-  }
-}, [product?.variations]); // chỉ chạy khi variations đổi
-const handleAddToCart = () => {
-  if (!product) return;
-  const variation = selectedVariation || product.variations?.[0];
-  if (!variation) return; // phòng trường hợp sản phẩm không có biến thể
+    if (!selectedVariation && product?.variations?.length) {
+      setSelectedVariation(null);
+    }
+  }, [product?.variations]); // chỉ chạy khi variations đổi
+  const handleAddToCart = () => {
+    if (!product) return;
+    const variation = selectedVariation || product.variations?.[0];
+    if (!variation) return; // phòng trường hợp sản phẩm không có biến thể
 
-  dispatch(
-    addItem({
-      product_id: product.product_id,
-      variation_id: variation.variation_id,
-      quantity: Math.max(1, Number(quantity) || 1), // +1 (hoặc theo ô số lượng)
-      product: { ...product, variation },
-    })
-  );
-};
+    dispatch(
+      addItem({
+        product_id: product.product_id,
+        variation_id: variation.variation_id,
+        quantity: Math.max(1, Number(quantity) || 1), // +1 (hoặc theo ô số lượng)
+        product: { ...product, variation },
+      })
+    );
+  };
 
-const handleBuyNow = () => {
-  handleAddToCart();          // thêm vào giỏ
-  navigate("/checkout");      // điều hướng đến trang thanh toán
-  // nếu dự án bạn dùng đường dẫn khác: "/cart/checkout" thì đổi ở đây
-};
+  const handleBuyNow = () => {
+    if (!isReady) return; // chưa chọn đủ cấu hình thì không cho mua
 
-const [openReplies, setOpenReplies] = useState({});
-const toggleReplies = (qid) =>
-  setOpenReplies((s) => ({ ...s, [qid]: !s[qid] }));
+    const qty = Math.max(1, Number(quantity) || 1);
+
+    // Không đụng giỏ. Điều hướng Checkout kèm "checkout intent"
+    navigate("/checkout", {
+      state: {
+        mode: "buy_now",
+        items: [{ variation_id: matched.variation_id, quantity: qty }],
+      },
+      replace: false,
+    });
+  };
+
+  const [openReplies, setOpenReplies] = useState({});
+  const toggleReplies = (qid) =>
+    setOpenReplies((s) => ({ ...s, [qid]: !s[qid] }));
   if (isLoading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -502,26 +519,38 @@ const toggleReplies = (qid) =>
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-  <button
-    onClick={handleAddToCart}
-    disabled={!product?.variations?.length}
-    className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-4 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-    title={!product?.variations?.length ? "Sản phẩm chưa có cấu hình" : ""}
-  >
-    <ShoppingCart className="w-5 h-5" />
-    <span className="font-semibold">Thêm vào giỏ</span>
-  </button>
+                <button
+                  onClick={handleAddToCart}
+                  disabled={!product?.variations?.length}
+                  className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-4 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  title={
+                    !product?.variations?.length
+                      ? "Sản phẩm chưa có cấu hình"
+                      : ""
+                  }
+                >
+                  <ShoppingCart className="w-5 h-5" />
+                  <span className="font-semibold">Thêm vào giỏ</span>
+                </button>
 
-  <button
-    onClick={handleBuyNow}
-    disabled={!product?.variations?.length}
-    className="w-full flex items-center justify-center gap-2 bg-emerald-600 text-white py-4 rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-    title={!product?.variations?.length ? "Sản phẩm chưa có cấu hình" : ""}
-  >
-    <span className="font-semibold">Mua ngay</span>
-  </button>
-</div>
-
+                <button
+                  onClick={handleBuyNow}
+                  disabled={!isReady}
+                  className="w-full flex items-center justify-center gap-2 bg-emerald-600 text-white py-4 rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  title={
+                    !isReady
+                      ? "Vui lòng chọn đầy đủ cấu hình để tiếp tục Mua ngay"
+                      : ""
+                  }
+                >
+                  <span className="font-semibold">Mua ngay</span>
+                </button>
+                {!isReady && (
+                  <p className="mt-1 text-sm text-gray-500">
+                    Vui lòng chọn đầy đủ cấu hình (CPU/RAM/SSD/Màu...) để tiếp tục <b>Mua ngay</b>.
+                  </p>
+                )}
+              </div>
               <div className="grid grid-cols-3 gap-4 pt-6 border-t border-gray-200">
                 <div className="flex flex-col items-center text-center">
                   <Truck className="w-8 h-8 text-blue-600 mb-2" />
@@ -571,139 +600,186 @@ const toggleReplies = (qid) =>
           />
         </div>
         {/* HỎI & ĐÁP */}
-<div className="mt-10">
-  <h2 className="text-2xl font-bold text-gray-900 mb-4">Hỏi & Đáp</h2>
+        <div className="mt-10">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Hỏi & Đáp</h2>
 
-  {/* Ô đặt câu hỏi nổi bật */}
-  <div className="rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-5 mb-6">
-    <div className="flex gap-4 items-start">
-      <div className="hidden sm:block">
-        <img src="/mascot.svg" onError={({currentTarget})=>{currentTarget.style.display='none'}} alt="" className="w-16 h-16 object-contain" />
-      </div>
-      <div className="flex-1">
-        <p className="text-gray-800 font-semibold mb-1">Hãy đặt câu hỏi cho chúng tôi</p>
-        <p className="text-sm text-gray-500 mb-3">
-          Thông tin có thể thay đổi theo thời gian, vui lòng đặt câu hỏi để nhận được cập nhật mới nhất!
-        </p>
-
-        <div className="flex gap-2">
-          <textarea
-            value={questionText}
-            onChange={(e) => setQuestionText(e.target.value)}
-            rows={1}
-            placeholder="Viết câu hỏi của bạn tại đây…"
-            className="flex-1 resize-none border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            onClick={postQuestion}
-            disabled={!isAuthed || !questionText.trim()}
-            className="shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 disabled:opacity-50"
-            title={!isAuthed ? "Đăng nhập để gửi câu hỏi" : "Gửi câu hỏi"}
-          >
-            <MessageSquare className="w-4 h-4" />
-            Gửi câu hỏi
-          </button>
-        </div>
-        {!isAuthed && (
-          <div className="text-xs text-gray-500 mt-1">Bạn cần đăng nhập để gửi câu hỏi.</div>
-        )}
-      </div>
-    </div>
-  </div>
-
-  {/* Danh sách Q&A */}
-  <div className="space-y-5">
-    {(product.questions || []).length === 0 && (
-      <div className="text-gray-500">Chưa có câu hỏi nào.</div>
-    )}
-
-    {(product.questions || []).map((q) => {
-      const asker = q.user?.full_name || q.user?.username || "Người dùng";
-      const answers = q.answers || [];
-      const opened = !!openReplies[q.question_id];
-
-      return (
-        <div key={q.question_id} className="rounded-xl border border-gray-200 bg-white p-4">
-          {/* HÀNG CÂU HỎI */}
-          <div className="flex gap-3">
-            <Avatar name={asker} />
-            <div className="flex-1">
-              <div className="flex items-center flex-wrap gap-x-2">
-                <span className="font-semibold text-gray-900">{asker}</span>
-                <span className="text-xs text-gray-500">• {timeAgo(q.created_at)}</span>
+          {/* Ô đặt câu hỏi nổi bật */}
+          <div className="rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-5 mb-6">
+            <div className="flex gap-4 items-start">
+              <div className="hidden sm:block">
+                <img
+                  src="/mascot.svg"
+                  onError={({ currentTarget }) => {
+                    currentTarget.style.display = "none";
+                  }}
+                  alt=""
+                  className="w-16 h-16 object-contain"
+                />
               </div>
-              <div className="mt-1 text-gray-800">{q.question_text}</div>
+              <div className="flex-1">
+                <p className="text-gray-800 font-semibold mb-1">
+                  Hãy đặt câu hỏi cho chúng tôi
+                </p>
+                <p className="text-sm text-gray-500 mb-3">
+                  Thông tin có thể thay đổi theo thời gian, vui lòng đặt câu hỏi
+                  để nhận được cập nhật mới nhất!
+                </p>
 
-              <div className="mt-2">
-                <button
-                  onClick={() => toggleReplies(q.question_id)}
-                  className="text-sm text-blue-600 hover:text-blue-700 inline-flex items-center gap-1"
-                >
-                  <Reply className="w-4 h-4" />
-                  Phản hồi
-                  <ChevronDown
-                    className={`w-4 h-4 transition-transform ${opened ? "rotate-180" : ""}`}
+                <div className="flex gap-2">
+                  <textarea
+                    value={questionText}
+                    onChange={(e) => setQuestionText(e.target.value)}
+                    rows={1}
+                    placeholder="Viết câu hỏi của bạn tại đây…"
+                    className="flex-1 resize-none border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                </button>
+                  <button
+                    onClick={postQuestion}
+                    disabled={!isAuthed || !questionText.trim()}
+                    className="shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 disabled:opacity-50"
+                    title={
+                      !isAuthed ? "Đăng nhập để gửi câu hỏi" : "Gửi câu hỏi"
+                    }
+                  >
+                    <MessageSquare className="w-4 h-4" />
+                    Gửi câu hỏi
+                  </button>
+                </div>
+                {!isAuthed && (
+                  <div className="text-xs text-gray-500 mt-1">
+                    Bạn cần đăng nhập để gửi câu hỏi.
+                  </div>
+                )}
               </div>
             </div>
           </div>
 
-          {/* KHỐI TRẢ LỜI */}
-          <div className={`mt-3 overflow-hidden transition-all ${opened ? "max-h-[2000px]" : "max-h-0"}`}>
-            <div className="pl-12 space-y-3">
-              {answers.map((a) => {
-                const replier = a.user?.full_name || a.user?.username || "Nhân viên";
-                const isAdmin = roles.includes("admin") || roles.includes("staff") || /quản trị|admin|staff/i.test(replier);
-                return (
-                  <div key={a.answer_id} className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                    <div className="flex items-start gap-2">
-                      <Avatar name={replier} />
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-gray-900">{replier}</span>
-                          {isAdmin && <AdminBadge />}
-                          <span className="text-xs text-gray-500">• {timeAgo(a.created_at)}</span>
-                        </div>
-                        <div className="mt-1 text-gray-800 whitespace-pre-wrap">{a.answer_text}</div>
+          {/* Danh sách Q&A */}
+          <div className="space-y-5">
+            {(product.questions || []).length === 0 && (
+              <div className="text-gray-500">Chưa có câu hỏi nào.</div>
+            )}
+
+            {(product.questions || []).map((q) => {
+              const asker =
+                q.user?.full_name || q.user?.username || "Người dùng";
+              const answers = q.answers || [];
+              const opened = !!openReplies[q.question_id];
+
+              return (
+                <div
+                  key={q.question_id}
+                  className="rounded-xl border border-gray-200 bg-white p-4"
+                >
+                  {/* HÀNG CÂU HỎI */}
+                  <div className="flex gap-3">
+                    <Avatar name={asker} />
+                    <div className="flex-1">
+                      <div className="flex items-center flex-wrap gap-x-2">
+                        <span className="font-semibold text-gray-900">
+                          {asker}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          • {timeAgo(q.created_at)}
+                        </span>
+                      </div>
+                      <div className="mt-1 text-gray-800">
+                        {q.question_text}
+                      </div>
+
+                      <div className="mt-2">
+                        <button
+                          onClick={() => toggleReplies(q.question_id)}
+                          className="text-sm text-blue-600 hover:text-blue-700 inline-flex items-center gap-1"
+                        >
+                          <Reply className="w-4 h-4" />
+                          Phản hồi
+                          <ChevronDown
+                            className={`w-4 h-4 transition-transform ${
+                              opened ? "rotate-180" : ""
+                            }`}
+                          />
+                        </button>
                       </div>
                     </div>
                   </div>
-                );
-              })}
 
-              {/* Form trả lời (chỉ hiển thị nếu có quyền) */}
-              {canAnswer && (
-                <div className="bg-white border border-gray-200 rounded-lg p-3">
-                  <textarea
-                    value={answerDrafts[q.question_id] || ""}
-                    onChange={(e) =>
-                      setAnswerDrafts((s) => ({ ...s, [q.question_id]: e.target.value }))
-                    }
-                    rows={2}
-                    placeholder="Nhập câu trả lời…"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
-                  <div className="mt-2 text-right">
-                    <button
-                      onClick={() => postAnswer(q.question_id)}
-                      disabled={!(answerDrafts[q.question_id] || "").trim()}
-                      className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-600 text-white font-semibold hover:bg-emerald-700 disabled:opacity-50"
-                    >
-                      <Reply className="w-4 h-4" />
-                      Gửi trả lời
-                    </button>
+                  {/* KHỐI TRẢ LỜI */}
+                  <div
+                    className={`mt-3 overflow-hidden transition-all ${
+                      opened ? "max-h-[2000px]" : "max-h-0"
+                    }`}
+                  >
+                    <div className="pl-12 space-y-3">
+                      {answers.map((a) => {
+                        const replier =
+                          a.user?.full_name || a.user?.username || "Nhân viên";
+                        const isAdmin =
+                          roles.includes("admin") ||
+                          roles.includes("staff") ||
+                          /quản trị|admin|staff/i.test(replier);
+                        return (
+                          <div
+                            key={a.answer_id}
+                            className="bg-gray-50 border border-gray-200 rounded-lg p-3"
+                          >
+                            <div className="flex items-start gap-2">
+                              <Avatar name={replier} />
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-semibold text-gray-900">
+                                    {replier}
+                                  </span>
+                                  {isAdmin && <AdminBadge />}
+                                  <span className="text-xs text-gray-500">
+                                    • {timeAgo(a.created_at)}
+                                  </span>
+                                </div>
+                                <div className="mt-1 text-gray-800 whitespace-pre-wrap">
+                                  {a.answer_text}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+
+                      {/* Form trả lời (chỉ hiển thị nếu có quyền) */}
+                      {canAnswer && (
+                        <div className="bg-white border border-gray-200 rounded-lg p-3">
+                          <textarea
+                            value={answerDrafts[q.question_id] || ""}
+                            onChange={(e) =>
+                              setAnswerDrafts((s) => ({
+                                ...s,
+                                [q.question_id]: e.target.value,
+                              }))
+                            }
+                            rows={2}
+                            placeholder="Nhập câu trả lời…"
+                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                          />
+                          <div className="mt-2 text-right">
+                            <button
+                              onClick={() => postAnswer(q.question_id)}
+                              disabled={
+                                !(answerDrafts[q.question_id] || "").trim()
+                              }
+                              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-600 text-white font-semibold hover:bg-emerald-700 disabled:opacity-50"
+                            >
+                              <Reply className="w-4 h-4" />
+                              Gửi trả lời
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              )}
-            </div>
+              );
+            })}
           </div>
         </div>
-      );
-    })}
-  </div>
-</div>
-
 
         {/* ... (Phần Recommended Products giữ nguyên) */}
         {recommended?.products?.length > 0 && (
