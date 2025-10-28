@@ -23,18 +23,24 @@ export function useOrder(id) {
 }
 
 export function useCreateOrder() {
-  const queryClient = useQueryClient()
-
   return useMutation({
-    mutationFn: async (orderData) => {
-      const { data } = await api.post("/orders", orderData)
-      return data
+    // CHÍNH LÀ "mutationFn" BẮT BUỘC
+    mutationFn: async (payload) => {
+      // Nếu FE vô tình truyền items: [] rỗng → xoá hẳn field để BE hiểu là "thanh toán toàn bộ giỏ"
+      const body = { ...payload };
+      if (Array.isArray(body.items) && body.items.length === 0) {
+        delete body.items;
+      }
+
+      // Lấy token (nếu backend yêu cầu Bearer)
+      const token = localStorage.getItem("token");
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+      // Quan trọng: KHÔNG gửi price/subtotal từ FE — BE tự tính
+      const { data } = await api.post("/orders", body, { headers });
+      return data; // { message, order, redirect? }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["orders"] })
-      queryClient.invalidateQueries({ queryKey: ["cart"] })
-    },
-  })
+  });
 }
 
 export function useAdminOrders() {
