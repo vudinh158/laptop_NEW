@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useCreateOrder } from "../hooks/useOrders";
@@ -83,6 +83,105 @@ export default function CheckoutPage() {
     });
   };
 
+  // Geocode theo địa chỉ hiện tại (Tỉnh + Xã + Số nhà/đường)
+  async function geocodeAddress(addressDetail) {
+    if (!provinceId || !wardId || !addressDetail) return;
+    const q = `${addressDetail}, ${wardName}, ${provinceName}, Vietnam`;
+
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(
+        q
+      )}`;
+      const res = await fetch(url, {
+        headers: {
+          Accept: "application/json",
+          // thêm UA theo khuyến cáo của Nominatim
+          "User-Agent":
+            "laptopstore-checkout/1.0 (contact: your-email@example.com)",
+        },
+      });
+      const arr = await res.json();
+      if (Array.isArray(arr) && arr.length > 0) {
+        const lat = parseFloat(arr[0].lat);
+        const lng = parseFloat(arr[0].lon);
+        setLocation({ lat, lng }); // auto ping
+        setLocationConfirmed(true); // bắt user xác nhận lại
+      } else {
+        alert("Không tìm thấy vị trí phù hợp. Hãy nhập địa chỉ chi tiết hơn.");
+      }
+    } catch (e) {
+      console.error("GEOCODE ERROR:", e);
+      alert("Không thể tìm vị trí. Vui lòng thử lại.");
+    }
+  }
+
+  // helpers
+  function removeAccents(s = "") {
+    return s
+      .normalize("NFD")
+      .replace(/\p{Diacritic}/gu, "")
+      .replace(/đ/gi, "d");
+  }
+
+  function cleanAddressDetail(addr = "", wardName = "", provinceName = "") {
+    let a = addr.trim();
+
+    // loại bỏ tên phường/tỉnh nếu user gõ kèm
+    const adminWords = [
+      "phường",
+      "p.",
+      "p ",
+      "xã",
+      "x.",
+      "x ",
+      "quận",
+      "huyện",
+      "thành phố",
+      "tp.",
+      "tp ",
+      "tỉnh",
+    ];
+
+    const patterns = [
+      wardName,
+      provinceName,
+      ...adminWords.map((w) => `\\b${w}\\b`),
+    ]
+      .filter(Boolean)
+      .map((w) => removeAccents(w).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+
+    if (patterns.length) {
+      const re = new RegExp(`(?:${patterns.join("|")})`, "gi");
+      a = a.replace(re, " ");
+    }
+
+    // xoá dấu phẩy/dư khoảng
+    a = a
+      .replace(/[,]+/g, " ")
+      .replace(/\s{2,}/g, " ")
+      .trim();
+    return a;
+  }
+  useEffect(() => {
+    // cần đủ tỉnh + phường + địa chỉ cụ thể
+    if (!provinceId || !wardId || !formData.address?.trim()) return;
+
+    // loại “Phường/TP/…” ra khỏi địa chỉ cụ thể để khỏi trùng khi ghép
+    const cleaned = cleanAddressDetail(
+      formData.address,
+      wardName,
+      provinceName
+    );
+
+    // debounce 500ms để chỉ gọi khi user dừng gõ
+    const t = setTimeout(() => {
+      geocodeAddress(cleaned);
+    }, 500);
+
+    // huỷ debounce nếu user còn đang gõ/đổi chọn
+    return () => clearTimeout(t);
+  }, [provinceId, wardId, formData.address, wardName, provinceName]);
+
   // Điều kiện đủ để cho phép submit
   const canSubmit = useMemo(() => {
     return (
@@ -102,8 +201,14 @@ export default function CheckoutPage() {
     e.preventDefault();
     if (!canSubmit) return;
 
+    const addressDetail = cleanAddressDetail(
+      formData.address,
+      wardName,
+      provinceName
+    );
+
     // Ghép địa chỉ hiển thị
-    const shipping_address = [formData.address, wardName, provinceName]
+    const shipping_address = [addressDetail, wardName, provinceName]
       .filter(Boolean)
       .join(", ");
 
@@ -140,8 +245,11 @@ export default function CheckoutPage() {
       dispatch(clearCart());
       navigate("/orders");
     } catch (error) {
-        console.error("CREATE ORDER ERROR:", error.response?.status, error.response?.data || error.message);
-
+      console.error(
+        "CREATE ORDER ERROR:",
+        error.response?.status,
+        error.response?.data || error.message
+      );
     }
   };
 
@@ -198,20 +306,6 @@ export default function CheckoutPage() {
                     />
                   </div>
 
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Email *
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-
                   {/* <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Quận/Huyện *</label>
                     <input
@@ -258,7 +352,7 @@ export default function CheckoutPage() {
                       <option value="">
                         {provinceId
                           ? "-- Chọn Phường/Xã --"
-                          : "Chọn Tỉnh/Thành trước"}
+                          : "Chọn Phường/Xã"}
                       </option>
                       {wards.map((w) => (
                         <option key={w.ward_id} value={w.ward_id}>
@@ -268,18 +362,44 @@ export default function CheckoutPage() {
                     </select>
                   </div>
                   <div className="md:col-span-2">
+                    {/* <div className="md:col-span-2"> */}
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Địa chỉ *
+                      Địa chỉ
                     </label>
-                    <input
-                      type="text"
-                      name="address"
-                      value={formData.address}
-                      onChange={handleChange}
-                      required
-                      placeholder="Số nhà, tên đường"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        name="address"
+                        value={formData.address}
+                        onChange={(e) => {
+                          handleChange(e);
+                          setLocationConfirmed(false);
+                        }}
+                        required
+                        disabled={!provinceId || !wardId}
+                        placeholder={
+                          !provinceId || !wardId
+                            ? "Số nhà, tên đường (vd: 109 Hiệp Bình)"
+                            : "Số nhà, tên đường (vd: 109 Hiệp Bình)"
+                        }
+                      />
+                      {/* <button
+                        type="button"
+                        onClick={() =>
+                          geocodeAddress(
+                            cleanAddressDetail(
+                              formData.address,
+                              wardName,
+                              provinceName
+                            )
+                          )
+                        }
+                        disabled={!provinceId || !wardId || !formData.address}
+                        className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg border hover:bg-gray-200 disabled:opacity-50"
+                      >
+                        Tìm vị trí
+                      </button> */}
+                    </div>
                   </div>
                   {/* Map chọn & xác nhận vị trí */}
                   <div className="md:col-span-2">
@@ -386,7 +506,7 @@ export default function CheckoutPage() {
 
                 <button
                   type="submit"
-                  disabled={createOrder.isPending}
+                  disabled={!canSubmit || createOrder.isPending} // <— thêm !canSubmit
                   className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-semibold mt-6 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {createOrder.isPending ? (
