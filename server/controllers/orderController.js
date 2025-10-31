@@ -10,6 +10,8 @@ const {
 } = require("../models");
 const sequelize = require("../config/database");
 
+const { quoteShipping } = require("../services/shippingService");
+
 // Generate unique order code
 const generateOrderCode = () => {
   const timestamp = Date.now().toString(36).toUpperCase();
@@ -71,6 +73,8 @@ exports.createOrder = async (req, res, next) => {
     }
     const isVnpay = payment_provider === "VNPAY";
     let txnRef = null;
+
+    const { shipping_fee } = await quoteShipping({ province_id, ward_id, subtotal: items_subtotal });
 
     // 1) Chuẩn bị itemsForOrder
     let itemsForOrder = [];
@@ -151,7 +155,7 @@ exports.createOrder = async (req, res, next) => {
       discountAmount += itemDiscount;
     }
 
-    const finalAmount = totalAmount - discountAmount;
+    const finalAmount = totalAmount + shipping_fee - (discountAmount || 0);
 
     // console.log("[amounts]", { totalAmount, discountAmount, finalAmount });
     // 3) Tạo Order
@@ -164,6 +168,7 @@ exports.createOrder = async (req, res, next) => {
         final_amount: finalAmount,
         status: isVnpay ? "AWAITING_PAYMENT" : "confirmed",
         shipping_address,
+        shipping_fee,
         shipping_phone,
         shipping_name,
         note: note || "",

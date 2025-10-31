@@ -13,7 +13,7 @@ const orderRoutes = require("./routes/orderRoutes")
 const adminRoutes = require("./routes/adminRoutes")
 const geoRoutes = require('./routes/geo');
 const vnpayRoutes = require("./routes/vnpayRoutes");
-
+const shippingRoutes = require("./routes/shippingRoutes");
 const app = express()
 
 // Middleware
@@ -29,6 +29,7 @@ app.use("/api/orders", orderRoutes)
 app.use("/api/admin", adminRoutes)
 app.use('/api', geoRoutes);
 app.use("/api", vnpayRoutes); // hoặc app.use("/api", vnpayRoutes);
+app.use("/api", shippingRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
