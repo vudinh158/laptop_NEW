@@ -41,11 +41,11 @@ Tag.belongsToMany(Product, { through: "product_tags", foreignKey: "tag_id" })
 
 // Product - ProductVariation (One-to-Many)
 Product.hasMany(ProductVariation, { foreignKey: "product_id", as: "variations" })
-ProductVariation.belongsTo(Product, { foreignKey: "product_id" })
+ProductVariation.belongsTo(Product, { foreignKey: "product_id" , as: "product"})
 
 // Product - ProductImage (One-to-Many)
 Product.hasMany(ProductImage, { foreignKey: "product_id", as: "images" })
-ProductImage.belongsTo(Product, { foreignKey: "product_id" })
+ProductImage.belongsTo(Product, { foreignKey: "product_id", as: "product" })
 
 // User - Cart (One-to-One)
 User.hasOne(Cart, { foreignKey: "user_id", as: "cart" })

@@ -18,6 +18,7 @@ import CompareModal from "../components/CompareModal";
 import { Reply, MessageSquare, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useAddToCart } from "../hooks/useCart";
 
 export default function ProductDetailPage() {
   const { id } = useParams(); // ID này là product_id hoặc slug
@@ -25,6 +26,7 @@ export default function ProductDetailPage() {
 
   const [cmpOpen, setCmpOpen] = useState(false);
   const compareItems = useSelector((s) => s.compare?.items ?? []);
+  const addToCart = useAddToCart();
 
   const ATTRS = [
     "processor",
@@ -251,23 +253,49 @@ export default function ProductDetailPage() {
   };
 
   const navigate = useNavigate();
+  const isAuthenticated = useSelector((s) => s.auth?.isAuthenticated);
   useEffect(() => {
-    if (!selectedVariation && product?.variations?.length) {
-      setSelectedVariation(null);
-    }
-  }, [product?.variations]); // chỉ chạy khi variations đổi
+    if (!product?.variations?.length) return;
+    // Ưu tiên biến thể còn hàng; nếu không có, chọn phần tử đầu
+    const firstInStock =
+      product.variations.find((v) => Number(v.stock_quantity) > 0) ||
+      product.variations[0];
+    setSelectedVariation(firstInStock);
+    // reset số lượng tối thiểu = 1
+    setQuantity(1);
+  }, [product?.variations]);
+
   const handleAddToCart = () => {
     if (!product) return;
     const variation = selectedVariation || product.variations?.[0];
-    if (!variation) return; // phòng trường hợp sản phẩm không có biến thể
+    if (!variation) return;
 
-    dispatch(
-      addItem({
-        product_id: product.product_id,
-        variation_id: variation.variation_id,
-        quantity: Math.max(1, Number(quantity) || 1), // +1 (hoặc theo ô số lượng)
-        product: { ...product, variation },
-      })
+    const stock = Number(variation.stock_quantity) || 0;
+    const qty = Math.max(1, Number(quantity) || 1);
+    if (stock <= 0) {
+      alert("Biến thể này đã hết hàng.");
+      return;
+    }
+    if (qty > stock) {
+      alert(`Chỉ còn ${stock} sản phẩm trong kho.`);
+      setQuantity(stock);
+      return;
+    }
+    if (!isAuthenticated) {
+      navigate(`/login?redirect=/products/${id}`);
+      return;
+    }
+
+    addToCart.mutate(
+      { variation_id: variation.variation_id, quantity: qty },
+      {
+        onError: (err) => {
+          // nếu token hết hạn hoặc thiếu → về login
+          if (err?.response?.status === 401) {
+            navigate(`/login?redirect=/products/${id}`);
+          }
+        },
+      }
     );
   };
 
@@ -280,9 +308,20 @@ export default function ProductDetailPage() {
     navigate("/checkout", {
       state: {
         mode: "buy_now",
-        items: [{ variation_id: matched.variation_id, quantity: qty }],
+        items: [
+          {
+            variation_id: matched.variation_id,
+            quantity: qty,
+            product: {
+              // chỉ để HIỂN THỊ
+              product_name: product.product_name,
+              thumbnail_url: product.thumbnail_url,
+              discount_percentage: product.discount_percentage,
+              variation: { price: Number(matched.price) },
+            },
+          },
+        ],
       },
-      replace: false,
     });
   };
 
@@ -306,6 +345,9 @@ export default function ProductDetailPage() {
       </div>
     );
   }
+
+  const stockOk =
+    Number((selectedVariation || product?.variations?.[0])?.stock_quantity) > 0;
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -521,18 +563,19 @@ export default function ProductDetailPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
                 <button
                   onClick={handleAddToCart}
-                  disabled={!product?.variations?.length}
+                  disabled={!product?.variations?.length || !stockOk}
                   className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-4 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   title={
-                    !product?.variations?.length
+                    +!product?.variations?.length
                       ? "Sản phẩm chưa có cấu hình"
+                      : !stockOk
+                      ? "Biến thể đã hết hàng"
                       : ""
                   }
                 >
                   <ShoppingCart className="w-5 h-5" />
                   <span className="font-semibold">Thêm vào giỏ</span>
                 </button>
-
                 <button
                   onClick={handleBuyNow}
                   disabled={!isReady}
@@ -547,7 +590,8 @@ export default function ProductDetailPage() {
                 </button>
                 {!isReady && (
                   <p className="mt-1 text-sm text-gray-500">
-                    Vui lòng chọn đầy đủ cấu hình (CPU/RAM/SSD/Màu...) để tiếp tục <b>Mua ngay</b>.
+                    Vui lòng chọn đầy đủ cấu hình (CPU/RAM/SSD/Màu...) để tiếp
+                    tục <b>Mua ngay</b>.
                   </p>
                 )}
               </div>

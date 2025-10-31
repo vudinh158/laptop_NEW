@@ -108,32 +108,49 @@ const cartSlice = createSlice({
     },
 
     // Khi load giỏ từ API BE (đã đăng nhập)
+        // Khi load giỏ từ API BE (đã đăng nhập)
     setCart: (state, action) => {
-      const { items = [], subtotal = 0 } = action.payload;
+      const { items = [], subtotal_snapshot, subtotal_live } = action.payload || {};
 
       state.items = items.map((item) => {
-        const raw = Number(item?.variation?.price ?? 0);
-        const discount = Number(
-          item?.variation?.Product?.discount_percentage ?? 0
-        );
-        const unitPrice = Math.max(0, raw * (1 - discount / 100)); // ✅
+       // BE trả: item.product { product_id, discount_percentage, variation: { price } }
+        const product = item?.product ?? {};
+        const variationFromProduct = product?.variation ?? {};
+
+        // Trường hợp BE khác: item.variation ở cấp item
+        const variationAlt = item?.variation ?? item?.Variation ?? item?.ProductVariation ?? {};
+        const variation = Object.keys(variationFromProduct).length ? variationFromProduct : variationAlt;
+
+        // Đơn giá ưu tiên số BE đã tính sẵn
+        const unitFromBE = Number(item?.unit_price_after_discount ?? NaN);
+        const raw = isNaN(unitFromBE)
+          ? Number(variation?.price ?? product?.base_price ?? 0)
+          : unitFromBE;
+        const discount = Number(product?.discount_percentage ?? 0);
+        const unitPrice = isNaN(unitFromBE) ? Math.max(0, raw * (1 - discount / 100)) : unitFromBE;
+
+        // Ảnh: hỗ trợ cả alias khác nhau nếu sau này BE có trả
+        const images = product?.images ?? product?.ProductImages ?? [];
 
         return {
-          id: item.cart_item_id,
-          product_id: item.variation.product_id,
-          variation_id: item.variation_id,
-          quantity: item.quantity,
-          price: unitPrice, // ✅ dùng giá sau giảm
+          id: item.cart_item_id ?? item.id,
+          cart_item_id: item.cart_item_id ?? item.id,
+          product_id: product?.product_id ?? variation?.product_id,
+          variation_id: item?.variation_id ?? variation?.variation_id,
+          quantity: item?.quantity ?? 1,
+          price: unitPrice,            // đơn giá sau giảm (UI dùng để hiển thị/tính nhanh)
           product: {
-            ...item.variation.Product,
-            variation: item.variation,
+            ...product,
+            images,
+            variation,                // để UI có product.variation.price
           },
-          selected: false, // mặc định CHƯA tick khi nạp từ server
+          selected: false,             // mặc định chưa tick
         };
       });
 
       recalcTotals(state);
-      state.totalPrice = subtotal || state.totalPrice;
+      // Ưu tiên các số tổng từ BE nếu có (live > snapshot)
+      state.totalPrice = Number(subtotal_live ?? subtotal_snapshot ?? state.totalPrice);
     },
 
     // Prefill checkout từ hồ sơ user (nếu đã login)

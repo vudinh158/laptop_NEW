@@ -1,17 +1,25 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { removeItem, updateQuantity, clearCart } from "../store/slices/cartSlice";
-import { Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
-import { formatPrice } from "../utils/formatters";
+import { ShoppingBag, Minus, Plus, Trash2 } from "lucide-react";
+
+import { useGetCart, useUpdateCartItem, useRemoveFromCart } from "../hooks/useCart";
+import { setCart } from "../store/slices/cartSlice"; // dùng khi clearCart từ server trả về
+import api from "../services/api";
+import { formatPrice } from "../utils/formatters"; // đảm bảo có util này
 
 export default function CartPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { items } = useSelector((state) => state.cart);
   const { isAuthenticated } = useSelector((state) => state.auth);
+
+  // ---- CALL ALL HOOKS UNCONDITIONALLY (trước mọi return) ----
+  const { data: serverCart } = useGetCart(); // sẽ tự setCart trong onSuccess của hook
+  const updateItem = useUpdateCartItem();
+  const removeItemSrv = useRemoveFromCart();
 
   // --- Trạng thái tick chọn ---
   const [selectedIds, setSelectedIds] = useState(() => new Set());
@@ -43,36 +51,38 @@ export default function CartPage() {
 
   // --- Cập nhật số lượng / xoá ---
   const handleUpdateQuantity = (id, newQuantity) => {
-    if (newQuantity === 0) {
+    if (newQuantity <= 0) {
       handleRemoveItem(id);
       return;
     }
-    if (newQuantity < 1) return;
-    // cartSlice.updateQuantity nhận { id, quantity }  (không phải variation_id)
-    dispatch(updateQuantity({ id, quantity: newQuantity })); // :contentReference[oaicite:2]{index=2}
+    updateItem.mutate({ itemId: id, quantity: newQuantity });
   };
 
   const handleRemoveItem = (id) => {
-    // Nếu món đang được tick, bỏ tick luôn
     setSelectedIds((prev) => {
       const next = new Set(prev);
       next.delete(id);
       return next;
     });
-    dispatch(removeItem(id));
+    removeItemSrv.mutate(id);
   };
 
-  const handleClearCart = () => {
-    if (window.confirm("Bạn có chắc muốn xóa tất cả sản phẩm trong giỏ hàng?")) {
+  // --- Xoá toàn bộ (gọi BE) ---
+  const handleClearCart = async () => {
+    if (!window.confirm("Bạn có chắc muốn xóa tất cả sản phẩm trong giỏ hàng?")) return;
+    try {
+      const { data } = await api.delete("/cart"); // BE trả về giỏ rỗng
+      dispatch(setCart(data.cart));               // đồng bộ lại Redux từ server
       setSelectedIds(new Set());
-      dispatch(clearCart());
+    } catch (e) {
+      console.error(e);
+      alert("Không xoá được giỏ hàng. Vui lòng thử lại.");
     }
   };
 
   // --- Tính tổng chỉ dựa trên item đã tick ---
   const subtotal = selectedItems.reduce((total, item) => {
-    // Giá đơn vị đã được cartSlice tính sẵn vào item.price (đã trừ discount)
-    const unit = Number(item.price || 0); // :contentReference[oaicite:3]{index=3}
+    const unit = Number(item.price || 0); // price đã là sau giảm
     return total + unit * item.quantity;
   }, 0);
 
@@ -90,12 +100,10 @@ export default function CartPage() {
     }));
 
     if (!isAuthenticated) {
-      // chuyển hướng đăng nhập xong quay lại checkout
       navigate("/login?redirect=/checkout");
       return;
     }
 
-    // Điều hướng với "checkout intent" từ giỏ
     navigate("/checkout", {
       state: {
         mode: "cart",
@@ -104,6 +112,7 @@ export default function CartPage() {
     });
   };
 
+  // ---- UI ----
   if (items.length === 0) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -148,16 +157,20 @@ export default function CartPage() {
               </div>
 
               {items.map((item) => {
-                const variation = item.product?.variation;
-                const unitPrice = Number(item.price || 0); // đã discount từ slice
+                // Lấy tồn kho an toàn theo nhiều cấu trúc
+                const stockQuantity = Number(
+                  item?.variation?.stock_quantity ??
+                  item?.product?.variation?.stock_quantity ??
+                  0
+                );
+
+                const unitPrice = Number(item.price || 0); // đã discount
                 const imageUrl =
                   item.product?.images?.[0]?.image_url ||
                   item.product?.thumbnail_url ||
                   "/placeholder.svg";
 
-                const stockQuantity = Number(variation?.stock_quantity || 0);
-                const isMaxQuantity = item.quantity >= stockQuantity;
-
+                const isMaxQuantity = stockQuantity > 0 && item.quantity >= stockQuantity;
                 const checked = selectedIds.has(item.id);
 
                 return (
@@ -188,9 +201,14 @@ export default function CartPage() {
                         {item.product?.product_name}
                       </Link>
 
-                      {variation && (
+                      {/* Thông tin biến thể (nếu có) */}
+                      {item.variation && (
                         <p className="text-sm text-gray-600 mt-1">
-                          {variation.processor} / {variation.ram} / {variation.storage}
+                          {[
+                            item.variation.processor,
+                            item.variation.ram,
+                            item.variation.storage,
+                          ].filter(Boolean).join(" / ")}
                         </p>
                       )}
 
@@ -229,7 +247,6 @@ export default function CartPage() {
                           <div className="font-bold text-blue-600">
                             {formatPrice(unitPrice * item.quantity)}
                           </div>
-                          {/* Có thể hiển thị giá gốc nếu muốn, nhưng unitPrice đã là giá sau giảm */}
                         </div>
                       </div>
                     </div>
