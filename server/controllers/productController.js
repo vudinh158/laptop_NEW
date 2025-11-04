@@ -135,11 +135,11 @@ exports.getProductDetail = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const where = isNaN(id) ? { slug: id } : { product_id: id };
+    const whereKey = isNaN(Number(id)) ? { slug: id } : { product_id: id };
 
     const product = await Product.findOne({
-      where: { ...where, is_active: true },
-      attributes: { include: ["specs"] },
+      where: { ...whereKey },
+      attributes: { include: ["specs", "is_active"] }, 
 
       include: [
         { model: Category, as: "category" },
@@ -148,7 +148,6 @@ exports.getProductDetail = async (req, res, next) => {
         {
           model: ProductImage,
           as: "images",
-          order: [["display_order", "ASC"]],
         },
         { model: Tag, through: { attributes: [] } },
         {

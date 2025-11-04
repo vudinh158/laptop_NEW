@@ -1,5 +1,11 @@
 // controllers/cartController.js
-const { Cart, CartItem, ProductVariation, Product, ProductImage } = require("../models");
+const {
+  Cart,
+  CartItem,
+  ProductVariation,
+  Product,
+  ProductImage,
+} = require("../models");
 
 // helper: luôn có cart
 async function getOrCreateCart(user_id) {
@@ -23,6 +29,18 @@ function normalizeItem(ci) {
     // snapshot lưu lúc add (không giảm giá)
     price_at_add: Number(ci.price_at_add || 0),
     // để FE render:
+
+    // thêm variation cho FE hiển thị cấu hình & tồn
+    variation: pv
+      ? {
+          stock_quantity: Number(pv.stock_quantity || 0),
+          is_available: pv.is_available === true,
+          processor: pv.processor || null,
+          ram: pv.ram || null,
+          storage: pv.storage || null,
+        }
+      : null,
+
     product: p
       ? {
           product_id: p.product_id,
@@ -33,6 +51,8 @@ function normalizeItem(ci) {
           // có thể thêm thuộc tính khác nếu cần
         }
       : null,
+    unit_price_before_discount: price,
+    discount_percentage: discountPct,
     // tính sẵn cho UI (không dùng gửi sang BE khi tạo order)
     unit_price_after_discount: priceAfterDiscount,
     line_total_after_discount: priceAfterDiscount * ci.quantity,
@@ -79,7 +99,7 @@ exports.getCart = async (req, res, next) => {
     );
 
     // subtotal “hiện hành” (áp discount theo Product.discount_percentage)
-    const subtotal_live = norm.reduce(
+    const subtotal_after_discount = norm.reduce(
       (s, it) => s + Number(it.line_total_after_discount || 0),
       0
     );
@@ -90,7 +110,7 @@ exports.getCart = async (req, res, next) => {
         item_count: norm.reduce((s, it) => s + Number(it.quantity || 0), 0),
         items: norm,
         subtotal_snapshot,
-        subtotal_live,
+        subtotal_after_discount, // đã gán đúng biến
       },
     });
   } catch (error) {
@@ -107,10 +127,16 @@ exports.addToCart = async (req, res, next) => {
     const variation = await ProductVariation.findByPk(variation_id, {
       include: [{ model: Product, as: "product" }],
     });
-    if (!variation) return res.status(404).json({ message: "Product variation not found" });
+    if (!variation)
+      return res.status(404).json({ message: "Product variation not found" });
 
-    if (!variation.is_available || Number(variation.stock_quantity) < Number(quantity)) {
-      return res.status(400).json({ message: "Product not available or insufficient stock" });
+    if (
+      !variation.is_available ||
+      Number(variation.stock_quantity) < Number(quantity)
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Product not available or insufficient stock" });
     }
 
     const cart = await getOrCreateCart(user_id);
@@ -145,27 +171,37 @@ exports.addToCart = async (req, res, next) => {
 exports.updateCartItem = async (req, res, next) => {
   try {
     const user_id = req.user.user_id;
-    const cart_item_id_param = req.params.cart_item_id;   // ← lấy từ params
-    const { variation_id, cart_item_id: cart_item_id_body, quantity } = req.body;
+    const cart_item_id_param = req.params.cart_item_id; // ← lấy từ params
+    const {
+      variation_id,
+      cart_item_id: cart_item_id_body,
+      quantity,
+    } = req.body;
 
-    if (quantity == null) return res.status(400).json({ message: "quantity is required" });
+    if (quantity == null)
+      return res.status(400).json({ message: "quantity is required" });
 
     const cart = await getOrCreateCart(user_id);
 
     const where = cart_item_id_param
       ? { cart_item_id: cart_item_id_param, cart_id: cart.cart_id }
-      : (cart_item_id_body
-          ? { cart_item_id: cart_item_id_body, cart_id: cart.cart_id }
-          : { cart_id: cart.cart_id, variation_id });
+      : cart_item_id_body
+      ? { cart_item_id: cart_item_id_body, cart_id: cart.cart_id }
+      : { cart_id: cart.cart_id, variation_id };
 
     const cartItem = await CartItem.findOne({
       where,
       include: [
-        { model: ProductVariation, as: "variation", include: [{ model: Product, as: "product" }] },
+        {
+          model: ProductVariation,
+          as: "variation",
+          include: [{ model: Product, as: "product" }],
+        },
       ],
     });
 
-    if (!cartItem) return res.status(404).json({ message: "Cart item not found" });
+    if (!cartItem)
+      return res.status(404).json({ message: "Cart item not found" });
 
     if (Number(quantity) <= 0) {
       await cartItem.destroy();
@@ -194,9 +230,13 @@ exports.removeCartItem = async (req, res, next) => {
     const cart = await getOrCreateCart(user_id);
 
     if (cart_item_id) {
-      await CartItem.destroy({ where: { cart_id: cart.cart_id, cart_item_id } });
+      await CartItem.destroy({
+        where: { cart_id: cart.cart_id, cart_item_id },
+      });
     } else if (variation_id) {
-      await CartItem.destroy({ where: { cart_id: cart.cart_id, variation_id } });
+      await CartItem.destroy({
+        where: { cart_id: cart.cart_id, variation_id },
+      });
     }
 
     return exports.getCart(req, res, next);
