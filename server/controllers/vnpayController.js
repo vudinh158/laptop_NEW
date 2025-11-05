@@ -102,7 +102,7 @@ async function ipn(req, res) {
           lock: t.LOCK.UPDATE,
         });
         if (order) {
-          order.status = "FAILED";
+          order.status = "cancelled";
           await order.save({ transaction: t });
         }
         return;
@@ -152,7 +152,7 @@ async function ipn(req, res) {
         payment.raw_ipn = req.query;
         await payment.save({ transaction: t });
 
-        order.status = "FAILED";
+        order.status = "pending";
         await order.save({ transaction: t });
       }
     });

@@ -10,5 +10,6 @@ router.post("/", orderController.createOrder)
 router.get("/", orderController.getUserOrders)
 router.get("/:order_id", orderController.getOrderDetail)
 router.put("/:order_id/cancel", orderController.cancelOrder)
+router.post("/preview", orderController.previewOrder);
 
 module.exports = router
