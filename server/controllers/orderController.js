@@ -287,19 +287,42 @@ exports.createOrder = async (req, res, next) => {
       { transaction: t }
     );
 
-    // 6) Clear cart nếu dùng cart
-    if (!(Array.isArray(items) && items.length > 0)) {
-      const cart = await Cart.findOne({
-        where: { user_id: req.user.user_id },
+    // 6) Clear cart (xoá các món đã chọn; nếu không truyền items → xoá toàn bộ)
+if (Array.isArray(items) && items.length > 0) {
+  const cart = await Cart.findOne({
+    where: { user_id: req.user.user_id },
+    transaction: t,
+  });
+
+  if (cart) {
+    const selectedVariationIds = items
+      .map((it) => Number(it.variation_id))
+      .filter(Boolean);
+
+    if (selectedVariationIds.length > 0) {
+      await CartItem.destroy({
+        where: {
+          cart_id: cart.cart_id,
+          variation_id: selectedVariationIds, // IN (...)
+        },
         transaction: t,
       });
-      if (cart) {
-        await CartItem.destroy({
-          where: { cart_id: cart.cart_id },
-          transaction: t,
-        });
-      }
     }
+  }
+} else {
+  // Không truyền items → checkout toàn bộ giỏ
+  const cart = await Cart.findOne({
+    where: { user_id: req.user.user_id },
+    transaction: t,
+  });
+  if (cart) {
+    await CartItem.destroy({
+      where: { cart_id: cart.cart_id },
+      transaction: t,
+    });
+  }
+}
+
 
     // 7) VNPAY redirect (bọc lỗi cấu hình)
     let redirect = null;
