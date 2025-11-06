@@ -124,7 +124,7 @@ async function ipn(req, res) {
         payment.paid_at = new Date();
         await payment.save({ transaction: t });
 
-        order.status = "PAID";
+        order.status = "processing";
         await order.save({ transaction: t });
       } else {
         // Thất bại → nếu bạn có cơ chế reserve trước đó, hoàn kho ở đây
@@ -152,7 +152,7 @@ async function ipn(req, res) {
         payment.raw_ipn = req.query;
         await payment.save({ transaction: t });
 
-        order.status = "pending";
+        order.status = "FAILED";
         await order.save({ transaction: t });
       }
     });
@@ -164,5 +164,45 @@ async function ipn(req, res) {
     return res.json({ RspCode: "99", Message: "Unknown error" });
   }
 }
+async function verifyRepay(req, res) {
+  try {
+    const VNP_HASHSECRET = process.env.VNP_HASHSECRET;
+    if (!VNP_HASHSECRET) {
+      return res.status(500).json({ message: "Missing VNP_HASHSECRET" });
+    }
 
-module.exports = { ipn };
+    // 1) Verify checksum như IPN
+    const params = { ...req.query };
+    const secureHash = params.vnp_SecureHash;
+    delete params.vnp_SecureHash;
+    if ("vnp_SecureHashType" in params) delete params.vnp_SecureHashType;
+
+    const signData = qs.stringify(sortObjectForVnp(params), { encode: false });
+    const check = hmacSHA512(VNP_HASHSECRET, signData);
+    if (check !== secureHash) {
+      return res.status(400).json({ ok: false, message: "Invalid checksum" });
+    }
+
+    // 2) Tìm payment theo txn_ref, trả trạng thái hiện tại (đã do IPN quyết định)
+    const txnRef = params.vnp_TxnRef;
+    const payment = await Payment.findOne({ where: { provider: "VNPAY", txn_ref: txnRef } });
+    if (!payment) {
+      return res.status(404).json({ ok: false, message: "Payment not found" });
+    }
+
+    const order = await Order.findOne({ where: { order_id: payment.order_id } });
+    if (!order) {
+      return res.status(404).json({ ok: false, message: "Order not found" });
+    }
+
+    return res.json({
+      ok: true,
+      order_id: order.order_id,
+      order_status: order.status,               // "processing" nếu success
+      payment_status: payment.payment_status,   // "completed" nếu success
+    });
+  } catch (e) {
+    return res.status(500).json({ ok: false, message: e.message });
+  }
+};
+module.exports = { ipn,verifyRepay  };
