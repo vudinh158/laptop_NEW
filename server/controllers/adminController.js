@@ -212,8 +212,20 @@ exports.updateOrderStatus = async (req, res, next) => {
 // User Management
 exports.getAllUsers = async (req, res, next) => {
   try {
-    const { page = 1, limit = 20 } = req.query
+    const { 
+      page = 1, 
+      limit = 20,
+      // ĐỌC THÊM tham số sort và order từ query
+      sort = "created_at", // Mặc định là created_at
+      order = "DESC"      // Mặc định là DESC
+    } = req.query
+
     const offset = (page - 1) * limit
+    
+    // Whitelist và kiểm tra các tham số sắp xếp
+    const allowedSort = ["user_id", "username", "created_at", "last_login", "email"]
+    const sortField = allowedSort.includes(sort) ? sort : "created_at"
+    const sortOrder = ["ASC", "DESC"].includes(order.toUpperCase()) ? order.toUpperCase() : "DESC"
 
     const { count, rows } = await User.findAndCountAll({
       include: [
@@ -225,7 +237,10 @@ exports.getAllUsers = async (req, res, next) => {
       attributes: { exclude: ["password_hash"] },
       limit: Number.parseInt(limit),
       offset: Number.parseInt(offset),
-      order: [["created_at", "DESC"]],
+      
+      // ÁP DỤNG SẮP XẾP MỚI
+      order: [[sortField, sortOrder]], 
+
     })
 
     res.json({
