@@ -1,13 +1,18 @@
-"use client"
-
-import { useState, useMemo } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { useRegister } from "../hooks/useAuth"
-import LoadingSpinner from "../components/LoadingSpinner"
+// client/app/pages/RegisterPage.jsx
+import { useState, useMemo, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useRegister } from "../hooks/useAuth";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "../store/slices/authSlice";
+import api from "../services/api";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { FcGoogle } from "react-icons/fc";
+import { FaFacebookSquare } from "react-icons/fa";
 
 export default function RegisterPage() {
-  const navigate = useNavigate()
-  const register = useRegister()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const register = useRegister();
 
   const [formData, setFormData] = useState({
     username: "",
@@ -16,20 +21,22 @@ export default function RegisterPage() {
     confirmPassword: "",
     full_name: "",
     phone_number: "",
-  })
-
-  const [fieldErrors, setFieldErrors] = useState({})
+  });
+  const [fieldErrors, setFieldErrors] = useState({});
 
   const handleChange = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
-    setFieldErrors((prev) => ({ ...prev, [e.target.name]: null }))
-  }
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setFieldErrors((prev) => ({ ...prev, [e.target.name]: null }));
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
-      setFieldErrors((prev) => ({ ...prev, confirmPassword: "Mật khẩu không khớp" }))
-      return
+      setFieldErrors((prev) => ({
+        ...prev,
+        confirmPassword: "Mật khẩu không khớp",
+      }));
+      return;
     }
     try {
       await register.mutateAsync({
@@ -38,35 +45,55 @@ export default function RegisterPage() {
         password: formData.password,
         full_name: formData.full_name.trim(),
         phone_number: formData.phone_number.trim(),
-      })
-      navigate("/login")
+      });
+      navigate("/login");
     } catch (error) {
-    const res = error?.response?.data
-    const next = {}
-    // Map 2 dạng:
-    // 1) Duplicate/tuỳ chỉnh: { errors: [{ field, message }] }
-    // 2) express-validator: { errors: [{ param, msg }] }
-    if (Array.isArray(res?.errors)) {
-      for (const err of res.errors) {
-        const fieldName = err.field || err.param || err.path
-        const message = err.message || err.msg
-        if (fieldName && message) next[fieldName] = message
+      const res = error?.response?.data;
+      const next = {};
+      if (Array.isArray(res?.errors)) {
+        for (const err of res.errors) {
+          const fieldName = err.field || err.param || err.path;
+          const message = err.message || err.msg;
+          if (fieldName && message) next[fieldName] = message;
+        }
       }
+      if (!Object.keys(next).length) {
+        next.general = res?.message || "Đăng ký thất bại. Vui lòng thử lại.";
+      }
+      setFieldErrors(next);
     }
-    if (!Object.keys(next).length) {
-      next.general = res?.message || "Đăng ký thất bại. Vui lòng thử lại."
-    }
-    setFieldErrors(next)
-  }
-  }
+  };
+
+  // ======= SOCIAL AUTH (Google/Facebook) =======
+  const BACKEND = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+
+  // Nhận token từ callback OAuth và hoàn tất đăng nhập
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+    if (!token) return;
+    (async () => {
+      try {
+        api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        const { data } = await api.get("/auth/me");
+        dispatch(setCredentials({ token, user: data.user }));
+        // Xoá token trên URL cho sạch
+        window.history.replaceState({}, "", "/register");
+        // Sau khi “đăng ký bằng mạng xã hội” xong -> vào trang chủ (hoặc profile tuỳ bạn)
+        navigate("/");
+      } catch (e) {
+        // noop
+      }
+    })();
+  }, [dispatch, navigate]);
 
   const dupHints = useMemo(() => {
-    const arr = []
-    if (fieldErrors.username) arr.push(fieldErrors.username)
-    if (fieldErrors.email) arr.push(fieldErrors.email)
-    if (fieldErrors.phone_number) arr.push(fieldErrors.phone_number)
-    return arr
-  }, [fieldErrors])
+    const arr = [];
+    if (fieldErrors.username) arr.push(fieldErrors.username);
+    if (fieldErrors.email) arr.push(fieldErrors.email);
+    if (fieldErrors.phone_number) arr.push(fieldErrors.phone_number);
+    return arr;
+  }, [fieldErrors]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -77,9 +104,46 @@ export default function RegisterPage() {
             <p className="mt-2 text-gray-600">Tạo tài khoản mới</p>
           </div>
 
+          {/* NÚT SOCIAL */}
+          <div className="space-y-3 mb-6">
+            <button
+              type="button"
+              onClick={() =>
+                window.location.assign(`${BACKEND}/api/auth/google`)
+              }
+              className="w-full border py-3 rounded-lg font-semibold flex items-center justify-center gap-3 hover:bg-gray-50"
+            >
+              <FcGoogle className="text-xl" aria-hidden="true" />
+              <span>Đăng ký bằng Google</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() =>
+                window.location.assign(`${BACKEND}/api/auth/facebook`)
+              }
+              className="w-full border py-3 rounded-lg font-semibold flex items-center justify-center gap-3 hover:bg-gray-50"
+            >
+              <FaFacebookSquare
+                className="text-xl text-[#1877F2]"
+                aria-hidden="true"
+              />
+              <span>Đăng ký bằng Facebook</span>
+            </button>
+
+            <div className="flex items-center gap-3 my-3">
+              <div className="h-px bg-gray-200 flex-1" />
+              <span className="text-gray-500 text-sm">hoặc</span>
+              <div className="h-px bg-gray-200 flex-1" />
+            </div>
+          </div>
+
+          {/* FORM ĐĂNG KÝ THƯỜNG */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Họ và tên</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Họ và tên
+              </label>
               <input
                 type="text"
                 name="full_name"
@@ -91,7 +155,9 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Username
+              </label>
               <input
                 type="text"
                 name="username"
@@ -103,11 +169,17 @@ export default function RegisterPage() {
                   fieldErrors.username ? "border-red-500" : "border-gray-300"
                 }`}
               />
-              {fieldErrors.username && <p className="text-sm text-red-600 mt-1">{fieldErrors.username}</p>}
+              {fieldErrors.username && (
+                <p className="text-sm text-red-600 mt-1">
+                  {fieldErrors.username}
+                </p>
+              )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email
+              </label>
               <input
                 type="email"
                 name="email"
@@ -119,7 +191,9 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Số điện thoại
+              </label>
               <input
                 type="tel"
                 name="phone_number"
@@ -131,7 +205,9 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Mật khẩu</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Mật khẩu
+              </label>
               <input
                 type="password"
                 name="password"
@@ -144,7 +220,9 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Xác nhận mật khẩu</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Xác nhận mật khẩu
+              </label>
               <input
                 type="password"
                 name="confirmPassword"
@@ -154,8 +232,10 @@ export default function RegisterPage() {
                 minLength={6}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-               {fieldErrors.confirmPassword && (
-                <p className="text-sm text-red-600 mt-1">{fieldErrors.confirmPassword}</p>
+              {fieldErrors.confirmPassword && (
+                <p className="text-sm text-red-600 mt-1">
+                  {fieldErrors.confirmPassword}
+                </p>
               )}
             </div>
 
@@ -187,7 +267,10 @@ export default function RegisterPage() {
           <div className="mt-6 text-center">
             <p className="text-gray-600">
               Đã có tài khoản?{" "}
-              <Link to="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+              <Link
+                to="/login"
+                className="text-blue-600 hover:text-blue-700 font-medium"
+              >
                 Đăng nhập
               </Link>
             </p>
@@ -195,5 +278,5 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

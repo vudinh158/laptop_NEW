@@ -1,44 +1,46 @@
-"use client"
-
-import { useState } from "react"
-import { Link, useNavigate, useSearchParams } from "react-router-dom"
-import { useLogin } from "../hooks/useAuth"
-import LoadingSpinner from "../components/LoadingSpinner"
+// client/app/pages/LoginPage.jsx
+import { useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useLogin } from "../hooks/useAuth";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { FcGoogle } from "react-icons/fc";
+import { FaFacebookSquare } from "react-icons/fa";
 
 export default function LoginPage() {
-  const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
-  const login = useLogin()
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const login = useLogin();
+  const BACKEND = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
   const [formData, setFormData] = useState({
     username: "",
     password: "",
-  })
+  });
 
   const handleChange = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
-  }
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
       await login.mutateAsync({
         username: formData.username.trim(),
         password: formData.password,
-      })
-      const redirect = searchParams.get("redirect") || "/"
-      navigate(redirect)
+      });
+      const redirect = searchParams.get("redirect") || "/";
+      navigate(redirect);
     } catch (error) {
       // lỗi đã hiển thị dưới form
     }
-  }
-  
+  };
+
   // helper lấy message lỗi từ BE
-    const errorMsg =
+  const errorMsg =
     login.error?.response?.data?.message ||
     login.error?.message ||
-    (login.error ? "Tên đăng nhập hoặc mật khẩu không đúng" : "")
-    
+    (login.error ? "Tên đăng nhập hoặc mật khẩu không đúng" : "");
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
@@ -49,8 +51,10 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Username
+              </label>
               <input
                 type="text"
                 name="username"
@@ -63,7 +67,9 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Mật khẩu</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Mật khẩu
+              </label>
               <input
                 type="password"
                 name="password"
@@ -74,7 +80,9 @@ export default function LoginPage() {
               />
             </div>
 
-            {login.isError && <div className="text-red-600 text-sm">{errorMsg}</div>}
+            {login.isError && (
+              <div className="text-red-600 text-sm">{errorMsg}</div>
+            )}
 
             <button
               type="submit"
@@ -90,12 +98,48 @@ export default function LoginPage() {
                 "Đăng nhập"
               )}
             </button>
+            {/* NÚT SOCIAL */}
+            <div className="space-y-3 mb-6">
+              <button
+                type="button"
+                onClick={() =>
+                  window.location.assign(`${BACKEND}/api/auth/google`)
+                }
+                className="w-full border py-3 rounded-lg font-semibold flex items-center justify-center gap-3 hover:bg-gray-50"
+              >
+                <FcGoogle className="text-xl" aria-hidden="true" />
+                <span>Đăng ký bằng Google</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  window.location.assign(`${BACKEND}/api/auth/facebook`)
+                }
+                className="w-full border py-3 rounded-lg font-semibold flex items-center justify-center gap-3 hover:bg-gray-50"
+              >
+                <FaFacebookSquare
+                  className="text-xl text-[#1877F2]"
+                  aria-hidden="true"
+                />
+                <span>Đăng ký bằng Facebook</span>
+              </button>
+
+              <div className="flex items-center gap-3 my-3">
+                <div className="h-px bg-gray-200 flex-1" />
+                <span className="text-gray-500 text-sm">hoặc</span>
+                <div className="h-px bg-gray-200 flex-1" />
+              </div>
+            </div>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-gray-600">
               Chưa có tài khoản?{" "}
-              <Link to="/register" className="text-blue-600 hover:text-blue-700 font-medium">
+              <Link
+                to="/register"
+                className="text-blue-600 hover:text-blue-700 font-medium"
+              >
                 Đăng ký ngay
               </Link>
             </p>
@@ -103,5 +147,5 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
