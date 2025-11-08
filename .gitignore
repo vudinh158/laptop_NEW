@@ -17,11 +17,18 @@ client/dist/
 server/dist/
 
 # === Env / local config ===
+# (rất quan trọng)
 .env
 .env.*
 !.env.example
+client/.env
+client/.env.*
+!client/.env.example
+server/.env
+server/.env.*
+!server/.env.example
 
-# === OS / IDE r�c ===
+# === OS / IDE r�c ===
 .DS_Store
 Thumbs.db
 *.swp

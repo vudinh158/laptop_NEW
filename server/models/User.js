@@ -1,3 +1,4 @@
+// server/models/User.js
 const { DataTypes } = require("sequelize")
 const sequelize = require("../config/database")
 const bcrypt = require("bcryptjs")
@@ -25,14 +26,14 @@ const User = sequelize.define(
     },
     password_hash: {
       type: DataTypes.STRING(255),
-      allowNull: false,
+      allowNull: true,
     },
     full_name: {
       type: DataTypes.STRING(100),
     },
     phone_number: {
       type: DataTypes.STRING(20),
-      allowNull : false,
+      allowNull : true,
       unique : true,
       vialidate : {
         is: /^[+0-9][0-9\s\-()]{6,}$/i,
@@ -51,6 +52,8 @@ const User = sequelize.define(
     last_login: {
       type: DataTypes.DATE,
     },
+        oauth_provider: { type: DataTypes.STRING(20) }, // 'google' | 'facebook'
+    oauth_id: { type: DataTypes.STRING(191) }, // sub/id từ provider
   },
   {
     tableName: "users",
