@@ -21,12 +21,7 @@ server/dist/
 .env
 .env.*
 !.env.example
-client/.env
-client/.env.*
-!client/.env.example
-server/.env
-server/.env.*
-!server/.env.example
+
 
 # === OS / IDE r�c ===
 .DS_Store
