@@ -28,6 +28,8 @@ const authenticateToken = async (req, res, next) => {
     }
 
     req.user = user
+    req.userId = user.user_id;              // ✅ thêm
+    req.userRoles = user.Roles?.map(r=>r.role_name) || []; // ✅ thêm
     next()
   } catch (error) {
     return res.status(403).json({ message: "Invalid or expired token" })
