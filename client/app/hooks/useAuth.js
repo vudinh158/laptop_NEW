@@ -2,7 +2,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
 import api, { authAPI } from "../services/api";
-import { setCredentials, logout  } from "../store/slices/authSlice";
+import { setCredentials, logout } from "../store/slices/authSlice";
 import { clearCart } from "../store/slices/cartSlice";
 
 // --- Helper: apply/remove Authorization header on axios instance ---
@@ -39,13 +39,18 @@ export function useLogin() {
       // data: { token, user, ... }
       setAuthHeader(data.token);
       localStorage.setItem("token", data.token);
+      const roles =
+        data?.user?.roles ||
+        (data?.user?.Roles || []).map((r) => r.role_name) ||
+        [];
+      localStorage.setItem("roles", JSON.stringify(roles));
       dispatch(setCredentials({ token: data.token, user: data.user }));
       // Làm tươi lại info user nếu bạn đang dùng
-        qc.invalidateQueries({ queryKey: ["me"] });
-  qc.invalidateQueries({ queryKey: ["currentUser"] });
-  // NEW: cập nhật giỏ ngay sau login
-  qc.invalidateQueries({ queryKey: ["cart"] });
-  qc.refetchQueries({ queryKey: ["cart"] });
+      qc.invalidateQueries({ queryKey: ["me"] });
+      qc.invalidateQueries({ queryKey: ["currentUser"] });
+      // NEW: cập nhật giỏ ngay sau login
+      qc.invalidateQueries({ queryKey: ["cart"] });
+      qc.refetchQueries({ queryKey: ["cart"] });
     },
   });
 }
@@ -74,6 +79,13 @@ export function useCurrentUser() {
       return data;
     },
     retry: false,
+    onSuccess: (data) => {
+      const roles =
+        data?.user?.roles ||
+        (data?.user?.Roles || []).map((r) => r.role_name) ||
+        [];
+      localStorage.setItem("roles", JSON.stringify(roles));
+    },
     onError: (err) => {
       // Nếu token hết hạn/không hợp lệ → coi như logout “mềm”
       if (err?.response?.status === 401) {
@@ -82,7 +94,7 @@ export function useCurrentUser() {
         localStorage.removeItem("token");
         localStorage.removeItem("roles");
         dispatch(clearCart());
-        dispatch(logout ());
+        dispatch(logout());
         // dọn cache để không gọi lại cart/me
         qc.removeQueries({ queryKey: ["cart"] });
         qc.removeQueries({ queryKey: ["me"] });
@@ -107,7 +119,7 @@ export function useLogout() {
 
       // 2) Dọn Redux
       dispatch(clearCart());
-      dispatch(logout ());
+      dispatch(logout());
 
       // 3) Dọn cache query để không tự fetch lại giỏ
       qc.removeQueries({ queryKey: ["cart"] });

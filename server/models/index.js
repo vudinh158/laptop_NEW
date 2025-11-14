@@ -87,6 +87,10 @@ Question.belongsTo(User, { foreignKey: "user_id", as: "user" })
 Question.hasMany(Answer, { foreignKey: "question_id", as: "answers" })
 Answer.belongsTo(Question, { foreignKey: "question_id" })
 
+// ✅ tự liên kết
+Question.belongsTo(Question, { as: "parent",   foreignKey: "parent_question_id" });
+Question.hasMany(Question,   { as: "children", foreignKey: "parent_question_id" });
+
 // User - Answer (One-to-Many)
 User.hasMany(Answer, { foreignKey: "user_id" })
 Answer.belongsTo(User, { foreignKey: "user_id", as: "user" })

@@ -1,3 +1,4 @@
+// server/controllers/shippingController.js
 const { quoteShipping } = require("../services/shippingService");
 
 exports.getQuote = async (req, res) => {

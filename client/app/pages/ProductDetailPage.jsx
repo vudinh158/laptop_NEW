@@ -1,3 +1,4 @@
+// client/app/pages/ProductDetailPage.jsx
 "use client";
 
 import { useState } from "react";
@@ -69,7 +70,17 @@ export default function ProductDetailPage() {
 
   // Chỉ lấy tên, không phụ thuộc matched
   const productName = product.product_name || "";
+  const currentUser =
+    useSelector((s) => s.auth?.user) ||
+    (() => {
+      try {
+        return JSON.parse(localStorage.getItem("user") || "null");
+      } catch {
+        return null;
+      }
+    })();
 
+  const currentUserId = currentUser?.user_id ?? null;
   // unique options lấy từ variations của sản phẩm hiện tại
   const uniqueOptions = ATTRS.reduce((acc, key) => {
     const set = new Set(
@@ -257,7 +268,17 @@ export default function ProductDetailPage() {
     }
     return "vừa xong";
   };
-
+  const canShowFollowUp = (q) => {
+    // Điều kiện:
+    // - đã đăng nhập
+    // - câu gốc đã được trả lời
+    // - chưa có child
+    // - chủ câu gốc là currentUser
+    const noChild = (q.children?.length || 0) === 0;
+    return (
+      isAuthed && q.is_answered && noChild && q.user?.user_id === currentUserId
+    );
+  };
   const navigate = useNavigate();
   const isAuthenticated = useSelector((s) => s.auth?.isAuthenticated);
   useEffect(() => {
@@ -273,8 +294,11 @@ export default function ProductDetailPage() {
 
   const handleAddToCart = () => {
     const r = getValidationReason();
-    if (r) { alert(reasonToMessage(r)); return; }
-  
+    if (r) {
+      alert(reasonToMessage(r));
+      return;
+    }
+
     if (!product) return;
     // BẮT BUỘC: phải chọn đúng biến thể
     if (!isReady || !matched) {
@@ -314,8 +338,11 @@ export default function ProductDetailPage() {
 
   const handleBuyNow = () => {
     const r = getValidationReason();
-    if (r) { alert(reasonToMessage(r)); return; }
-    
+    if (r) {
+      alert(reasonToMessage(r));
+      return;
+    }
+
     if (!isReady) return; // chưa chọn đủ cấu hình thì không cho mua
 
     const qty = Math.max(1, Number(quantity) || 1);
@@ -871,6 +898,99 @@ export default function ProductDetailPage() {
                           </div>
                         );
                       })}
+                      {(q.children || []).map((c) => (
+                        <div
+                          key={c.question_id}
+                          className="bg-white border border-gray-200 rounded-lg p-3"
+                        >
+                          <div className="flex items-start gap-2">
+                            <Avatar
+                              name={
+                                c.user?.full_name || c.user?.username || "Bạn"
+                              }
+                            />
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <span className="font-semibold text-gray-900">
+                                  {c.user?.full_name ||
+                                    c.user?.username ||
+                                    "Bạn"}
+                                </span>
+                                <span className="text-xs text-gray-500">
+                                  • {timeAgo(c.created_at)}
+                                </span>
+                              </div>
+                              <div className="mt-1 text-gray-800 whitespace-pre-wrap">
+                                {c.question_text}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {canShowFollowUp(q) && (
+                        <div className="bg-white border border-gray-200 rounded-lg p-3">
+                          <textarea
+                            value={answerDrafts[`fu_${q.question_id}`] || ""}
+                            onChange={(e) =>
+                              setAnswerDrafts((s) => ({
+                                ...s,
+                                [`fu_${q.question_id}`]: e.target.value,
+                              }))
+                            }
+                            rows={2}
+                            placeholder="Phản hồi thêm cho câu hỏi của bạn…"
+                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                          <div className="mt-2 text-right">
+                            <button
+                              onClick={async () => {
+                                const text = (
+                                  answerDrafts[`fu_${q.question_id}`] || ""
+                                ).trim();
+                                if (!text) return;
+                                try {
+                                  const resp = await fetch(
+                                    `/api/products/${id}/questions`,
+                                    {
+                                      method: "POST",
+                                      headers: {
+                                        "Content-Type": "application/json",
+                                        Authorization: `Bearer ${token}`,
+                                      },
+                                      body: JSON.stringify({
+                                        question_text: text,
+                                        parent_question_id: q.question_id, // ✅ follow-up 1 tầng
+                                      }),
+                                    }
+                                  );
+                                  if (!resp.ok) {
+                                    const e = await resp
+                                      .json()
+                                      .catch(() => ({}));
+                                    throw new Error(
+                                      e?.message || "Follow-up failed"
+                                    );
+                                  }
+                                  setAnswerDrafts((s) => ({
+                                    ...s,
+                                    [`fu_${q.question_id}`]: "",
+                                  }));
+                                  window.location.reload(); // có thể thay bằng refetch detail
+                                } catch (e) {
+                                  alert(e.message);
+                                }
+                              }}
+                              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 disabled:opacity-50"
+                            >
+                              Gửi follow-up
+                            </button>
+                          </div>
+                          <div className="text-xs text-gray-500 mt-1">
+                            (Chỉ cho phép 1 follow-up; follow-up chỉ thực hiện
+                            sau khi câu gốc đã được trả lời)
+                          </div>
+                        </div>
+                      )}
 
                       {/* Form trả lời (chỉ hiển thị nếu có quyền) */}
                       {canAnswer && (
