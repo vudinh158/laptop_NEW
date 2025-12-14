@@ -10,6 +10,9 @@ const {
   User,
 } = require("../models");
 const { Op, Sequelize } = require("sequelize");
+const axios = require("axios");
+const BASE = process.env.RECO_API_BASE || "http://127.0.0.1:8000";
+const TIMEOUT = +(process.env.RECO_TIMEOUT_MS || 7000);
 
 // helper: nhận string CSV, array, hoặc single → trả về mảng số
 const parseIdList = (input) => {
@@ -130,41 +133,88 @@ exports.getProducts = async (req, res, next) => {
   }
 };
 
-// Get product by ID or slug
 exports.getProductDetail = async (req, res, next) => {
   try {
     const { id } = req.params;
-
     const where = isNaN(id) ? { slug: id } : { product_id: id };
 
     const product = await Product.findOne({
       where: { ...where, is_active: true },
-      attributes: { include: ["specs"] },
+
+      // ✔ thêm các computed fields để FE dùng luôn
+      attributes: {
+        include: [
+          "specs",
+          // primaryVariationId: ưu tiên is_primary, còn hàng nhiều, giá thấp
+          [
+            Sequelize.literal(`(
+              SELECT pv.variation_id
+              FROM product_variations pv
+              WHERE pv.product_id = "Product".product_id
+                AND pv.is_available = true
+              ORDER BY pv.is_primary DESC, pv.stock_quantity DESC, pv.price ASC
+              LIMIT 1
+            )`),
+            "primaryVariationId",
+          ],
+          // (tuỳ chọn) minPrice để hiện giá nhanh ngoài Home/Card
+          [
+            Sequelize.literal(`(
+              SELECT MIN(pv2.price)
+              FROM product_variations pv2
+              WHERE pv2.product_id = "Product".product_id
+                AND pv2.is_available = true
+            )`),
+            "minPrice",
+          ],
+        ],
+      },
 
       include: [
         { model: Category, as: "category" },
         { model: Brand, as: "brand" },
-        { model: ProductVariation, as: "variations" },
+
+        // ✔ variations: chọn các cột cần thiết + sắp xếp hợp lý
+        {
+          model: ProductVariation,
+          as: "variations",
+          required: false,
+          // Nếu muốn chỉ trả về cấu hình còn bán, bật dòng dưới:
+          // where: { is_available: true },
+          attributes: [
+            "variation_id",
+            "price",
+            "stock_quantity",
+            "is_available",
+            "is_primary",
+            "processor",
+            "ram",
+            "storage",
+            "graphics_card",
+            "screen_size",
+            "color",
+          ],
+        },
+
+        // Ảnh: lấy theo thứ tự display_order
         {
           model: ProductImage,
           as: "images",
-          order: [["display_order", "ASC"]],
+          required: false,
+          // order không đặt trong include, đặt ở top-level order phía dưới
         },
+
         { model: Tag, through: { attributes: [] } },
+
         {
           model: Question,
           as: "questions",
-          attributes: [
-            "question_id",
-            "question_text",
-            "is_answered",
-            "created_at",
-          ],
+          attributes: ["question_id", "question_text", "is_answered", "created_at"],
           include: [
             {
               model: User,
               as: "user",
-              attributes: ["user_id", "username", "full_name"], // ẩn email/password
+              attributes: ["user_id", "username", "full_name"],
             },
             {
               model: Answer,
@@ -181,28 +231,35 @@ exports.getProductDetail = async (req, res, next) => {
           ],
         },
       ],
+
+      // ✔ sắp xếp: ảnh theo display_order, hỏi đáp theo thời gian,
+      //   variations mình sẽ sort ở FE theo is_primary/stock/price nếu muốn
       order: [
         [{ model: ProductImage, as: "images" }, "display_order", "ASC"],
-        [{ model: Question, as: "questions" }, "created_at", "DESC"], // câu hỏi mới nhất trước
-        [
-          { model: Question, as: "questions" },
-          { model: Answer, as: "answers" },
-          "created_at",
-          "ASC", // câu trả lời cũ trước
-        ],
+        [{ model: Question, as: "questions" }, "created_at", "DESC"],
+        [{ model: Question, as: "questions" }, { model: Answer, as: "answers" }, "created_at", "ASC"],
       ],
     });
 
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
-    }
+    if (!product) return res.status(404).json({ message: "Product not found" });
 
-    // Increment view count
-    await product.increment("view_count");
+    // Tăng view count (best-effort)
+    product.increment("view_count").catch(() => {});
 
-    // Bảo vệ: nếu specs null thì trả về {}
+    // Chuẩn hóa JSON trả ra
     const json = product.toJSON();
     if (json.specs == null) json.specs = {};
+
+    // ✔ Phòng trường hợp subquery không tìm được primaryVariationId
+    if (!json.primaryVariationId && Array.isArray(json.variations) && json.variations.length) {
+      const sorted = [...json.variations].sort((a, b) => {
+        // is_primary DESC, stock DESC, price ASC
+        if (+b.is_primary !== +a.is_primary) return (+b.is_primary) - (+a.is_primary);
+        if ((b.stock_quantity ?? 0) !== (a.stock_quantity ?? 0)) return (b.stock_quantity ?? 0) - (a.stock_quantity ?? 0);
+        return (a.price ?? Number.MAX_SAFE_INTEGER) - (b.price ?? Number.MAX_SAFE_INTEGER);
+      });
+      json.primaryVariationId = sorted[0]?.variation_id;
+    }
 
     return res.json({ product: json });
   } catch (error) {
@@ -255,66 +312,209 @@ exports.getSearchSuggestions = async (req, res, next) => {
 };
 
 // Get recommended products
-exports.getRecommendedProducts = async (req, res, next) => {
-  try {
-    const { product_id } = req.params;
-    const { limit = 4 } = req.query;
+// exports.getRecommendedProducts = async (req, res, next) => {
+//   try {
+//     const { product_id } = req.params;
+//     const { limit = 4 } = req.query;
 
-    const currentProduct = await Product.findByPk(product_id);
-    if (!currentProduct) {
-      return res.status(404).json({ message: "Product not found" });
-    }
+//     const currentProduct = await Product.findByPk(product_id);
+//     if (!currentProduct) {
+//       return res.status(404).json({ message: "Product not found" });
+//     }
 
-    // Get products from same category or brand
-    const products = await Product.findAll({
-      where: {
-        product_id: { [Op.ne]: product_id },
-        is_active: true,
-        [Op.or]: [
-          { category_id: currentProduct.category_id },
-          { brand_id: currentProduct.brand_id },
-        ],
+//     // Get products from same category or brand
+//     const products = await Product.findAll({
+//       where: {
+//         product_id: { [Op.ne]: product_id },
+//         is_active: true,
+//         [Op.or]: [
+//           { category_id: currentProduct.category_id },
+//           { brand_id: currentProduct.brand_id },
+//         ],
+//       },
+//       include: [
+//         {
+//           model: Category,
+//           as: "category",
+//           attributes: ["category_id", "category_name"],
+//         },
+//         {
+//           model: Brand,
+//           as: "brand",
+//           attributes: ["brand_id", "brand_name", "logo_url"],
+//         },
+//         // ĐÃ SỬA: BẮT BUỘC INCLUDE VARIATIONS VÀ IMAGES
+//         {
+//           model: ProductVariation,
+//           as: "variations",
+//           attributes: [
+//             "variation_id",
+//             "price",
+//             "stock_quantity",
+//           ],
+//           limit: 1,
+//         },
+//         {
+//           model: ProductImage,
+//           as: "images",
+//           where: { is_primary: true },
+//           required: false,
+//           attributes: ["image_url"],
+//         },
+//       ],
+//       limit: Number.parseInt(limit),
+//       order: [
+//         ["rating_average", "DESC"],
+//         ["view_count", "DESC"],
+//       ],
+//     });
+
+//     res.json({ products });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
+// Get recommend
+async function fetchProductMeta(productIds = []) {
+  if (!productIds.length) return {};
+
+  const rows = await Product.findAll({
+    where: { product_id: { [Op.in]: productIds } },
+    attributes: [
+      "product_id",
+      // đổi "product_name" thành "name" nếu model của bạn map field -> name
+      "product_name",
+      "slug",
+      "rating_average",
+      "thumbnail_url",
+    ],
+    include: [
+      {
+        model: ProductImage,
+        as: "images",
+        required: false,
+        attributes: ["image_url", "is_primary", "display_order"],
       },
-      include: [
-        {
-          model: Category,
-          as: "category",
-          attributes: ["category_id", "category_name"],
-        },
-        {
-          model: Brand,
-          as: "brand",
-          attributes: ["brand_id", "brand_name", "logo_url"],
-        },
-        // ĐÃ SỬA: BẮT BUỘC INCLUDE VARIATIONS VÀ IMAGES
-        {
-          model: ProductVariation,
-          as: "variations",
-          attributes: [
-            "variation_id",
-            "price",
-            "stock_quantity",
-          ],
-          limit: 1,
-        },
-        {
-          model: ProductImage,
-          as: "images",
-          where: { is_primary: true },
-          required: false,
-          attributes: ["image_url"],
-        },
-      ],
-      limit: Number.parseInt(limit),
-      order: [
-        ["rating_average", "DESC"],
-        ["view_count", "DESC"],
-      ],
+    ],
+    order: [
+      [{ model: ProductImage, as: "images" }, "is_primary", "DESC"],
+      [{ model: ProductImage, as: "images" }, "display_order", "ASC"],
+    ],
+  });
+
+  const map = {};
+  for (const r of rows) {
+    const j = r.toJSON();
+    const img = j.images?.[0];
+    map[j.product_id] = {
+      product_name: j.product_name,              // hoặc j.name nếu model đặt alias
+      slug: j.slug,
+      thumbnail_url: j.thumbnail_url || null,    // ← ưu tiên thumbnail_url từ products
+      image: j.thumbnail_url || img?.image_url || null, // fallback sang ảnh primary
+      rating_average: j.rating_average || null,
+    };
+  }
+  return map;
+}
+
+exports.getRecommendedByVariation = async (req, res) => {
+  const variationId = Number(req.params.variation_id);
+  if (!variationId) return res.status(400).json({ products: [], error: "invalid variation_id" });
+
+  try {
+    const resp = await axios.get(`${BASE}/recommend`, {
+      params: { variation_id: variationId },
+      timeout: TIMEOUT,
+      validateStatus: () => true, // nhận cả 4xx/5xx để đọc body
     });
 
-    res.json({ products });
-  } catch (error) {
-    next(error);
+    if (resp.status >= 400) {
+      return res.status(502).json({
+        products: [],
+        basedOn: { variationId },
+        source: "knn",
+        error: `upstream_${resp.status}`,
+        upstream: resp.data,
+      });
+    }
+
+    const payload = resp.data;
+
+    // ---- HỖ TRỢ NHIỀU KIỂU SHAPE ----
+    // 1) Chuẩn: { items: [...] }
+    // 2) Debug mode bạn đang có: { debug: [...] }
+    // 3) Hiếm gặp: payload là một mảng luôn
+    let raw = Array.isArray(payload?.items)
+      ? payload.items
+      : Array.isArray(payload?.debug)
+      ? payload.debug
+      : Array.isArray(payload)
+      ? payload
+      : [];
+
+    // (tuỳ chọn) Gộp trùng theo product_id → giữ biến thể có score cao nhất
+    // score mặc định lấy performance_score nếu có, rơi về 0
+    const bestByProduct = new Map();
+    for (const it of raw) {
+      const pid = it.product_id ?? it.id;
+      const score =
+        it.score ??
+        it.performance_score ??
+        it.rank_score ??
+        0;
+
+      const prev = bestByProduct.get(pid);
+      if (!prev || score > prev._score) {
+        bestByProduct.set(pid, { ...it, _score: score });
+      }
+    }
+    raw = Array.from(bestByProduct.values());
+
+    // Lấy meta từ DB cho các product_id (ảnh, slug, name)
+    const productIds = raw.map((x) => x.product_id).filter(Boolean);
+    const metaMap = await fetchProductMeta(productIds);
+
+    // Map về shape FE cần
+    const products = raw.map((it) => {
+      const meta = metaMap[it.product_id] || {};
+      return {
+        id: it.product_id,                    // FE card link theo product
+        variation_id: it.variation_id,        // để deep-link ?v= nếu muốn
+        name: meta.product_name || it.product_name,   // ưu tiên DB -> rơi về từ Flask
+        image: meta.thumbnail_url,                    // ưu tiên ảnh DB (ổn định)
+        slug: meta.slug,
+        price: it.price,
+        score: it.score ?? it.performance_score ?? null,
+        rating_average: meta.rating_average,
+        // (tuỳ) thêm nguồn giải thích:
+        explain: {
+          source: it.source,                  // "fresh" / "indexed"
+          score_source: it.score_source,      // "fresh:benchmark", ...
+          cpu_source: it.cpu_source,
+          gpu_source: it.gpu_source,
+        },
+      };
+    });
+
+    // Sắp xếp theo score giảm dần (nếu có)
+    products.sort((a, b) => (b.score ?? -1) - (a.score ?? -1));
+
+    return res.json({
+      products,
+      basedOn: { variationId },
+      generated_at: payload.generated_at || new Date().toISOString(),
+      source: "knn",
+    });
+  } catch (e) {
+    console.error("getRecommendedByVariation EX:", e);
+    return res.status(502).json({
+      products: [],
+      basedOn: { variationId },
+      source: "knn",
+      error: "adapter_exception",
+      detail: { message: e.message, code: e.code, base: BASE },
+    });
   }
 };
 

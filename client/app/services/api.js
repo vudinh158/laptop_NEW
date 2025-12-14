@@ -68,7 +68,7 @@ export const authAPI = {
 export const productsAPI = {
   getProducts: (params) => api.get("/products", { params }),
   getProductById: (id) => api.get(`/products/${id}`),
-  getRecommendations: (id) => api.get(`/products/${id}/recommendations`),
+  getRecommendations: (id) => api.get(`/products/variations/${id}/recommendations`),
 };
 
 // Cart API

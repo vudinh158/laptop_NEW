@@ -61,21 +61,19 @@ export function useSearchSuggestions(query) {
   });
 }
 
-export function useRecommendedProducts(productId) {
+export function useRecommendedByVariation(variationId) {
   return useQuery({
-    queryKey: ["recommended", productId ?? "none"],
+    queryKey: ["reco-by-variation", variationId ?? "none"],
     queryFn: async () => {
-      if (!productId) return { products: [] };
-      try {
-        const { data } = await api.get(
-          `/products/${productId}/recommendations`
-        );
-        return data;
-      } catch (e) {
-        return { products: [] }; // an toàn UI khi BE lỗi
+      if (!variationId) {
+        return { products: [], basedOn: { variationId: 0 }, source: "knn" };
       }
+      const res = await api.get(`/products/variations/${variationId}/recommendations`);
+      return res.data; // { products, basedOn, generated_at, source }
     },
-    enabled: !!productId,
+    enabled: !!variationId,
+    keepPreviousData: true,
+    staleTime: 60 * 1000, // 1 phút
   });
 }
 

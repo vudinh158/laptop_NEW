@@ -39,6 +39,7 @@ app.get("/api/health", (req, res) => {
 // Error handler
 app.use(errorHandler)
 
+
 // Database connection and server start
 const PORT = process.env.PORT || 5000
 

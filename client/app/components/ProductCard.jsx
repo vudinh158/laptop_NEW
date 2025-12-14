@@ -33,24 +33,34 @@ export default function ProductCard({ product }) {
   const productName = product.product_name; // FIX: Sử dụng product_name
   
   const defaultVariation = product.variations?.[0]
+
+  const initialVariationId =
+  product.primaryVariationId ??
+  defaultVariation?.variation_id ??
+  undefined;
+
+  // Link ưu tiên slug, fallback id
+  const slugOrId = product.slug || productId;
+
+  // Query ?v=<variation_id> để mở đúng cấu hình
+  const variationQuery = initialVariationId ? `?v=${initialVariationId}` : "";
+
+  // Ảnh đại diện
+  const imageUrl = product.images?.[0]?.image_url || product.thumbnail_url ||"/placeholder.svg";
+
   
-  // FIX: Lấy giá từ defaultVariation, nếu không có thì dùng base_price
-  const price = Number(defaultVariation?.price || product.base_price || 0); 
-  
-  // FIX: Lấy discount từ Product base
-  const discount = Number(product.discount_percentage || 0); 
-  
+  const price = Number(defaultVariation?.price || product.base_price || 0);
+  const discount = Number(product.discount_percentage || 0);
   const finalPrice = price * (1 - discount / 100);
   
   // Dữ liệu rating và review
   const average_rating = Number(product.rating_average || 0); 
   const review_count = Number(product.review_count || 0);
   
-  // FIX HIỂN THỊ ẢNH: Lấy ảnh từ mảng images hoặc thumbnail_url
-  const imageUrl = product.images?.[0]?.image_url || product.thumbnail_url || "/placeholder.svg" 
+
 
   return (
-    <Link to={`/products/${productId}`} className="group"> 
+    <Link to={`/products/${slugOrId}${variationQuery}`} className="group"> 
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
         <div className="relative aspect-square overflow-hidden bg-gray-100">
           <img
