@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useProduct, useRecommendedByVariation } from "../hooks/useProducts";
@@ -15,9 +15,9 @@ import { useSelector } from "react-redux";
 import CompareBar from "../components/CompareBar";
 import CompareModal from "../components/CompareModal";
 import ProductRecommendations from "../components/ProductRecommendations";
-import { Reply, MessageSquare, ChevronDown } from "lucide-react";
+import { Reply, MessageSquare, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+
 
 export default function ProductDetailPage() {
 
@@ -48,9 +48,28 @@ export default function ProductDetailPage() {
   const [specOpen, setSpecOpen] = useState(false);
 
   const { data: recommendations } = useRecommendedByVariation(selectedVariation?.variation_id);
+  const scrollRef = useRef(null);
 
   const product = productData?.product || 0; // Trích xuất object product
 
+  const galleryImages = product.images || [];
+  let allImages = [...galleryImages];
+
+  if (product.thumbnail_url) {
+    // Kiểm tra xem thumbnail có bị trùng với ảnh nào trong gallery không để tránh hiển thị 2 lần
+    const isDuplicate = galleryImages.some(img => img.image_url === product.thumbnail_url);
+
+    if (!isDuplicate) {
+      // Thêm object thumbnail vào đầu mảng (unshift)
+      allImages.unshift({
+        image_id: 'thumb-main', // ID giả định duy nhất cho key React
+        image_url: product.thumbnail_url,
+        is_primary: true
+      });
+    }
+  }
+
+  const activeImage = allImages[selectedImage]?.image_url || product.thumbnail_url || "/placeholder.svg";
   // const handleAddToCart = () => {
   //   if (!selectedVariation || !product) return;
 
@@ -67,6 +86,18 @@ export default function ProductDetailPage() {
   //     })
   //   );
   // };
+
+    const handleScroll = (direction) => {
+    if (scrollRef.current) {
+      const { current } = scrollRef;
+      const scrollAmount = 200; 
+      if (direction === "left") {
+        current.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+      } else {
+        current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+      }
+    }
+  };
 
   // FIX: Sử dụng thuộc tính product_id, product_name
   const currentVariation = selectedVariation || product.variations?.[0];
@@ -104,6 +135,7 @@ export default function ProductDetailPage() {
     matchVariation(v, sel)
   );
 
+  const requiredKeys = ATTRS.filter((k) => (uniqueOptions[k] || []).length > 0);
 
   // Người dùng đã chọn đầy đủ các option cần thiết?
   const allSelected = requiredKeys.every((k) => !!sel[k]);
@@ -274,25 +306,26 @@ const Avatar = ({ name }) => {
   };
   const navigate = useNavigate();
   useEffect(() => {
-  if (!selectedVariation && product?.variations?.length) {
-    setSelectedVariation(product.variations[0]);
-  }
-}, [product?.variations]); // chỉ chạy khi variations đổi
-// const handleAddToCart = () => {
-//   if (!product) return;
-//   const variation = selectedVariation || product.variations?.[0];
-//   if (!variation) return; // phòng trường hợp sản phẩm không có biến thể
+    if (product?.variations?.length) {
+      setSelectedImage(0);
+      setSelectedVariation(product.variations[0]);
+    }
+  }, [product?.variations]);
+  // const handleAddToCart = () => {
+  //   if (!product) return;
+  //   const variation = selectedVariation || product.variations?.[0];
+  //   if (!variation) return; // phòng trường hợp sản phẩm không có biến thể
 
 
-//   dispatch(
-//     addItem({
-//       product_id: product.product_id,
-//       variation_id: variation.variation_id,
-//       quantity: Math.max(1, Number(quantity) || 1), // +1 (hoặc theo ô số lượng)
-//       product: { ...product, variation },
-//     })
-//   );
-// };
+  //   dispatch(
+  //     addItem({
+  //       product_id: product.product_id,
+  //       variation_id: variation.variation_id,
+  //       quantity: Math.max(1, Number(quantity) || 1), // +1 (hoặc theo ô số lượng)
+  //       product: { ...product, variation },
+  //     })
+  //   );
+  // };
 
   const handleAddToCart = () => {
     const r = getValidationReason();
@@ -443,39 +476,74 @@ const Avatar = ({ name }) => {
             products={compareItems}
           />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* CỘT TRÁI: HÌNH ẢNH */}
             <div>
-              <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-4">
+              {/* 1. Ảnh chính lớn */}
+              <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-4 border border-gray-200 relative">
                 <img
-                  // FIX: Truy cập images và thumbnail_url
-                  src={
-                    product.images?.[selectedImage]?.image_url ||
-                    product.thumbnail_url ||
-                    "/placeholder.svg"
-                  }
+                  src={activeImage} // Sử dụng activeImage đã tính toán ở trên
                   alt={productName}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
+                  onError={(e) => { e.currentTarget.src = "/placeholder.svg"; e.currentTarget.onerror = null; }}
                 />
+                {discount > 0 && (
+                  <span className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded text-sm font-bold">
+                    -{discount}%
+                  </span>
+                )}
               </div>
 
-              {product.images?.length > 1 && (
-                <div className="grid grid-cols-4 gap-2">
-                  {product.images.map((image, index) => (
+              {/* 2. Danh sách ảnh nhỏ (Thumbnails) */}
+              {allImages.length > 0 && (
+                <div className="relative group mt-4">
+                  {/* Nút Mũi tên Trái (Chỉ hiện khi di chuột vào vùng ảnh) */}
+                  {allImages.length > 5 && (
                     <button
-                      key={image.image_id} // FIX: Sử dụng image_id làm key
-                      onClick={() => setSelectedImage(index)}
-                      className={`aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 ${
-                        selectedImage === index
-                          ? "border-blue-600"
-                          : "border-transparent"
-                      }`}
+                      onClick={() => handleScroll("left")}
+                      className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-1.5 rounded-full shadow-md hover:bg-white text-gray-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      aria-label="Scroll left"
                     >
-                      <img
-                        src={image.image_url || "/placeholder.svg"}
-                        alt={`${productName} ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
+                      <ChevronLeft size={20} />
                     </button>
-                  ))}
+                  )}
+
+                  {/* Container chứa ảnh - Dùng Flexbox để xếp ngang */}
+                  <div
+                    ref={scrollRef}
+                    className="flex gap-3 overflow-x-auto scrollbar-hide py-1 snap-x scroll-smooth"
+                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }} // Ẩn thanh cuộn mặc định
+                  >
+                    {allImages.map((image, index) => (
+                      <button
+                        key={image.image_id || index}
+                        onClick={() => setSelectedImage(index)}
+                        // flex-shrink-0 để ảnh không bị co lại, w-20 h-20 là kích thước cố định
+                        className={`flex-shrink-0 w-20 h-20 bg-gray-50 rounded-lg overflow-hidden border-2 transition-all snap-start ${
+                          selectedImage === index
+                            ? "border-blue-600 opacity-100 ring-2 ring-blue-100"
+                            : "border-transparent opacity-60 hover:opacity-100 hover:border-gray-300"
+                        }`}
+                      >
+                        <img
+                          src={image.image_url}
+                          alt={`Thumbnail ${index + 1}`}
+                          className="w-full h-full object-cover"
+                          onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                        />
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Nút Mũi tên Phải */}
+                  {allImages.length > 4 && (
+                    <button
+                      onClick={() => handleScroll("right")}
+                      className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-1.5 rounded-full shadow-md hover:bg-white text-gray-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      aria-label="Scroll right"
+                    >
+                      <ChevronRight size={20} />
+                    </button>
+                  )}
                 </div>
               )}
             </div>

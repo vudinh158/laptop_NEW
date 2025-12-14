@@ -67,25 +67,81 @@ exports.createProduct = async (req, res, next) => {
 }
 
 exports.updateProduct = async (req, res, next) => {
-  try {
-    const { product_id } = req.params
-    const updateData = req.body
+  // Bắt đầu transaction để đảm bảo dữ liệu nhất quán
+  const t = await sequelize.transaction();
 
-    const product = await Product.findByPk(product_id)
+  try {
+    const { product_id } = req.params;
+    
+    // Tìm sản phẩm
+    const product = await Product.findByPk(product_id);
     if (!product) {
-      return res.status(404).json({ message: "Product not found" })
+      await t.rollback();
+      return res.status(404).json({ message: "Product not found" });
     }
 
-    await product.update(updateData)
+    // 1. Chuẩn bị dữ liệu update từ text fields
+    const updateData = { ...req.body };
+
+    // 2. Xử lý THUMBNAIL (Ảnh đại diện)
+    // Nếu có file 'thumbnail' gửi lên, cập nhật URL vào bảng Product
+    if (req.files && req.files['thumbnail'] && req.files['thumbnail'][0]) {
+        updateData.thumbnail_url = req.files['thumbnail'][0].path; 
+    }
+
+    // 3. Xử lý GALLERY IMAGES (Ảnh chi tiết)
+    // Nếu có file 'images' gửi lên, thêm vào bảng ProductImage
+    if (req.files && req.files['images']) {
+        const newImages = req.files['images'].map(file => ({
+            product_id: product.product_id,
+            image_url: file.path, // URL từ Cloudinary
+            is_primary: false     // Mặc định là ảnh phụ
+        }));
+        
+        await ProductImage.bulkCreate(newImages, { transaction: t });
+    }
+
+    // 4. Xử lý XÓA ẢNH CŨ (Nếu có)
+    if (req.body.deleted_image_ids) {
+        // req.body.deleted_image_ids có thể là string hoặc array tùy cách gửi của FormData
+        // Nếu chỉ có 1 ID, nó là string. Nếu nhiều, multer có thể gộp hoặc ta cần xử lý.
+        // Cách an toàn nhất là ép về mảng.
+        let idsToDelete = req.body.deleted_image_ids;
+        if (!Array.isArray(idsToDelete)) {
+            idsToDelete = [idsToDelete];
+        }
+        
+        await ProductImage.destroy({
+            where: { 
+                image_id: idsToDelete,
+                product_id: product_id // Chỉ xóa ảnh của sản phẩm này để an toàn
+            },
+            transaction: t
+        });
+    }
+
+    // 5. Thực hiện update thông tin sản phẩm
+    await product.update(updateData, { transaction: t });
+
+    // Commit transaction
+    await t.commit();
+
+    // 6. Lấy lại dữ liệu mới nhất để trả về cho Client
+    const updatedProduct = await Product.findByPk(product_id, {
+      include: [{ model: ProductImage, as: 'images' }]
+    });
 
     res.json({
       message: "Product updated successfully",
-      product,
-    })
+      product: updatedProduct,
+    });
+
   } catch (error) {
-    next(error)
+    // Nếu lỗi, rollback mọi thay đổi
+    await t.rollback();
+    next(error);
   }
-}
+};
 
 exports.deleteProduct = async (req, res, next) => {
   try {
