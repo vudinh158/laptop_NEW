@@ -14,15 +14,20 @@ const adminRoutes = require("./routes/adminRoutes")
 const geoRoutes = require('./routes/geo');
 const vnpayRoutes = require("./routes/vnpayRoutes");
 const shippingRoutes = require("./routes/shippingRoutes");
+const passport = require("./config/passport");
+const authSocialRoutes = require("./routes/authSocialRoutes");
+
 const app = express()
 
 // Middleware
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(passport.initialize());
 
 // Routes
 app.use("/api/auth", authRoutes)
+app.use("/api/auth", authSocialRoutes);  // mount chung prefix /api/auth
 app.use("/api/products", productRoutes)
 app.use("/api/cart", cartRoutes)
 app.use("/api/orders", orderRoutes)

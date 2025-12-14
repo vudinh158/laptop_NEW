@@ -1,3 +1,4 @@
+// client/app/hooks/useProducts.js
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api, { adminAPI } from "../services/api";
 

@@ -1,3 +1,4 @@
+// server/controllers/productController.js
 const {
   Product,
   ProductVariation,
@@ -57,7 +58,7 @@ exports.getProducts = async (req, res, next) => {
       req.query.min_price != null ? Number(req.query.min_price) : undefined;
     const maxPrice =
       req.query.max_price != null ? Number(req.query.max_price) : undefined;
-    
+
     // ĐỌC THAM SỐ TÌM KIẾM TỪ HEADER (search query)
     const search = (req.query.search || "").trim();
 
@@ -114,7 +115,7 @@ exports.getProducts = async (req, res, next) => {
       limit,
       offset,
       order: [[sort, order]],
-      distinct: true, 
+      distinct: true,
     });
 
     res.json({
@@ -136,39 +137,11 @@ exports.getProducts = async (req, res, next) => {
 exports.getProductDetail = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const where = isNaN(id) ? { slug: id } : { product_id: id };
+    const whereKey = isNaN(Number(id)) ? { slug: id } : { product_id: id };
 
     const product = await Product.findOne({
-      where: { ...where, is_active: true },
-
-      // ✔ thêm các computed fields để FE dùng luôn
-      attributes: {
-        include: [
-          "specs",
-          // primaryVariationId: ưu tiên is_primary, còn hàng nhiều, giá thấp
-          [
-            Sequelize.literal(`(
-              SELECT pv.variation_id
-              FROM product_variations pv
-              WHERE pv.product_id = "Product".product_id
-                AND pv.is_available = true
-              ORDER BY pv.is_primary DESC, pv.stock_quantity DESC, pv.price ASC
-              LIMIT 1
-            )`),
-            "primaryVariationId",
-          ],
-          // (tuỳ chọn) minPrice để hiện giá nhanh ngoài Home/Card
-          [
-            Sequelize.literal(`(
-              SELECT MIN(pv2.price)
-              FROM product_variations pv2
-              WHERE pv2.product_id = "Product".product_id
-                AND pv2.is_available = true
-            )`),
-            "minPrice",
-          ],
-        ],
-      },
+      where: { ...whereKey },
+      attributes: { include: ["specs", "is_active"] },
 
       include: [
         { model: Category, as: "category" },
@@ -200,16 +173,22 @@ exports.getProductDetail = async (req, res, next) => {
         {
           model: ProductImage,
           as: "images",
-          required: false,
-          // order không đặt trong include, đặt ở top-level order phía dưới
         },
 
         { model: Tag, through: { attributes: [] } },
-
+        // trong include: [...]
         {
           model: Question,
           as: "questions",
-          attributes: ["question_id", "question_text", "is_answered", "created_at"],
+          attributes: [
+            "question_id",
+            "question_text",
+            "is_answered",
+            "created_at",
+            "parent_question_id",
+          ],
+          where: { parent_question_id: null }, 
+          required: false,
           include: [
             {
               model: User,
@@ -228,6 +207,36 @@ exports.getProductDetail = async (req, res, next) => {
                 },
               ],
             },
+            {
+              model: Question, 
+              as: "children",
+              attributes: [
+                "question_id",
+                "question_text",
+                "is_answered",
+                "created_at",
+                "parent_question_id",
+              ],
+              include: [
+                {
+                  model: User,
+                  as: "user",
+                  attributes: ["user_id", "username", "full_name"],
+                },
+                {
+                  model: Answer,
+                  as: "answers",
+                  attributes: ["answer_id", "answer_text", "created_at"],
+                  include: [
+                    {
+                      model: User,
+                      as: "user",
+                      attributes: ["user_id", "username", "full_name"],
+                    },
+                  ],
+                },
+              ],
+            },
           ],
         },
       ],
@@ -236,8 +245,29 @@ exports.getProductDetail = async (req, res, next) => {
       //   variations mình sẽ sort ở FE theo is_primary/stock/price nếu muốn
       order: [
         [{ model: ProductImage, as: "images" }, "display_order", "ASC"],
-        [{ model: Question, as: "questions" }, "created_at", "DESC"],
-        [{ model: Question, as: "questions" }, { model: Answer, as: "answers" }, "created_at", "ASC"],
+        [{ model: Question, as: "questions" }, "created_at", "DESC"], // gốc mới trước
+        // câu trả lời của gốc
+        [
+          { model: Question, as: "questions" },
+          { model: Answer, as: "answers" },
+          "created_at",
+          "ASC",
+        ],
+        // follow-up: cũ trước (thường chỉ 1)
+        [
+          { model: Question, as: "questions" },
+          { model: Question, as: "children" },
+          "created_at",
+          "ASC",
+        ],
+        // trả lời của follow-up
+        [
+          { model: Question, as: "questions" },
+          { model: Question, as: "children" },
+          { model: Answer, as: "answers" },
+          "created_at",
+          "ASC",
+        ],
       ],
     });
 
@@ -545,30 +575,101 @@ exports.getBrands = async (req, res, next) => {
 };
 
 // Tạo câu hỏi
+// === TẠO CÂU HỎI (SỬA: dùng req.user.user_id) ===
 exports.createQuestion = async (req, res, next) => {
   try {
-    const { id } = req.params;                    // id hoặc slug
-    const { question_text } = req.body;
+    const { id } = req.params; // product_id hoặc slug
+    const { question_text, parent_question_id } = req.body;
+
     if (!question_text || !question_text.trim()) {
       return res.status(400).json({ message: "question_text is required" });
     }
 
-    const whereKey = /^\d+$/.test(String(id)) ? { product_id: id } : { slug: id };
-    const product = await Product.findOne({ where: whereKey });
+    const whereKey = /^\d+$/.test(String(id))
+      ? { product_id: id }
+      : { slug: id };
+    const product = await Product.findOne({
+      where: whereKey,
+      attributes: ["product_id"],
+    });
     if (!product) return res.status(404).json({ message: "Product not found" });
 
+    let parent = null;
+    if (parent_question_id) {
+      parent = await Question.findByPk(parent_question_id, {
+        attributes: ["question_id", "product_id", "parent_question_id"],
+      });
+      if (!parent) {
+        return res.status(404).json({ message: "Parent question not found" });
+      }
+      // parent phải là câu gốc
+      if (parent.parent_question_id) {
+        return res
+          .status(400)
+          .json({ message: "Only one follow-up level is allowed" });
+      }
+      // cùng sản phẩm
+      if (parent.product_id !== product.product_id) {
+        return res
+          .status(400)
+          .json({ message: "Parent question does not belong to this product" });
+      }
+      // parent đã được trả lời bởi admin?
+      const answered = await Answer.findOne({
+        where: { question_id: parent.question_id },
+      });
+      if (!answered) {
+        return res
+          .status(400)
+          .json({ message: "Parent must be answered before follow-up" });
+      }
+      // (tuỳ chọn) chỉ chủ sở hữu parent mới được follow-up
+      // const owner = await Question.findByPk(parent_question_id, { attributes: ["user_id"] });
+      // if (owner && owner.user_id !== req.user.user_id) {
+      //   return res.status(403).json({ message: "Only the original asker can follow up" });
+      // }
+    }
+
+    // Tạo mới
     const q = await Question.create({
       product_id: product.product_id,
-      user_id: req.userId,          // lấy từ middleware authenticateToken
+      user_id: req.user.user_id,
       question_text: question_text.trim(),
       is_answered: false,
+      parent_question_id: parent_question_id || null,
     });
 
-    return res.status(201).json({ question: q });
-  } catch (err) { next(err); }
+    // Trả về kèm user
+    const withUser = await Question.findByPk(q.question_id, {
+      attributes: [
+        "question_id",
+        "question_text",
+        "is_answered",
+        "created_at",
+        "parent_question_id",
+      ],
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["user_id", "username", "full_name"],
+        },
+      ],
+    });
+
+    return res.status(201).json({ question: withUser });
+  } catch (err) {
+    // Nếu vi phạm unique (đã có follow-up cho parent), báo 409
+    if (err?.name === "SequelizeUniqueConstraintError") {
+      return res
+        .status(409)
+        .json({ message: "This question already has a follow-up" });
+    }
+    next(err);
+  }
 };
 
-// Trả lời câu hỏi
+// === TRẢ LỜI CÂU HỎI (SỬA: dùng req.user.user_id) ===
 exports.createAnswer = async (req, res, next) => {
   try {
     const { question_id } = req.params;
@@ -578,24 +679,166 @@ exports.createAnswer = async (req, res, next) => {
       return res.status(400).json({ message: "answer_text is required" });
     }
 
+    // role check
+    const roles = (req.user.Roles || []).map((r) => r.role_name);
+    const isStaff = roles.includes("admin") || roles.includes("staff");
+    if (!isStaff) {
+      return res.status(403).json({ message: "Only staff can answer" });
+    }
+
     const q = await Question.findByPk(question_id);
     if (!q) return res.status(404).json({ message: "Question not found" });
 
+    const existed = await Answer.findOne({
+      where: { question_id: q.question_id },
+    });
+    if (existed) {
+      return res
+        .status(409)
+        .json({ message: "This question already has an answer" });
+    }
+
     const a = await Answer.create({
       question_id: q.question_id,
-      user_id: req.userId,          // người trả lời (có thể là admin/staff)
+      user_id: req.user.user_id,
       answer_text: answer_text.trim(),
     });
 
-    // cập nhật cờ đã có trả lời (nếu muốn)
-    if (!q.is_answered) {
-      await q.update({ is_answered: true });
-    }
+    if (!q.is_answered) await q.update({ is_answered: true });
 
-    return res.status(201).json({ answer: a });
-  } catch (err) { next(err); }
+    const withUser = await Answer.findByPk(a.answer_id, {
+      attributes: ["answer_id", "answer_text", "created_at"],
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["user_id", "username", "full_name"],
+        },
+      ],
+    });
+
+    return res.status(201).json({ answer: withUser });
+  } catch (err) {
+    if (err?.name === "SequelizeUniqueConstraintError") {
+      return res
+        .status(409)
+        .json({ message: "This question already has an answer" });
+    }
+    next(err);
+  }
 };
 
+// === DANH SÁCH CÂU HỎI CỦA 1 PRODUCT (tuỳ bạn dùng hay không; FE bạn đang lấy qua getProductDetail rồi) ===
+exports.getProductQuestions = async (req, res, next) => {
+  try {
+    const { id } = req.params; // product_id hoặc slug
+    const page = Math.max(1, parseInt(req.query.page || "1", 10));
+    const limit = Math.min(
+      50,
+      Math.max(1, parseInt(req.query.limit || "10", 10))
+    );
+    const offset = (page - 1) * limit;
+
+    const whereKey = /^\d+$/.test(String(id))
+      ? { product_id: id }
+      : { slug: id };
+    const product = await Product.findOne({
+      where: whereKey,
+      attributes: ["product_id"],
+    });
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    const { count, rows } = await Question.findAndCountAll({
+      where: { product_id: product.product_id },
+      attributes: ["question_id", "question_text", "is_answered", "created_at"],
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["user_id", "username", "full_name"],
+        },
+        {
+          model: Answer,
+          as: "answers",
+          attributes: ["answer_id", "answer_text", "created_at"],
+          include: [
+            {
+              model: User,
+              as: "user",
+              attributes: ["user_id", "username", "full_name"],
+            },
+          ],
+        },
+      ],
+      order: [
+        ["created_at", "DESC"],
+        [{ model: Answer, as: "answers" }, "created_at", "ASC"],
+      ],
+      limit,
+      offset,
+    });
+
+    res.json({
+      questions: rows,
+      pagination: {
+        total: count,
+        page,
+        limit,
+        totalPages: Math.ceil(count / limit),
+      },
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+// === SỬA CÂU HỎI (chỉ chủ sở hữu hoặc admin/staff) ===
+exports.updateQuestion = async (req, res, next) => {
+  try {
+    const { question_id } = req.params;
+    const { question_text } = req.body;
+    if (!question_text || !question_text.trim()) {
+      return res.status(400).json({ message: "question_text is required" });
+    }
+
+    const q = await Question.findByPk(question_id);
+    if (!q) return res.status(404).json({ message: "Question not found" });
+
+    const isOwner = q.user_id === req.user.user_id;
+    const userRoles = (req.user.Roles || []).map((r) => r.role_name);
+    const isStaff = userRoles.includes("admin") || userRoles.includes("staff");
+    if (!isOwner && !isStaff) {
+      return res.status(403).json({ message: "Insufficient permissions" });
+    }
+
+    await q.update({ question_text: question_text.trim() });
+    res.json({ question: q });
+  } catch (e) {
+    next(e);
+  }
+};
+
+// === XOÁ CÂU HỎI (chỉ chủ sở hữu hoặc admin/staff); xoá kèm answer ===
+exports.deleteQuestion = async (req, res, next) => {
+  try {
+    const { question_id } = req.params;
+    const q = await Question.findByPk(question_id);
+    if (!q) return res.status(404).json({ message: "Question not found" });
+
+    const isOwner = q.user_id === req.user.user_id;
+    const userRoles = (req.user.Roles || []).map((r) => r.role_name);
+    const isStaff = userRoles.includes("admin") || userRoles.includes("staff");
+    if (!isOwner && !isStaff) {
+      return res.status(403).json({ message: "Insufficient permissions" });
+    }
+
+    await Answer.destroy({ where: { question_id: q.question_id } });
+    await q.destroy();
+    res.json({ ok: true });
+  } catch (e) {
+    next(e);
+  }
+};
 
 exports.compareProducts = async (req, res, next) => {
   try {

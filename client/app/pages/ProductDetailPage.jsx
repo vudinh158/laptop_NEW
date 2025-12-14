@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -66,6 +67,7 @@ export default function ProductDetailPage() {
   //     })
   //   );
   // };
+
   // FIX: Sử dụng thuộc tính product_id, product_name
   const currentVariation = selectedVariation || product.variations?.[0];
   const discount = Number(product.discount_percentage || 0);
@@ -74,6 +76,18 @@ export default function ProductDetailPage() {
   const productName = product.product_name; // Lấy tên sản phẩm
 
   const currentVariationId = selectedVariation?.variation_id || product?.variations?.[0]?.variation_id;
+  const currentUser =
+    useSelector((s) => s.auth?.user) ||
+    (() => {
+      try {
+        return JSON.parse(localStorage.getItem("user") || "null");
+      } catch {
+        return null;
+      }
+    })();
+
+  const currentUserId = currentUser?.user_id ?? null;
+
   // unique options lấy từ variations của sản phẩm hiện tại
   const uniqueOptions = ATTRS.reduce((acc, key) => {
     const set = new Set(
@@ -90,6 +104,15 @@ export default function ProductDetailPage() {
     matchVariation(v, sel)
   );
 
+
+  // Người dùng đã chọn đầy đủ các option cần thiết?
+  const allSelected = requiredKeys.every((k) => !!sel[k]);
+
+  // Sẵn sàng "Mua ngay" khi VỪA khớp 1 biến thể, VỪA chọn đủ option
+  const isReady = Boolean(matched) && allSelected;
+  const basePrice = Number(currentVariation?.price ?? product.base_price ?? 0);
+
+
   const toggleSelect = (k, val) => {
     setSel((prev) => {
       const next = { ...prev, [k]: prev[k] === val ? "" : val };
@@ -104,12 +127,12 @@ export default function ProductDetailPage() {
     return !(product.variations || []).some((v) => matchVariation(v, s));
   };
 
-  // Giá hiển thị: yêu cầu chọn đủ => dùng matched; chưa chọn => dùng base_price
-  const shownPrice = matched
-    ? Number(matched.price) *
-      (1 - (Number(product.discount_percentage) || 0) / 100)
-    : Number(product.base_price) *
-      (1 - (Number(product.discount_percentage) || 0) / 100);
+  // // Giá hiển thị: yêu cầu chọn đủ => dùng matched; chưa chọn => dùng base_price
+  // const shownPrice = matched
+  //   ? Number(matched.price) *
+  //     (1 - (Number(product.discount_percentage) || 0) / 100)
+  //   : Number(product.base_price) *
+  //     (1 - (Number(product.discount_percentage) || 0) / 100);
 
   const normalizeSpecs = (specs) => {
     if (!specs) return {};
@@ -219,61 +242,137 @@ const Avatar = ({ name }) => {
   );
 };
 
-// badge quản trị viên
-const AdminBadge = () => (
-  <span className="ml-2 inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded bg-rose-100 text-rose-700 border border-rose-200">
-    QTV
-  </span>
-);
-
-// time-ago đơn giản
-const timeAgo = (d) => {
-  const diff = Math.max(1, Math.floor((Date.now() - new Date(d).getTime()) / 1000));
-  const units = [
-    ["năm", 31536000],
-    ["tháng", 2592000],
-    ["tuần", 604800],
-    ["ngày", 86400],
-    ["giờ", 3600],
-    ["phút", 60],
-    ["giây", 1],
-  ];
-  for (const [label, sec] of units) {
-    if (diff >= sec) return `${Math.floor(diff / sec)} ${label} trước`;
-  }
-  return "vừa xong";
-};
-
+  const timeAgo = (d) => {
+    const diff = Math.max(
+      1,
+      Math.floor((Date.now() - new Date(d).getTime()) / 1000)
+    );
+    const units = [
+      ["năm", 31536000],
+      ["tháng", 2592000],
+      ["tuần", 604800],
+      ["ngày", 86400],
+      ["giờ", 3600],
+      ["phút", 60],
+      ["giây", 1],
+    ];
+    for (const [label, sec] of units) {
+      if (diff >= sec) return `${Math.floor(diff / sec)} ${label} trước`;
+    }
+    return "vừa xong";
+  };
+  const canShowFollowUp = (q) => {
+    // Điều kiện:
+    // - đã đăng nhập
+    // - câu gốc đã được trả lời
+    // - chưa có child
+    // - chủ câu gốc là currentUser
+    const noChild = (q.children?.length || 0) === 0;
+    return (
+      isAuthed && q.is_answered && noChild && q.user?.user_id === currentUserId
+    );
+  };
   const navigate = useNavigate();
   useEffect(() => {
   if (!selectedVariation && product?.variations?.length) {
     setSelectedVariation(product.variations[0]);
   }
 }, [product?.variations]); // chỉ chạy khi variations đổi
-const handleAddToCart = () => {
-  if (!product) return;
-  const variation = selectedVariation || product.variations?.[0];
-  if (!variation) return; // phòng trường hợp sản phẩm không có biến thể
+// const handleAddToCart = () => {
+//   if (!product) return;
+//   const variation = selectedVariation || product.variations?.[0];
+//   if (!variation) return; // phòng trường hợp sản phẩm không có biến thể
 
-  dispatch(
-    addItem({
-      product_id: product.product_id,
-      variation_id: variation.variation_id,
-      quantity: Math.max(1, Number(quantity) || 1), // +1 (hoặc theo ô số lượng)
-      product: { ...product, variation },
-    })
-  );
-};
 
-const handleBuyNow = () => {
-  handleAddToCart();          // thêm vào giỏ
-  navigate("/checkout");      // điều hướng đến trang thanh toán
-  // nếu dự án bạn dùng đường dẫn khác: "/cart/checkout" thì đổi ở đây
-};
+//   dispatch(
+//     addItem({
+//       product_id: product.product_id,
+//       variation_id: variation.variation_id,
+//       quantity: Math.max(1, Number(quantity) || 1), // +1 (hoặc theo ô số lượng)
+//       product: { ...product, variation },
+//     })
+//   );
+// };
 
-const [openReplies, setOpenReplies] = useState({});
-const toggleReplies = (qid) =>
-  setOpenReplies((s) => ({ ...s, [qid]: !s[qid] }));
+  const handleAddToCart = () => {
+    const r = getValidationReason();
+    if (r) {
+      alert(reasonToMessage(r));
+      return;
+    }
+
+    if (!product) return;
+    // BẮT BUỘC: phải chọn đúng biến thể
+    if (!isReady || !matched) {
+      alert("Vui lòng chọn đầy đủ cấu hình trước khi thêm vào giỏ.");
+      return; 
+    }
+    const variation = matched;
+
+    const stock = Number(variation.stock_quantity) || 0;
+    const qty = Math.max(1, Number(quantity) || 1);
+    if (stock <= 0) {
+      alert("Biến thể này đã hết hàng.");
+      return;
+    }
+    if (qty > stock) {
+      alert(`Chỉ còn ${stock} sản phẩm trong kho.`);
+      setQuantity(stock);
+      return;
+    }
+    if (!isAuthenticated) {
+      navigate(`/login?redirect=/products/${id}`);
+      return;
+    }
+
+    addToCart.mutate(
+      { variation_id: variation.variation_id, quantity: qty },
+      {
+        onError: (err) => {
+          // nếu token hết hạn hoặc thiếu → về login
+          if (err?.response?.status === 401) {
+            navigate(`/login?redirect=/products/${id}`);
+          }
+        },
+      }
+    );
+  };
+
+  const handleBuyNow = () => {
+    const r = getValidationReason();
+    if (r) {
+      alert(reasonToMessage(r));
+      return;
+    }
+
+    if (!isReady) return; // chưa chọn đủ cấu hình thì không cho mua
+
+    const qty = Math.max(1, Number(quantity) || 1);
+
+    // Không đụng giỏ. Điều hướng Checkout kèm "checkout intent"
+    navigate("/checkout", {
+      state: {
+        mode: "buy_now",
+        items: [
+          {
+            variation_id: matched.variation_id,
+            quantity: qty,
+            product: {
+              // chỉ để HIỂN THỊ
+              product_name: product.product_name,
+              thumbnail_url: product.thumbnail_url,
+              discount_percentage: product.discount_percentage,
+              variation: { price: Number(matched.price) },
+            },
+          },
+        ],
+      },
+    });
+  };
+
+  const [openReplies, setOpenReplies] = useState({});
+  const toggleReplies = (qid) =>
+    setOpenReplies((s) => ({ ...s, [qid]: !s[qid] }));
   if (isLoading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -294,6 +393,45 @@ const toggleReplies = (qid) =>
 
 
 
+  // === VALIDATION HELPERS ===
+  const productInactive = product?.is_active === false;
+
+  // matched đã có từ code gốc
+  const selectedVar = matched || null;
+  const stockQty = Number(selectedVar?.stock_quantity ?? 0);
+  const varAvailable = selectedVar
+    ? selectedVar?.is_available !== false
+    : false;
+  const qty = Math.max(1, Number(quantity) || 1);
+
+  // Lý do không thể tiếp tục (string) hoặc null nếu OK
+  const getValidationReason = () => {
+    if (productInactive) return "inactive"; // SP ngừng KD
+    if (!isReady) return "choose-attrs"; // chưa chọn đủ
+    if (!varAvailable) return "soldout"; // biến thể hết hàng
+    if (qty > stockQty) return "exceed-stock"; // vượt tồn
+    return null;
+  };
+
+  const validationReason = getValidationReason();
+  const actionDisabled = !!validationReason;
+
+  // UI message gọn theo reason
+  const reasonToMessage = (r) => {
+    switch (r) {
+      case "inactive":
+        return "Sản phẩm không còn kinh doanh.";
+      case "choose-attrs":
+        return "Chọn cấu hình để tiếp tục.";
+      case "soldout":
+        return "Sản phẩm đã hết hàng.";
+      case "exceed-stock":
+        return `Chỉ còn ${stockQty} máy.`;
+      default:
+        return "";
+    }
+  };
+  const disabledByProduct = productInactive;
   return (
     <div className="bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -386,9 +524,8 @@ const toggleReplies = (qid) =>
                   </span> */}
                   {discount > 0 && (
                     <>
-                      {/* Giá gốc hiển thị base_price */}
                       <span className="text-xl text-gray-400 line-through">
-                        {formatPrice(price)}
+                        {formatPrice(basePrice)}
                       </span>
                       <span className="px-2 py-1 bg-orange-500 text-white rounded-md text-sm font-semibold">
                         -{discount}%
@@ -397,12 +534,17 @@ const toggleReplies = (qid) =>
                   )}
                 </div>
               </div>
+              {productInactive && (
+                <div className="mb-4 rounded-md border border-rose-200 bg-rose-50 p-3 text-rose-700 text-sm">
+                  Sản phẩm không còn kinh doanh.
+                </div>
+              )}
               {/* ---- THAY block variations cũ bằng UI lựa chọn như ảnh demo ---- */}
               {product.variations?.length > 0 && (
                 <div className="mb-6">
                   <div className="flex items-baseline gap-3 mb-3">
                     <span className="text-4xl font-bold text-blue-600">
-                      {formatPrice(shownPrice)}
+                      {formatPrice(finalPrice)}
                     </span>
                     {product.discount_percentage > 0 && (
                       <span className="px-2 py-1 bg-orange-500 text-white rounded-md text-sm font-semibold">
@@ -451,20 +593,26 @@ const toggleReplies = (qid) =>
                                 <button
                                   key={val}
                                   onClick={() =>
-                                    !disabled && toggleSelect(k, val)
+                                    !disabled &&
+                                    !disabledByProduct &&
+                                    toggleSelect(k, val)
                                   }
                                   className={[
                                     "px-3 py-2 rounded-lg border text-sm",
                                     active
                                       ? "border-red-500 text-red-600 bg-red-50"
                                       : "border-gray-300 hover:bg-gray-50",
-                                    disabled &&
+                                    (disabled || disabledByProduct) &&
                                       "opacity-40 cursor-not-allowed hover:bg-transparent",
                                   ].join(" ")}
                                   aria-pressed={active}
-                                  disabled={disabled}
+                                  disabled={disabled || disabledByProduct}
                                   title={
-                                    disabled ? "Kết hợp này không có sẵn" : ""
+                                    disabledByProduct
+                                      ? "Sản phẩm không còn kinh doanh"
+                                      : disabled
+                                      ? "Kết hợp này không có sẵn"
+                                      : ""
                                   }
                                 >
                                   {String(val)}
@@ -505,27 +653,60 @@ const toggleReplies = (qid) =>
                   </button>
                 </div>
               </div>
+              {/* Banner cảnh báo chung theo validation */}
+              {validationReason && (
+                <div className="mb-3 rounded-md border border-amber-200 bg-amber-50 p-3 text-amber-800 text-sm">
+                  {reasonToMessage(validationReason)}
+                </div>
+              )}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-  <button
-    onClick={handleAddToCart}
-    disabled={!product?.variations?.length}
-    className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-4 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-    title={!product?.variations?.length ? "Sản phẩm chưa có cấu hình" : ""}
-  >
-    <ShoppingCart className="w-5 h-5" />
-    <span className="font-semibold">Thêm vào giỏ</span>
-  </button>
-
-  <button
-    onClick={handleBuyNow}
-    disabled={!product?.variations?.length}
-    className="w-full flex items-center justify-center gap-2 bg-emerald-600 text-white py-4 rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-    title={!product?.variations?.length ? "Sản phẩm chưa có cấu hình" : ""}
-  >
-    <span className="font-semibold">Mua ngay</span>
-  </button>
-</div>
-
+                <button
+                  onClick={() => {
+                    if (actionDisabled) {
+                      alert(reasonToMessage(validationReason));
+                      return;
+                    }
+                    // ====== hành vi cũ thêm giỏ ======
+                    handleAddToCart();
+                  }}
+                  disabled={actionDisabled}
+                  className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-4 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  title={
+                    actionDisabled ? reasonToMessage(validationReason) : ""
+                  }
+                >
+                  <ShoppingCart className="w-5 h-5" />
+                  <span className="font-semibold">Thêm vào giỏ</span>
+                </button>
+                <button
+                  onClick={() => {
+                    if (actionDisabled) {
+                      alert(reasonToMessage(validationReason));
+                      return;
+                    }
+                    // ====== hành vi cũ mua ngay ======
+                    handleBuyNow();
+                  }}
+                  disabled={actionDisabled}
+                  className="w-full flex items-center justify-center gap-2 bg-emerald-600 text-white py-4 rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  title={
+                    actionDisabled ? reasonToMessage(validationReason) : ""
+                  }
+                >
+                  <span className="font-semibold">Mua ngay</span>
+                </button>
+                {isReady && (
+                  <div className="mt-2 text-sm">
+                    {varAvailable ? (
+                      <span className="text-gray-600">Còn {stockQty} máy</span>
+                    ) : (
+                      <span className="text-rose-600 font-medium">
+                        Đã hết hàng
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
               <div className="grid grid-cols-3 gap-4 pt-6 border-t border-gray-200">
                 <div className="flex flex-col items-center text-center">
                   <Truck className="w-8 h-8 text-blue-600 mb-2" />
@@ -676,35 +857,175 @@ const toggleReplies = (qid) =>
                 );
               })}
 
-              {/* Form trả lời (chỉ hiển thị nếu có quyền) */}
-              {canAnswer && (
-                <div className="bg-white border border-gray-200 rounded-lg p-3">
-                  <textarea
-                    value={answerDrafts[q.question_id] || ""}
-                    onChange={(e) =>
-                      setAnswerDrafts((s) => ({ ...s, [q.question_id]: e.target.value }))
-                    }
-                    rows={2}
-                    placeholder="Nhập câu trả lời…"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
-                  <div className="mt-2 text-right">
-                    <button
-                      onClick={() => postAnswer(q.question_id)}
-                      disabled={!(answerDrafts[q.question_id] || "").trim()}
-                      className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-600 text-white font-semibold hover:bg-emerald-700 disabled:opacity-50"
-                    >
-                      <Reply className="w-4 h-4" />
-                      Gửi trả lời
-                    </button>
+                  {/* KHỐI TRẢ LỜI */}
+                  <div
+                    className={`mt-3 overflow-hidden transition-all ${
+                      opened ? "max-h-[2000px]" : "max-h-0"
+                    }`}
+                  >
+                    <div className="pl-12 space-y-3">
+                      {answers.map((a) => {
+                        const replier =
+                          a.user?.full_name || a.user?.username || "Nhân viên";
+                        const isAdmin =
+                          roles.includes("admin") ||
+                          roles.includes("staff") ||
+                          /quản trị|admin|staff/i.test(replier);
+                        return (
+                          <div
+                            key={a.answer_id}
+                            className="bg-gray-50 border border-gray-200 rounded-lg p-3"
+                          >
+                            <div className="flex items-start gap-2">
+                              <Avatar name={replier} />
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-semibold text-gray-900">
+                                    {replier}
+                                  </span>
+                                  {isAdmin && <AdminBadge />}
+                                  <span className="text-xs text-gray-500">
+                                    • {timeAgo(a.created_at)}
+                                  </span>
+                                </div>
+                                <div className="mt-1 text-gray-800 whitespace-pre-wrap">
+                                  {a.answer_text}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                      {(q.children || []).map((c) => (
+                        <div
+                          key={c.question_id}
+                          className="bg-white border border-gray-200 rounded-lg p-3"
+                        >
+                          <div className="flex items-start gap-2">
+                            <Avatar
+                              name={
+                                c.user?.full_name || c.user?.username || "Bạn"
+                              }
+                            />
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <span className="font-semibold text-gray-900">
+                                  {c.user?.full_name ||
+                                    c.user?.username ||
+                                    "Bạn"}
+                                </span>
+                                <span className="text-xs text-gray-500">
+                                  • {timeAgo(c.created_at)}
+                                </span>
+                              </div>
+                              <div className="mt-1 text-gray-800 whitespace-pre-wrap">
+                                {c.question_text}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {canShowFollowUp(q) && (
+                        <div className="bg-white border border-gray-200 rounded-lg p-3">
+                          <textarea
+                            value={answerDrafts[`fu_${q.question_id}`] || ""}
+                            onChange={(e) =>
+                              setAnswerDrafts((s) => ({
+                                ...s,
+                                [`fu_${q.question_id}`]: e.target.value,
+                              }))
+                            }
+                            rows={2}
+                            placeholder="Phản hồi thêm cho câu hỏi của bạn…"
+                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                          <div className="mt-2 text-right">
+                            <button
+                              onClick={async () => {
+                                const text = (
+                                  answerDrafts[`fu_${q.question_id}`] || ""
+                                ).trim();
+                                if (!text) return;
+                                try {
+                                  const resp = await fetch(
+                                    `/api/products/${id}/questions`,
+                                    {
+                                      method: "POST",
+                                      headers: {
+                                        "Content-Type": "application/json",
+                                        Authorization: `Bearer ${token}`,
+                                      },
+                                      body: JSON.stringify({
+                                        question_text: text,
+                                        parent_question_id: q.question_id, // ✅ follow-up 1 tầng
+                                      }),
+                                    }
+                                  );
+                                  if (!resp.ok) {
+                                    const e = await resp
+                                      .json()
+                                      .catch(() => ({}));
+                                    throw new Error(
+                                      e?.message || "Follow-up failed"
+                                    );
+                                  }
+                                  setAnswerDrafts((s) => ({
+                                    ...s,
+                                    [`fu_${q.question_id}`]: "",
+                                  }));
+                                  window.location.reload(); // có thể thay bằng refetch detail
+                                } catch (e) {
+                                  alert(e.message);
+                                }
+                              }}
+                              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 disabled:opacity-50"
+                            >
+                              Gửi follow-up
+                            </button>
+                          </div>
+                          <div className="text-xs text-gray-500 mt-1">
+                            (Chỉ cho phép 1 follow-up; follow-up chỉ thực hiện
+                            sau khi câu gốc đã được trả lời)
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Form trả lời (chỉ hiển thị nếu có quyền) */}
+                      {canAnswer && (
+                        <div className="bg-white border border-gray-200 rounded-lg p-3">
+                          <textarea
+                            value={answerDrafts[q.question_id] || ""}
+                            onChange={(e) =>
+                              setAnswerDrafts((s) => ({
+                                ...s,
+                                [q.question_id]: e.target.value,
+                              }))
+                            }
+                            rows={2}
+                            placeholder="Nhập câu trả lời…"
+                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                          />
+                          <div className="mt-2 text-right">
+                            <button
+                              onClick={() => postAnswer(q.question_id)}
+                              disabled={
+                                !(answerDrafts[q.question_id] || "").trim()
+                              }
+                              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-600 text-white font-semibold hover:bg-emerald-700 disabled:opacity-50"
+                            >
+                              <Reply className="w-4 h-4" />
+                              Gửi trả lời
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              )}
             </div>
           </div>
-        </div>
-      );
-    })}
+        );
+     })}
   </div>
 </div>
 

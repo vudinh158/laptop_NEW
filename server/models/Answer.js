@@ -1,3 +1,4 @@
+// server/models/Answer.js
 const { DataTypes } = require("sequelize")
 const sequelize = require("../config/database")
 

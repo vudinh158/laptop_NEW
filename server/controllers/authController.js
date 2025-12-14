@@ -1,3 +1,4 @@
+// server/controllers/authController.js
 const jwt = require("jsonwebtoken")
 const { User, Role, Cart } = require("../models")
 const { validationResult } = require("express-validator")
@@ -64,6 +65,7 @@ exports.register = async (req, res, next) => {
 
     // Generate token
     const token = generateToken(user.user_id)
+    const roles = [ "customer" ]; // hoặc truy DB nếu muốn chắc chắn
 
     res.status(201).json({
       message: "User registered successfully",
@@ -74,6 +76,7 @@ exports.register = async (req, res, next) => {
         email: user.email,
         full_name: user.full_name,
         phone_number: user.phone_number,
+        roles,
       },
     })
   } catch (error) {

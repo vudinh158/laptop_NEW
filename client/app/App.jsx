@@ -18,17 +18,26 @@ import AdminCategories from "./pages/admin/AdminCategories";
 import AdminProductNewPage from "./pages/admin/AdminProductNewPage";
 import AdminProductEditPage from "./pages/admin/AdminProductEditPage";
 import VnpayReturn from "./pages/checkout/VnpayReturn";
+import OrderDetailPage from "./pages/OrderDetailPage";
+import OAuthSuccess from "./pages/OAuthSuccess";
 
 function App() {
   return (
-    <Router>
+    <Router
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
           <Route path="products/:id" element={<ProductDetailPage />} />
           <Route path="cart" element={<CartPage />} />
           <Route path="login" element={<LoginPage />} />
+          <Route path="oauth/success" element={<OAuthSuccess />} />
           <Route path="register" element={<RegisterPage />} />
+          <Route path="orders/:id" element={<OrderDetailPage />} />
 
           <Route
             path="checkout"
@@ -38,7 +47,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/checkout/vnpay-return" element={<VnpayReturn />} />
+          <Route path="checkout/vnpay-return" element={<VnpayReturn />} />
 
           <Route
             path="profile"

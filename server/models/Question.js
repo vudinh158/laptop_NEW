@@ -1,3 +1,4 @@
+// server/models/Question.js
 const { DataTypes } = require("sequelize")
 const sequelize = require("../config/database")
 
@@ -32,6 +33,11 @@ const Question = sequelize.define(
     is_answered: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
+    }, 
+    parent_question_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: { model: "questions", key: "question_id" },
     },
   },
   {

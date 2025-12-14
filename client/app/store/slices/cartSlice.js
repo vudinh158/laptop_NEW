@@ -10,7 +10,7 @@ function recalcTotals(state) {
 }
 
 const initialState = {
-  items: [],          // [{ id, product_id, variation_id, quantity, price, product, selected }]
+  items: [], // [{ id, product_id, variation_id, quantity, price, product, selected }]
   totalItems: 0,
   totalPrice: 0,
   loading: false,
@@ -108,26 +108,38 @@ const cartSlice = createSlice({
     },
 
     // Khi load giỏ từ API BE (đã đăng nhập)
-        // Khi load giỏ từ API BE (đã đăng nhập)
+    // Khi load giỏ từ API BE (đã đăng nhập)
     setCart: (state, action) => {
-      const { items = [], subtotal_snapshot, subtotal_live } = action.payload || {};
+      const {
+        items = [],
+        subtotal_snapshot,
+        subtotal_after_discount,
+      } = action.payload || {};
 
       state.items = items.map((item) => {
-       // BE trả: item.product { product_id, discount_percentage, variation: { price } }
+        // BE trả: item.product { product_id, discount_percentage, variation: { price } }
         const product = item?.product ?? {};
         const variationFromProduct = product?.variation ?? {};
 
         // Trường hợp BE khác: item.variation ở cấp item
-        const variationAlt = item?.variation ?? item?.Variation ?? item?.ProductVariation ?? {};
-        const variation = Object.keys(variationFromProduct).length ? variationFromProduct : variationAlt;
+        const variationAlt =
+          item?.variation ?? item?.Variation ?? item?.ProductVariation ?? {};
+        const variation = Object.keys(variationFromProduct).length
+          ? variationFromProduct
+          : variationAlt;
+
+        // GỘP: lấy tồn kho/thuộc tính từ variationAlt, lấy price từ product.variation
+        const mergedVariation = { ...variationAlt, ...variationFromProduct };
 
         // Đơn giá ưu tiên số BE đã tính sẵn
         const unitFromBE = Number(item?.unit_price_after_discount ?? NaN);
         const raw = isNaN(unitFromBE)
-          ? Number(variation?.price ?? product?.base_price ?? 0)
+          ? Number(mergedVariation?.price ?? product?.base_price ?? 0)
           : unitFromBE;
         const discount = Number(product?.discount_percentage ?? 0);
-        const unitPrice = isNaN(unitFromBE) ? Math.max(0, raw * (1 - discount / 100)) : unitFromBE;
+        const unitPrice = isNaN(unitFromBE)
+          ? Math.max(0, raw * (1 - discount / 100))
+          : unitFromBE;
 
         // Ảnh: hỗ trợ cả alias khác nhau nếu sau này BE có trả
         const images = product?.images ?? product?.ProductImages ?? [];
@@ -138,19 +150,23 @@ const cartSlice = createSlice({
           product_id: product?.product_id ?? variation?.product_id,
           variation_id: item?.variation_id ?? variation?.variation_id,
           quantity: item?.quantity ?? 1,
-          price: unitPrice,            // đơn giá sau giảm (UI dùng để hiển thị/tính nhanh)
+          price: unitPrice, // đơn giá sau giảm (UI dùng để hiển thị/tính nhanh)
+          // expose variation ở CẤP ROOT để CartPage đọc tồn kho
+          variation: mergedVariation,
           product: {
             ...product,
             images,
-            variation,                // để UI có product.variation.price
+            variation: mergedVariation, // để UI có product.variation.price
           },
-          selected: false,             // mặc định chưa tick
+          unit_price_after_discount: item?.unit_price_after_discount,
+          line_total_after_discount: item?.line_total_after_discount,
+          selected: false, // mặc định chưa tick
         };
       });
 
       recalcTotals(state);
       // Ưu tiên các số tổng từ BE nếu có (live > snapshot)
-      state.totalPrice = Number(subtotal_live ?? subtotal_snapshot ?? state.totalPrice);
+      state.totalPrice = Number(subtotal_after_discount ?? subtotal_snapshot ?? state.totalPrice);
     },
 
     // Prefill checkout từ hồ sơ user (nếu đã login)
@@ -182,14 +198,14 @@ export const {
   addItem,
   updateQuantity,
   removeItem,
-  removeMany,       // NEW (tuỳ chọn)
+  removeMany, // NEW (tuỳ chọn)
   clearCart,
   setLoading,
   setError,
   setCart,
   setCustomerInfo,
-  setItemSelected,  // NEW
-  setAllSelected,   // NEW
+  setItemSelected, // NEW
+  setAllSelected, // NEW
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

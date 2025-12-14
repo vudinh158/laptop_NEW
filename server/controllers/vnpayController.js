@@ -1,168 +1,87 @@
-// controllers/vnpayController.js
-const qs = require("qs");
-const crypto = require("crypto");
-const {
-  sequelize,
-  Payment,
-  Order,
-  OrderItem,
-  ProductVariation,
-} = require("../models");
+const { Payment, Order } = require("../models");
+const { getPaymentUrl, verifyReturnUrl } = require("../services/vnpayService");
 
-const VNP_HASHSECRET = process.env.VNP_HASHSECRET;
-
-/** Encode + sort giống mẫu VNPAY (keys & values), space -> '+' */
-function sortObjectForVnp(obj) {
-  const encoded = {};
-  const keys = [];
-  for (const k in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, k)) {
-      keys.push(encodeURIComponent(k));
-    }
-  }
-  keys.sort();
-  for (let i = 0; i < keys.length; i++) {
-    const encKey = keys[i];
-    const rawKey = decodeURIComponent(encKey);
-    const val = obj[rawKey];
-    encoded[encKey] = encodeURIComponent(String(val)).replace(/%20/g, "+");
-  }
-  return encoded;
-}
-
-function hmacSHA512(secret, data) {
-  return crypto
-    .createHmac("sha512", secret)
-    .update(data, "utf-8")
-    .digest("hex");
-}
-
-/**
- * IPN handler:
- * - Verify chữ ký (đúng mẫu VNPAY)
- * - Đối soát số tiền
- * - Idempotent
- * - Transaction + row-lock
- * - (Nếu SUCCESS) cập nhật thanh toán & đơn
- */
-async function ipn(req, res) {
+// 1. Tạo link thanh toán
+exports.createPayment = async (req, res) => {
   try {
-    console.log("[VNPAY][IPN] HIT", new Date().toISOString(), req.originalUrl);
-    if (req.query.ping) {
-      return res.json({ RspCode: "00", Message: "pong" });
-    }
-    if (!VNP_HASHSECRET) {
-      console.error("[VNPAY][IPN] Missing VNP_HASHSECRET env");
-      return res.json({ RspCode: "99", Message: "Missing secret" });
-    }
-    // 1) Verify chữ ký
-    const params = { ...req.query };
-    const secureHash = params.vnp_SecureHash;
-    delete params.vnp_SecureHash;
-    if ("vnp_SecureHashType" in params) delete params.vnp_SecureHashType;
-    if (!secureHash) {
-      return res.json({ RspCode: "97", Message: "Missing SecureHash" });
-    }
-    const signData = qs.stringify(sortObjectForVnp(params), { encode: false });
-    const check = hmacSHA512(VNP_HASHSECRET, signData);
-    if (check !== secureHash) {
-      return res.json({ RspCode: "97", Message: "Invalid Checksum" });
+    const { orderId, amount } = req.body;
+
+    if (!orderId || !amount) {
+      return res.status(400).json({ message: "Thiếu orderId hoặc amount" });
     }
 
-    // 2) Trích thông tin quan trọng
-    const txnRef = params.vnp_TxnRef;
-    const amount = Number(params.vnp_Amount || 0) / 100; // đổi về VND
-    const rspCode = params.vnp_ResponseCode;
-    const txnStatus = params.vnp_TransactionStatus;
-    const isSuccess = rspCode === "00" && txnStatus === "00";
+    // Lấy IP thật của user (ưu tiên x-forwarded-for nếu có proxy)
+    const ipAddrRaw = req.headers["x-forwarded-for"] || req.socket.remoteAddress || "127.0.0.1";
+    const ipAddr = Array.isArray(ipAddrRaw) ? ipAddrRaw[0] : String(ipAddrRaw).split(",")[0].trim();
 
-    // 3) Transaction + row-lock
-    await sequelize.transaction(async (t) => {
-      const payment = await Payment.findOne({
-        where: { provider: "VNPAY", txn_ref: txnRef },
-        transaction: t,
-        lock: t.LOCK.UPDATE,
-      });
-      if (!payment) throw new Error("Payment not found");
+    // TxnRef nên unique (orderId-timestamp)
+    const txnRef = `${orderId}-${Date.now()}`;
 
-      // Idempotent
-      if (payment.payment_status === "completed") {
-        return;
-      }
-
-      // Đối soát số tiền
-      if (Number(payment.amount) !== amount) {
-        payment.payment_status = "failed";
-        payment.raw_ipn = req.query;
-        await payment.save({ transaction: t });
-
-        const order = await Order.findOne({
-          where: { order_id: payment.order_id },
-          transaction: t,
-          lock: t.LOCK.UPDATE,
-        });
-        if (order) {
-          order.status = "FAILED";
-          await order.save({ transaction: t });
-        }
-        return;
-      }
-
-      // Lấy order
-      const order = await Order.findOne({
-        where: { order_id: payment.order_id },
-        transaction: t,
-        lock: t.LOCK.UPDATE,
-      });
-      if (!order) throw new Error("Order not found");
-
-      if (isSuccess) {
-        // Thành công
-        payment.payment_status = "completed";
-        payment.transaction_id = params.vnp_TransactionNo || null;
-        payment.raw_ipn = req.query;
-        payment.paid_at = new Date();
-        await payment.save({ transaction: t });
-
-        order.status = "PAID";
-        await order.save({ transaction: t });
-      } else {
-        // Thất bại → nếu bạn có cơ chế reserve trước đó, hoàn kho ở đây
-        // (Bạn đã bổ sung hoàn kho ở nhánh failed – giữ nguyên)
-        const items = await OrderItem.findAll({
-          where: { order_id: order.order_id },
-          transaction: t,
-        });
-        for (const it of items) {
-          const v = await ProductVariation.findOne({
-            where: { variation_id: it.variation_id },
-            transaction: t,
-            lock: t.LOCK.UPDATE,
-            skipLocked: true,
-          });
-          if (v) {
-            await v.increment("stock_quantity", {
-              by: it.quantity,
-              transaction: t,
-            });
-          }
-        }
-
-        payment.payment_status = "failed";
-        payment.raw_ipn = req.query;
-        await payment.save({ transaction: t });
-
-        order.status = "FAILED";
-        await order.save({ transaction: t });
-      }
+    const url = await getPaymentUrl({
+      amount,
+      txnRef,
+      orderDesc: `Thanh toan don hang #${orderId}`,
+      ipAddr,
+      // method: req.body.method, // (không khuyến nghị) - để VNPAY cho chọn
     });
 
-    return res.json({ RspCode: "00", Message: "Confirm Success" });
-  } catch (e) {
-    // lỗi hệ thống → để VNPAY retry
-    console.error("[VNPAY][IPN] ERROR:", e && e.stack ? e.stack : e);
-    return res.json({ RspCode: "99", Message: "Unknown error" });
+    return res.json({ url });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Lỗi tạo link thanh toán" });
   }
-}
+};
 
-module.exports = { ipn };
+// 2. Xử lý khi user quay lại từ VNPAY (Return URL)
+exports.vnpayReturn = async (req, res) => {
+  try {
+    const { isSuccess, vnp_Params } = verifyReturnUrl({ ...req.query });
+
+    // Lấy Order ID từ txnRef (format: orderId-timestamp)
+    const txnRef = vnp_Params["vnp_TxnRef"] || "";
+    const orderId = txnRef.split("-")[0];
+
+    const frontendUrl = process.env.FE_APP_URL || "http://localhost:3000";
+
+    if (!orderId) {
+      return res.redirect(`${frontendUrl}/checkout/vnpay-return?status=failed&orderId=unknown`);
+    }
+
+    if (isSuccess) {
+      // --- LOGIC CẬP NHẬT DB ---
+      const order = await Order.findByPk(orderId);
+      const payment = await Payment.findOne({ where: { order_id: orderId } });
+
+      if (order && payment) {
+        if (payment.payment_status !== "completed") {
+          payment.payment_status = "completed";
+          payment.txn_ref = txnRef;
+          payment.transaction_id = vnp_Params["vnp_TransactionNo"] || null;
+          payment.paid_at = new Date();
+          await payment.save();
+
+          order.status = "processing";
+          await order.save();
+        }
+      }
+
+      return res.redirect(
+        `${frontendUrl}/checkout/vnpay-return?status=success&orderId=${encodeURIComponent(orderId)}`
+      );
+    } else {
+      const payment = await Payment.findOne({ where: { order_id: orderId } });
+      if (payment) {
+        payment.payment_status = "failed";
+        await payment.save();
+      }
+
+      return res.redirect(
+        `${frontendUrl}/checkout/vnpay-return?status=failed&orderId=${encodeURIComponent(orderId)}`
+      );
+    }
+  } catch (error) {
+    console.error("VNPAY Return Error:", error);
+    const frontendUrl = process.env.FE_APP_URL || "http://localhost:3000";
+    return res.redirect(`${frontendUrl}/orders?error=unknown`);
+  }
+};
