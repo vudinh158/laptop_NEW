@@ -2,6 +2,7 @@ const express = require("express")
 const router = express.Router()
 const adminController = require("../controllers/adminController")
 const { authenticateToken, authorizeRoles } = require("../middleware/auth")
+const upload = require("../middleware/upload")
 
 // All admin routes require authentication and admin role
 router.use(authenticateToken)
@@ -9,7 +10,10 @@ router.use(authorizeRoles("admin", "manager"))
 
 // Product management
 router.post("/products", adminController.createProduct)
-router.put("/products/:product_id", adminController.updateProduct)
+router.put('/products/:product_id', upload.fields([
+    { name: 'thumbnail', maxCount: 1 }, 
+    { name: 'images', maxCount: 10 }
+  ]),  adminController.updateProduct);
 router.delete("/products/:product_id", adminController.deleteProduct)
 
 // Variation management

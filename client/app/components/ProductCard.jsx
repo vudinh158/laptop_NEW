@@ -30,7 +30,7 @@ export default function ProductCard({ product }) {
   }
 
   const productId = product.product_id; 
-  const productName = product.product_name; // FIX: Sử dụng product_name
+  const productName = product.product_name; 
   
   const defaultVariation = product.variations?.[0]
 
@@ -45,8 +45,17 @@ export default function ProductCard({ product }) {
   // Query ?v=<variation_id> để mở đúng cấu hình
   const variationQuery = initialVariationId ? `?v=${initialVariationId}` : "";
 
-  // Ảnh đại diện
-  const imageUrl = product.images?.[0]?.image_url || product.thumbnail_url ||"/placeholder.svg";
+  let imageUrl = product.thumbnail_url;
+
+  if (!imageUrl && product.images && product.images.length > 0) {
+      const primaryImage = product.images.find(img => img.is_primary);
+      imageUrl = primaryImage ? primaryImage.image_url : product.images[0].image_url;
+  }
+
+  if (!imageUrl) {
+      imageUrl = "/placeholder.svg";
+  }
+  // ------------------------------------
 
   
   const price = Number(defaultVariation?.price || product.base_price || 0);
@@ -67,6 +76,8 @@ export default function ProductCard({ product }) {
             src={imageUrl} 
             alt={productName}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            // Thêm xử lý lỗi ảnh
+            onError={(e) => { e.currentTarget.src = "/placeholder.svg"; e.currentTarget.onerror = null; }}
           />
           {discount > 0 && (
             <div className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded-md text-sm font-semibold">
@@ -77,7 +88,7 @@ export default function ProductCard({ product }) {
 
         <div className="p-4">
           {/* FIX HIỂN THỊ TÊN SẢN PHẨM */}
-          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600">{productName}</h3> 
+          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600" title={productName}>{productName}</h3> 
 
           <div className="flex items-center gap-1 mb-2">
             <div className="flex">
