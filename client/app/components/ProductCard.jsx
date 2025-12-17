@@ -30,33 +30,54 @@ export default function ProductCard({ product }) {
   }
 
   const productId = product.product_id; 
-  const productName = product.product_name; // FIX: Sử dụng product_name
+  const productName = product.product_name; 
   
   const defaultVariation = product.variations?.[0]
+
+  const initialVariationId =
+  product.primaryVariationId ??
+  defaultVariation?.variation_id ??
+  undefined;
+
+  // Link ưu tiên slug, fallback id
+  const slugOrId = product.slug || productId;
+
+  // Query ?v=<variation_id> để mở đúng cấu hình
+  const variationQuery = initialVariationId ? `?v=${initialVariationId}` : "";
+
+  let imageUrl = product.thumbnail_url;
+
+  if (!imageUrl && product.images && product.images.length > 0) {
+      const primaryImage = product.images.find(img => img.is_primary);
+      imageUrl = primaryImage ? primaryImage.image_url : product.images[0].image_url;
+  }
+
+  if (!imageUrl) {
+      imageUrl = "/placeholder.svg";
+  }
+  // ------------------------------------
+
   
-  // FIX: Lấy giá từ defaultVariation, nếu không có thì dùng base_price
-  const price = Number(defaultVariation?.price || product.base_price || 0); 
-  
-  // FIX: Lấy discount từ Product base
-  const discount = Number(product.discount_percentage || 0); 
-  
+  const price = Number(defaultVariation?.price || product.base_price || 0);
+  const discount = Number(product.discount_percentage || 0);
   const finalPrice = price * (1 - discount / 100);
   
   // Dữ liệu rating và review
   const average_rating = Number(product.rating_average || 0); 
   const review_count = Number(product.review_count || 0);
   
-  // FIX HIỂN THỊ ẢNH: Lấy ảnh từ mảng images hoặc thumbnail_url
-  const imageUrl = product.images?.[0]?.image_url || product.thumbnail_url || "/placeholder.svg" 
+
 
   return (
-    <Link to={`/products/${productId}`} className="group"> 
+    <Link to={`/products/${slugOrId}${variationQuery}`} className="group"> 
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
         <div className="relative aspect-square overflow-hidden bg-gray-100">
           <img
             src={imageUrl} 
             alt={productName}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            // Thêm xử lý lỗi ảnh
+            onError={(e) => { e.currentTarget.src = "/placeholder.svg"; e.currentTarget.onerror = null; }}
           />
           {discount > 0 && (
             <div className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded-md text-sm font-semibold">
@@ -67,7 +88,7 @@ export default function ProductCard({ product }) {
 
         <div className="p-4">
           {/* FIX HIỂN THỊ TÊN SẢN PHẨM */}
-          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600">{productName}</h3> 
+          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600" title={productName}>{productName}</h3> 
 
           <div className="flex items-center gap-1 mb-2">
             <div className="flex">

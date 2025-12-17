@@ -8,15 +8,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# ===== Paths =====
-ARTIFACTS_DIR = os.getenv("ARTIFACTS_DIR", "artifacts")
-DATA_DIR      = os.getenv("DATA_DIR", "data")
-os.makedirs(ARTIFACTS_DIR, exist_ok=True)
+CPU_JSON_PATH = "cpu_benchmark.json"
+GPU_JSON_PATH = "gpu_benchmark.json"
 
-CPU_JSON_PATH = os.path.join(DATA_DIR, "cpu_benchmark.json")
-GPU_JSON_PATH = os.path.join(DATA_DIR, "gpu_benchmark.json")
-
-# ===== Weights & scale =====
 CPU_WEIGHT = 0.40
 GPU_WEIGHT = 0.35
 RAM_WEIGHT = 0.15
@@ -109,10 +103,10 @@ def load_benchmarks(json_path, is_cpu=True):
 
 def best_match_score(query_str: str, bench_df: pd.DataFrame, is_cpu=True):
     """
-    return (score, source):
-      'json-exact'   : match exact sau chuẩn hoá
-      'json-contains': match mờ theo Jaccard >= FUZZY_THRESHOLD
-      (None, None)   : không match
+    Trả về (score, source_label):
+      - 'json-exact'     : match đúng 'simple' (sau chuẩn hoá)
+      - 'json-contains'  : match mờ theo Jaccard >= FUZZY_THRESHOLD
+      - (None, None)     : không match
     """
     if not query_str or bench_df is None or bench_df.empty:
         return (None, None)
@@ -120,19 +114,24 @@ def best_match_score(query_str: str, bench_df: pd.DataFrame, is_cpu=True):
     simp = simplify_cpu_name(query_str) if is_cpu else simplify_gpu_name(query_str)
     tok = tokens(simp)
 
+    # exact trên 'simple'
     r = bench_df.loc[bench_df["simple"] == simp]
     if not r.empty:
         return (float(r.iloc[0]["score"]), "json-exact")
 
-    variants = {simp,
-                re.sub(r"\b(laptop|max\-q|maxq|mobile)\b", "", simp).strip(),
-                re.sub(r"\b(processor|cpu)\b", "", simp).strip()}
+    # vài biến thể rất nhẹ
+    variants = {
+        simp,
+        re.sub(r"\b(laptop|max\-q|maxq|mobile)\b", "", simp).strip(),
+        re.sub(r"\b(processor|cpu)\b", "", simp).strip()
+    }
     for v in variants:
         if not v: continue
         rr = bench_df.loc[bench_df["simple"] == v]
         if not rr.empty:
             return (float(rr.iloc[0]["score"]), "json-exact")
 
+    # fuzzy contains bằng Jaccard
     best, best_sim = None, 0.0
     for _, row in bench_df.iterrows():
         sim = jaccard(tok, row["tokens"])
@@ -205,7 +204,8 @@ def main():
     cpu_bench = load_benchmarks(CPU_JSON_PATH, is_cpu=True)
     gpu_bench = load_benchmarks(GPU_JSON_PATH, is_cpu=False)
 
-    cpu_raw, gpu_raw, cpu_src, gpu_src = [], [], [], []
+    cpu_raw, gpu_raw = [], []
+    cpu_src, gpu_src = [], []
 
     for _, row in df.iterrows():
         c = row.get("processor", "")
@@ -217,26 +217,33 @@ def main():
         # CPU
         if c_score is None:
             base = fallback_cpu_score(c)
-            m_multi = re.search(r"\b(\d+)x\b", (c or "").lower())  # hỗ trợ 2x/4x...
+            # hỗ trợ cụm 2X, 4X ...
+            m_multi = re.search(r"\b(\d+)x\b", (c or "").lower())
             if m_multi:
-                try: base *= int(m_multi.group(1))
-                except Exception: pass
-            cpu_raw.append(base); cpu_src.append("rule")
+                try:
+                    base *= int(m_multi.group(1))
+                except Exception:
+                    pass
+            cpu_raw.append(base)
+            cpu_src.append("rule")
         else:
-            cpu_raw.append(c_score); cpu_src.append(c_label or "json-exact")
+            cpu_raw.append(c_score)
+            cpu_src.append(c_label or "json-exact")
 
         # GPU
         if g_score is None:
-            gpu_raw.append(fallback_gpu_score(g)); gpu_src.append("rule")
+            gpu_raw.append(fallback_gpu_score(g))
+            gpu_src.append("rule")
         else:
-            gpu_raw.append(g_score); gpu_src.append(g_label or "json-exact")
+            gpu_raw.append(g_score)
+            gpu_src.append(g_label or "json-exact")
 
     df["cpu_score_raw"] = cpu_raw
     df["gpu_score_raw"] = gpu_raw
     df["cpu_source"] = cpu_src
     df["gpu_source"] = gpu_src
 
-    # scale về 0–100 (đồng nhất & robust)
+    # scale về 0–100
     df["cpu_score_100"] = scale_bench_to_100(df["cpu_score_raw"], method=SCALE_METHOD)
     df["gpu_score_100"] = scale_bench_to_100(df["gpu_score_raw"], method=SCALE_METHOD)
     df["ram_score"] = df["ram"].map(score_ram)
@@ -251,18 +258,18 @@ def main():
     df["price"] = pd.to_numeric(df["price"], errors="coerce")
     df.dropna(subset=["price","performance_score"], inplace=True)
 
-    # === Fit scaler & lưu ma trận đã scale (để app dùng KNN thủ công) ===
+    # === Fit scaler và lưu ma trận đặc trưng đã scale (thay cho sklearn KNN) ===
     features = df[["price","performance_score"]].copy()
     scaler = MinMaxScaler()
     X = scaler.fit_transform(features).astype(np.float64)
 
-    # Lưu ARTIfacts đúng thư mục
-    joblib.dump(scaler, os.path.join(ARTIFACTS_DIR, "scaler.joblib"))
-    df.to_pickle(os.path.join(ARTIFACTS_DIR, "products_df_from_db.pkl"))
-    np.save(os.path.join(ARTIFACTS_DIR, "knn_X_all.npy"), X)
-    np.save(os.path.join(ARTIFACTS_DIR, "knn_variation_ids.npy"), df["variation_id"].to_numpy(np.int64))
+    # Lưu artefacts
+    joblib.dump(scaler, "scaler.joblib")
+    df.to_pickle("products_df_from_db.pkl")
+    np.save("knn_X_all.npy", X)                                   # (N, 2)
+    np.save("knn_variation_ids.npy", df["variation_id"].to_numpy(np.int64))  # (N,)
 
-    print(f"Saved ARTIfacts to '{ARTIFACTS_DIR}': scaler.joblib, products_df_from_db.pkl, knn_X_all.npy, knn_variation_ids.npy")
+    print("Saved: scaler.joblib, products_df_from_db.pkl, knn_X_all.npy, knn_variation_ids.npy")
 
 if __name__ == "__main__":
     main()

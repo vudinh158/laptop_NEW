@@ -1,10 +1,11 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useAdminOrders, useUpdateOrderStatus } from "../../hooks/useOrders";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { formatPrice } from "../../utils/formatters";
 
 export default function AdminOrders() {
-  const { data, isLoading, error, refetch } = useAdminOrders();
+  const [page, setPage] = useState(1);
+  const { data, isLoading, error, refetch } = useAdminOrders({page, limit: 20});
   const updateStatus = useUpdateOrderStatus();
 
   useEffect(() => {
@@ -15,7 +16,7 @@ export default function AdminOrders() {
 
   const handleStatusChange = (orderId, status) => {
     if (!orderId) {
-      console.error("❌ orderId is undefined");
+      console.error("orderId is undefined");
       return;
     }
 
@@ -38,6 +39,7 @@ export default function AdminOrders() {
     );
   }
 
+  const pagination = data?.pagination || {};
   return (
     <div className="max-w-7xl mx-auto px-6 py-6">
       <h1 className="text-2xl font-bold mb-6">Quản lý đơn hàng</h1>
@@ -101,7 +103,7 @@ export default function AdminOrders() {
                     value={order.status}
                     onChange={(e) =>
                       handleStatusChange(
-                        order.order_id,   // ✅ FIX QUAN TRỌNG
+                        order.order_id,   
                         e.target.value
                       )
                     }
@@ -126,6 +128,38 @@ export default function AdminOrders() {
             ))}
           </tbody>
         </table>
+        {/* Pagination */}
+        {pagination.totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 mt-8">
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Trước
+            </button>
+            {[...Array(pagination.totalPages)].map((_, i) => (
+              <button
+                key={i + 1}
+                onClick={() => setPage(i + 1)}
+                className={`px-4 py-2 rounded-lg ${
+                  page === i + 1
+                    ? "bg-blue-600 text-white"
+                    : "border border-gray-300 hover:bg-gray-50"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button
+              onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
+              disabled={page === pagination.totalPages}
+              className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Sau
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

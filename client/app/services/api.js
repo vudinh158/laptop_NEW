@@ -9,9 +9,7 @@ const API_BASE_URL =
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
+
 });
 
 // Request interceptor to add auth token
@@ -68,7 +66,7 @@ export const authAPI = {
 export const productsAPI = {
   getProducts: (params) => api.get("/products", { params }),
   getProductById: (id) => api.get(`/products/${id}`),
-  getRecommendations: (id) => api.get(`/products/${id}/recommendations`),
+  getRecommendations: (id) => api.get(`/products/variations/${id}/recommendations`),
 };
 
 // Cart API
