@@ -51,6 +51,11 @@ const ProductVariation = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
+    is_primary: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    },
   },
   {
     tableName: "product_variations",

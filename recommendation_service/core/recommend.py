@@ -10,7 +10,7 @@ from .knn_numpy import knn_kneighbors_numpy, euclid_weighted
 from .recency import score_fresh_candidates
 import joblib
 
-# ---- load artefacts tại import-time
+# ---- load artifacts tại import-time
 DF = pd.read_pickle(DF_PATH)
 SCALER = joblib.load(SCALER_PATH)
 X_ALL = np.load(XALL_PATH)                 # (N,2)
@@ -27,11 +27,14 @@ def recommend_core(var_id: int):
     df_ids = set(DF["variation_id"].tolist())
 
     # 1) chuẩn bị query vector
+    base_product_id = None # <-- Biến mới để lưu product_id gốc
+
     if var_id in df_ids:
         base = DF.loc[DF["variation_id"] == var_id].iloc[0]
         q_price = float(base["price"]); q_perf = float(base["performance_score"])
         q_scaled = SCALER.transform(np.array([[q_price, q_perf]], dtype=float))[0]
         base_row = base
+        base_product_id = int(base["product_id"]) # <-- Lấy product_id gốc
     else:
         fresh_one = fetch_one_variation_from_db(var_id)
         if fresh_one is None or fresh_one.empty:
@@ -42,6 +45,7 @@ def recommend_core(var_id: int):
         q_price = float(fresh_one["price"]); q_perf = float(fresh_one["performance_score"])
         q_scaled = SCALER.transform(np.array([[q_price, q_perf]], dtype=float))[0]
         base_row = pd.Series({"variation_id": int(fresh_one["variation_id"]), "price": q_price, "performance_score": q_perf})
+        base_product_id = int(fresh_one["product_id"]) # <-- Lấy product_id gốc
 
     # 2) ứng viên từ index
     n_neighbors = min(int(TOPK) + 15, len(DF))
@@ -63,7 +67,6 @@ def recommend_core(var_id: int):
     if fresh_df is not None and not fresh_df.empty:
         mask_new = ~fresh_df["variation_id"].isin(df_ids)
         fresh_df = fresh_df.loc[mask_new].reset_index(drop=True)
-        # tính perf + nguồn
         perf_list, cpu_srcs, gpu_srcs = [], [], []
         for _, r in fresh_df.iterrows():
             score, cpu_src, gpu_src, _, _ = calculate_perf_from_mapping_or_rule(r)
@@ -79,38 +82,63 @@ def recommend_core(var_id: int):
         for i, sim in scored:
             cand_fresh.append(("fresh", i, sim, fresh_df))
 
+
     # 4) gộp & rerank
     pool = cand_knn + cand_fresh
     pool.sort(key=lambda t: t[2], reverse=True)
-    pool = pool[:TOPK]
 
-    # 5) response
+    # 5) response 
     out = []
+    
+    # Thêm product_id GỐC vào danh sách đã thấy
+    seen_product_ids = {base_product_id}
+
     for src, i, _, fdf in pool:
+        current_product_id = None
+        current_variation_id = None
+        r = None # Khai báo r
+
         if src == "indexed":
             r = DF.iloc[i]
-            out.append({
-                "variation_id": int(r["variation_id"]),
-                "product_id": int(r["product_id"]),
-                "product_name": str(r["product_name"]),
-                "price": float(r["price"]),
-                "performance_score": float(r["performance_score"]),
-                "cpu_source": str(r.get("cpu_source", "unknown")),
-                "gpu_source": str(r.get("gpu_source", "unknown")),
-                "score_source": f"cpu:{r.get('cpu_source','?')},gpu:{r.get('gpu_source','?')}",
-                "source": "indexed"
-            })
-        else:
+            current_product_id = int(r["product_id"])
+            current_variation_id = int(r["variation_id"])
+        else: # src == "fresh"
             r = fdf.iloc[i]
-            out.append({
-                "variation_id": int(r["variation_id"]),
-                "product_id": int(r["product_id"]),
-                "product_name": str(r["product_name"]),
-                "price": float(r["price"]),
-                "performance_score": float(r["performance_score"]),
-                "cpu_source": str(r.get("cpu_source", "rule")),
-                "gpu_source": str(r.get("gpu_source", "rule")),
-                "score_source": str(r.get("score_source", "fresh:rule")),
-                "source": "fresh"
-            })
+            current_product_id = int(r["product_id"])
+            current_variation_id = int(r["variation_id"])
+            
+        # Kiểm tra trùng lặp
+        if current_product_id not in seen_product_ids:
+            seen_product_ids.add(current_product_id)
+            
+            # Build object
+            if src == "indexed":
+                out.append({
+                    "variation_id": current_variation_id,
+                    "product_id": current_product_id,
+                    "product_name": str(r["product_name"]),
+                    "price": float(r["price"]),
+                    "performance_score": float(r["performance_score"]),
+                    "cpu_source": str(r.get("cpu_source", "unknown")),
+                    "gpu_source": str(r.get("gpu_source", "unknown")),
+                    "score_source": f"cpu:{r.get('cpu_source','?')},gpu:{r.get('gpu_source','?')}",
+                    "source": "indexed"
+                })
+            else:
+                out.append({
+                    "variation_id": current_variation_id,
+                    "product_id": current_product_id,
+                    "product_name": str(r["product_name"]),
+                    "price": float(r["price"]),
+                    "performance_score": float(r["performance_score"]),
+                    "cpu_source": str(r.get("cpu_source", "rule")),
+                    "gpu_source": str(r.get("gpu_source", "rule")),
+                    "score_source": str(r.get("score_source", "fresh:rule")),
+                    "source": "fresh"
+                })
+
+        # Dừng khi đủ TOPK
+        if len(out) >= TOPK:
+            break
+            
     return out, 200

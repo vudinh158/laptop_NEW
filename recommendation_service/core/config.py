@@ -22,15 +22,15 @@ BENCH_METHOD = os.getenv("BENCH_SCALE_METHOD", "logminmax")     # logminmax|minm
 BENCH_DOMAIN = os.getenv("BENCH_DOMAIN", "all")                  # consumer|all
 
 # ---- paths
-ARTEFACTS_DIR = os.getenv("ARTEFACTS_DIR", "artefacts")
+ARTIFACTS_DIR = os.getenv("ARTIFACTS_DIR", "artifacts")
 DATA_DIR = os.getenv("DATA_DIR", "data")
 
 CPU_JSON_PATH = os.path.join(DATA_DIR, "cpu_benchmark.json")
 GPU_JSON_PATH = os.path.join(DATA_DIR, "gpu_benchmark.json")
-DF_PATH       = os.path.join(ARTEFACTS_DIR, "products_df_from_db.pkl")
-SCALER_PATH   = os.path.join(ARTEFACTS_DIR, "scaler.joblib")
-XALL_PATH     = os.path.join(ARTEFACTS_DIR, "knn_X_all.npy")
-VARIDS_PATH   = os.path.join(ARTEFACTS_DIR, "knn_variation_ids.npy")
+DF_PATH       = os.path.join(ARTIFACTS_DIR, "products_df_from_db.pkl")
+SCALER_PATH   = os.path.join(ARTIFACTS_DIR, "scaler.joblib")
+XALL_PATH     = os.path.join(ARTIFACTS_DIR, "knn_X_all.npy")
+VARIDS_PATH   = os.path.join(ARTIFACTS_DIR, "knn_variation_ids.npy")
 
 # ---- DB
 DB_URL = os.getenv("DATABASE_URL")

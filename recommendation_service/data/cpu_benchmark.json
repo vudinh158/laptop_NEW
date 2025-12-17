@@ -400,7 +400,7 @@
     "Number of Benchmarks": 1
   },
   {
-    "Device Name": "13th Gen Intel Core i9-13900KS",
+    "Device Name": "Intel Core i9-13900KS",
     "Median Score": 505.29,
     "Number of Benchmarks": 7
   },
@@ -435,7 +435,7 @@
     "Number of Benchmarks": 1
   },
   {
-    "Device Name": "13th Gen Intel Core i9-13900KF",
+    "Device Name": "Intel Core i9-13900KF",
     "Median Score": 489.37,
     "Number of Benchmarks": 22
   },
@@ -460,7 +460,7 @@
     "Number of Benchmarks": 1
   },
   {
-    "Device Name": "13th Gen Intel Core i9-13900K",
+    "Device Name": "Intel Core i9-13900K",
     "Median Score": 478.55,
     "Number of Benchmarks": 42
   },
@@ -475,7 +475,7 @@
     "Number of Benchmarks": 1
   },
   {
-    "Device Name": "13th Gen Intel Core i9-13900",
+    "Device Name": "Intel Core i9-13900",
     "Median Score": 474.33,
     "Number of Benchmarks": 3
   },
@@ -590,7 +590,7 @@
     "Number of Benchmarks": 22
   },
   {
-    "Device Name": "13th Gen Intel Core i9-13900F",
+    "Device Name": "Intel Core i9-13900F",
     "Median Score": 405.79,
     "Number of Benchmarks": 4
   },
@@ -635,7 +635,7 @@
     "Number of Benchmarks": 2
   },
   {
-    "Device Name": "13th Gen Intel Core i7-13700K",
+    "Device Name": "Intel Core i7-13700K",
     "Median Score": 382.75,
     "Number of Benchmarks": 32
   },
@@ -645,12 +645,12 @@
     "Number of Benchmarks": 4
   },
   {
-    "Device Name": "13th Gen Intel Core i7-13700KF",
+    "Device Name": "Intel Core i7-13700KF",
     "Median Score": 380.08,
     "Number of Benchmarks": 20
   },
   {
-    "Device Name": "13th Gen Intel Core i9-13900HX",
+    "Device Name": "Intel Core i9-13900HX",
     "Median Score": 376.27,
     "Number of Benchmarks": 78
   },
@@ -745,7 +745,7 @@
     "Number of Benchmarks": 41
   },
   {
-    "Device Name": "13th Gen Intel Core i7-13700F",
+    "Device Name": "Intel Core i7-13700F",
     "Median Score": 330.24,
     "Number of Benchmarks": 5
   },
@@ -775,7 +775,7 @@
     "Number of Benchmarks": 2
   },
   {
-    "Device Name": "13th Gen Intel Core i9-13980HX",
+    "Device Name": "Intel Core i9-13980HX",
     "Median Score": 314.82,
     "Number of Benchmarks": 12
   },
@@ -810,7 +810,7 @@
     "Number of Benchmarks": 1
   },
   {
-    "Device Name": "13th Gen Intel Core i7-13700T",
+    "Device Name": "Intel Core i7-13700T",
     "Median Score": 307.76,
     "Number of Benchmarks": 4
   },
@@ -840,12 +840,12 @@
     "Number of Benchmarks": 2
   },
   {
-    "Device Name": "13th Gen Intel Core i5-13600K",
+    "Device Name": "Intel Core i5-13600K",
     "Median Score": 299.51,
     "Number of Benchmarks": 15
   },
   {
-    "Device Name": "13th Gen Intel Core i7-13700",
+    "Device Name": "Intel Core i7-13700",
     "Median Score": 298.15,
     "Number of Benchmarks": 2
   },
@@ -855,7 +855,7 @@
     "Number of Benchmarks": 100
   },
   {
-    "Device Name": "13th Gen Intel Core i5-13600KF",
+    "Device Name": "Intel Core i5-13600KF",
     "Median Score": 294.78,
     "Number of Benchmarks": 18
   },
@@ -995,7 +995,7 @@
     "Number of Benchmarks": 1
   },
   {
-    "Device Name": "13th Gen Intel Core i9-13950HX",
+    "Device Name": "Intel Core i9-13950HX",
     "Median Score": 267.46,
     "Number of Benchmarks": 11
   },
@@ -1120,7 +1120,7 @@
     "Number of Benchmarks": 2
   },
   {
-    "Device Name": "13th Gen Intel Core i7-13700HX",
+    "Device Name": "Intel Core i7-13700HX",
     "Median Score": 247.86,
     "Number of Benchmarks": 13
   },
@@ -1155,7 +1155,7 @@
     "Number of Benchmarks": 1
   },
   {
-    "Device Name": "13th Gen Intel Core i5-13500",
+    "Device Name": "Intel Core i5-13500",
     "Median Score": 238.66,
     "Number of Benchmarks": 7
   },
@@ -1240,7 +1240,7 @@
     "Number of Benchmarks": 3
   },
   {
-    "Device Name": "13th Gen Intel Core i5-13600",
+    "Device Name": "Intel Core i5-13600",
     "Median Score": 228.61,
     "Number of Benchmarks": 1
   },
@@ -1300,7 +1300,7 @@
     "Number of Benchmarks": 133
   },
   {
-    "Device Name": "13th Gen Intel Core i5-13400",
+    "Device Name": "Intel Core i5-13400",
     "Median Score": 221.55,
     "Number of Benchmarks": 4
   },
@@ -1430,7 +1430,7 @@
     "Number of Benchmarks": 14
   },
   {
-    "Device Name": "13th Gen Intel Core i5-13400F",
+    "Device Name": "Intel Core i5-13400F",
     "Median Score": 202.65,
     "Number of Benchmarks": 36
   },
@@ -1450,12 +1450,12 @@
     "Number of Benchmarks": 55
   },
   {
-    "Device Name": "13th Gen Intel Core i9-13900HK",
+    "Device Name": "Intel Core i9-13900HK",
     "Median Score": 201,
     "Number of Benchmarks": 3
   },
   {
-    "Device Name": "13th Gen Intel Core i5-13450HX",
+    "Device Name": "Intel Core i5-13450HX",
     "Median Score": 200.5,
     "Number of Benchmarks": 21
   },
@@ -1490,7 +1490,7 @@
     "Number of Benchmarks": 2
   },
   {
-    "Device Name": "13th Gen Intel Core i7-13650HX",
+    "Device Name": "Intel Core i7-13650HX",
     "Median Score": 196.88,
     "Number of Benchmarks": 41
   },
@@ -1635,7 +1635,7 @@
     "Number of Benchmarks": 17
   },
   {
-    "Device Name": "13th Gen Intel Core i9-13900H",
+    "Device Name": "Intel Core i9-13900H",
     "Median Score": 182.8,
     "Number of Benchmarks": 50
   },
@@ -1710,7 +1710,7 @@
     "Number of Benchmarks": 4
   },
   {
-    "Device Name": "13th Gen Intel Core i5-13490F",
+    "Device Name": "Intel Core i5-13490F",
     "Median Score": 173.03,
     "Number of Benchmarks": 3
   },
@@ -1830,7 +1830,7 @@
     "Number of Benchmarks": 7
   },
   {
-    "Device Name": "13th Gen Intel Core i7-13620H",
+    "Device Name": "Intel Core i7-13620H",
     "Median Score": 159.63,
     "Number of Benchmarks": 28
   },
@@ -1845,7 +1845,7 @@
     "Number of Benchmarks": 2
   },
   {
-    "Device Name": "13th Gen Intel Core i7-13700H",
+    "Device Name": "Intel Core i7-13700H",
     "Median Score": 158.91,
     "Number of Benchmarks": 15
   },
@@ -1875,7 +1875,7 @@
     "Number of Benchmarks": 5
   },
   {
-    "Device Name": "13th Gen Intel Core i5-13500HX",
+    "Device Name": "Intel Core i5-13500HX",
     "Median Score": 154.65,
     "Number of Benchmarks": 2
   },
@@ -1885,7 +1885,7 @@
     "Number of Benchmarks": 1
   },
   {
-    "Device Name": "13th Gen Intel Core i5-13500H",
+    "Device Name": "Intel Core i5-13500H",
     "Median Score": 153.53,
     "Number of Benchmarks": 5
   },
@@ -2060,7 +2060,7 @@
     "Number of Benchmarks": 4
   },
   {
-    "Device Name": "13th Gen Intel Core i5-13500T",
+    "Device Name": "Intel Core i5-13500T",
     "Median Score": 141.06,
     "Number of Benchmarks": 1
   },
@@ -2225,7 +2225,7 @@
     "Number of Benchmarks": 11
   },
   {
-    "Device Name": "13th Gen Intel Core i3-13100F",
+    "Device Name": "Intel Core i3-13100F",
     "Median Score": 131.97,
     "Number of Benchmarks": 1
   },
@@ -2260,7 +2260,7 @@
     "Number of Benchmarks": 1
   },
   {
-    "Device Name": "13th Gen Intel Core i5-1340P",
+    "Device Name": "Intel Core i5-1340P",
     "Median Score": 129.51,
     "Number of Benchmarks": 1
   },
@@ -2285,7 +2285,7 @@
     "Number of Benchmarks": 10
   },
   {
-    "Device Name": "13th Gen Intel Core i7-1360P",
+    "Device Name": "Intel Core i7-1360P",
     "Median Score": 126.65,
     "Number of Benchmarks": 3
   },
@@ -2330,7 +2330,7 @@
     "Number of Benchmarks": 4
   },
   {
-    "Device Name": "13th Gen Intel Core i5-13420H",
+    "Device Name": "Intel Core i5-13420H",
     "Median Score": 122.34,
     "Number of Benchmarks": 19
   },
@@ -2565,7 +2565,7 @@
     "Number of Benchmarks": 5
   },
   {
-    "Device Name": "13th Gen Intel Core i3-13100",
+    "Device Name": "Intel Core i3-13100",
     "Median Score": 106.48,
     "Number of Benchmarks": 2
   },
@@ -2660,7 +2660,7 @@
     "Number of Benchmarks": 2
   },
   {
-    "Device Name": "13th Gen Intel Core i7-1355U",
+    "Device Name": "Intel Core i7-1355U",
     "Median Score": 98.32,
     "Number of Benchmarks": 3
   },
@@ -2905,7 +2905,7 @@
     "Number of Benchmarks": 1
   },
   {
-    "Device Name": "4X 12th Gen Intel Core i5-12400",
+    "Device Name": "Intel Core i5-12400",
     "Median Score": 74.09,
     "Number of Benchmarks": 1
   },
@@ -3170,7 +3170,7 @@
     "Number of Benchmarks": 1
   },
   {
-    "Device Name": "13th Gen Intel Core i3-1315U",
+    "Device Name": "Intel Core i3-1315U",
     "Median Score": 61.17,
     "Number of Benchmarks": 4
   },
@@ -3265,7 +3265,7 @@
     "Number of Benchmarks": 2
   },
   {
-    "Device Name": "13th Gen Intel Core i5-1335U",
+    "Device Name": "Intel Core i5-1335U",
     "Median Score": 56.82,
     "Number of Benchmarks": 2
   },
@@ -3370,7 +3370,7 @@
     "Number of Benchmarks": 3
   },
   {
-    "Device Name": "13th Gen Intel Core i5-1334U",
+    "Device Name": "Intel Core i5-1334U",
     "Median Score": 50.02,
     "Number of Benchmarks": 4
   },
