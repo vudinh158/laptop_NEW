@@ -5,6 +5,8 @@ import { useAdminProduct, useCategories, useBrands } from "../../hooks/useProduc
 import { adminAPI } from "../../services/api" 
 import { useQueryClient } from "@tanstack/react-query" 
 import LoadingSpinner from "../../components/LoadingSpinner"
+import ReactQuill from "react-quill"
+import "react-quill/dist/quill.snow.css"
 
 export default function AdminProductEditPage() {
   const { id } = useParams()
@@ -280,12 +282,11 @@ export default function AdminProductEditPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Mô tả sản phẩm</label>
-                    <textarea
-                      name="description"
+                    <ReactQuill
+                      theme="snow"
                       value={formData.description}
-                      onChange={handleChange}
-                      rows={6}
-                      className={defaultInputClass + " resize-none"}
+                      onChange={(value) => setFormData((prev) => ({ ...prev, description: value }))}
+                      className="bg-white"
                     />
                   </div>
                 </div>
