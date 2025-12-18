@@ -384,6 +384,176 @@ exports.createOrder = async (req, res, next) => {
   }
 };
 
+exports.getUserOrdersV2 = async (req, res, next) => {
+  try {
+    const {
+      tab = "all",
+      page = 1,
+      limit = 10,
+      q = "",
+      sort = "created_at:desc",
+    } = req.query;
+
+    const pageNum = Math.max(1, parseInt(page, 10) || 1);
+    const perPage = Math.min(100, Math.max(1, parseInt(limit, 10) || 10));
+    const offset = (pageNum - 1) * perPage;
+
+    const [, sortDirRaw] = String(sort).split(":");
+    const sortDir =
+      (sortDirRaw || "desc").toUpperCase() === "ASC" ? "ASC" : "DESC";
+    const orderBy = [["created_at", sortDir]];
+
+    const where = { user_id: req.user.user_id };
+
+    let paymentInclude = {
+      model: Payment,
+      as: "payment",
+      required: false,
+    };
+
+    switch (tab) {
+      case "awaiting_payment":
+        where.status = "AWAITING_PAYMENT";
+        paymentInclude = {
+          model: Payment,
+          as: "payment",
+          required: true,
+          where: { provider: "VNPAY", payment_status: "pending" },
+        };
+        break;
+
+      case "to_ship":
+        where.status = "processing";
+        paymentInclude = {
+          model: Payment,
+          as: "payment",
+          required: true,
+          where: {
+            [Op.or]: [
+              { provider: "COD", payment_status: "pending" },
+              { provider: "VNPAY", payment_status: "completed" },
+            ],
+          },
+        };
+        break;
+
+      case "shipping":
+        where.status = "shipping";
+        paymentInclude = {
+          model: Payment,
+          as: "payment",
+          required: true,
+          where: {
+            [Op.or]: [
+              { provider: "COD", payment_status: "pending" },
+              { provider: "VNPAY", payment_status: "completed" },
+            ],
+          },
+        };
+        break;
+
+      case "completed":
+        where.status = "delivered";
+        paymentInclude = {
+          model: Payment,
+          as: "payment",
+          required: true,
+          where: { payment_status: "completed" },
+        };
+        break;
+
+      case "cancelled":
+        where.status = { [Op.in]: ["cancelled", "FAILED"] };
+        break;
+
+      case "failed":
+        where.status = "FAILED";
+        break;
+
+      case "all":
+      default:
+        break;
+    }
+
+    const query = String(q || "").trim();
+    if (query) {
+      where[Op.or] = [
+        { order_code: { [Op.iLike]: `%${query}%` } },
+        { "$items.variation.product.product_name$": { [Op.iLike]: `%${query}%` } },
+      ];
+    }
+
+    const { count, rows } = await Order.findAndCountAll({
+      where,
+      include: [
+        {
+          model: OrderItem,
+          as: "items",
+          required: true,
+          include: [
+            {
+              model: ProductVariation,
+              as: "variation",
+              include: [{ model: Product, as: "product" }],
+            },
+          ],
+        },
+        paymentInclude,
+      ],
+      limit: perPage,
+      offset,
+      order: orderBy,
+      distinct: true,
+      subQuery: false,
+    });
+
+    const orders = rows.map((o) => {
+      const j = o.toJSON();
+      const preview = (j.items || []).slice(0, 2).map((it) => ({
+        variation_id: it.variation_id,
+        quantity: it.quantity,
+        product_name: it.variation?.product?.product_name || null,
+        thumbnail_url:
+          it.variation?.product?.images?.[0]?.image_url ||
+          it.variation?.product?.thumbnail_url ||
+          null,
+      }));
+
+      return {
+        order_id: j.order_id,
+        order_code: j.order_code,
+        status: j.status,
+        final_amount: Number(j.final_amount || 0),
+        shipping_fee: Number(j.shipping_fee || 0),
+        created_at: j.created_at,
+        reserve_expires_at: j.reserve_expires_at,
+        payment: j.payment
+          ? {
+              provider: j.payment.provider,
+              payment_method: j.payment.payment_method,
+              payment_status: j.payment.payment_status,
+              txn_ref: j.payment.txn_ref,
+            }
+          : null,
+        items_preview: preview,
+        items_count: (j.items || []).length,
+      };
+    });
+
+    return res.json({
+      orders,
+      pagination: {
+        total: count,
+        page: pageNum,
+        limit: perPage,
+        totalPages: Math.ceil(count / perPage),
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Get user orders
 // controllers/orderController.js
 exports.getUserOrders = async (req, res, next) => {
@@ -1002,6 +1172,74 @@ exports.getOrderCounters = async (req, res, next) => {
       if (o.status === "shipping") counters.shipping += 1;
 
       if (o.status === "delivered" && p?.payment_status === "completed") {
+        counters.delivered += 1;
+      }
+
+      if (o.status === "cancelled" || o.status === "FAILED") {
+        counters.cancelled += 1;
+      }
+
+      if (o.status === "FAILED") counters.failed += 1;
+    }
+
+    return res.json(counters);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getOrderCountersV2 = async (req, res, next) => {
+  try {
+    const rows = await Order.findAll({
+      where: { user_id: req.user.user_id },
+      include: [{ model: Payment, as: "payment", required: false }],
+      attributes: ["order_id", "status"],
+    });
+
+    const counters = {
+      all: 0,
+      awaiting_payment: 0,
+      processing: 0,
+      to_ship: 0,
+      shipping: 0,
+      delivered: 0,
+      cancelled: 0,
+      failed: 0,
+    };
+
+    for (const o of rows) {
+      counters.all += 1;
+      const p = o.payment;
+      const prov = p?.provider;
+      const pstatus = p?.payment_status;
+
+      if (
+        o.status === "AWAITING_PAYMENT" &&
+        prov === "VNPAY" &&
+        pstatus === "pending"
+      ) {
+        counters.awaiting_payment += 1;
+      }
+
+      if (o.status === "processing") {
+        counters.processing += 1;
+        if (
+          (prov === "COD" && pstatus === "pending") ||
+          (prov === "VNPAY" && pstatus === "completed")
+        ) {
+          counters.to_ship += 1;
+        }
+      }
+
+      if (
+        o.status === "shipping" &&
+        ((prov === "COD" && pstatus === "pending") ||
+          (prov === "VNPAY" && pstatus === "completed"))
+      ) {
+        counters.shipping += 1;
+      }
+
+      if (o.status === "delivered" && pstatus === "completed") {
         counters.delivered += 1;
       }
 

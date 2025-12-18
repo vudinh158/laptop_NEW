@@ -1,6 +1,5 @@
-import { useMemo, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useOrders, useOrderCounters } from "../hooks/useOrders";
-import { matchTab } from "../utils/orderTabs";
 import { formatPrice } from "../utils/formatters";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { Link, useSearchParams } from "react-router-dom";
@@ -24,9 +23,9 @@ export default function OrdersPage() {
   const initialPage = Number(searchParams.get("page") || 1);
   const initialQ = searchParams.get("q") || "";
 
-  const [tab, setTab] = useState("all");
-  const [page, setPage] = useState(1);
-  const [q, setQ] = useState("");
+  const [tab, setTab] = useState(initialTab);
+  const [page, setPage] = useState(initialPage);
+  const [q, setQ] = useState(initialQ);
   const limit = 10;
 
   // Khi tab/page/q đổi -> ghi lại vào URL (để có thể deep-link)
@@ -52,11 +51,6 @@ export default function OrdersPage() {
 
   const orders = data?.orders || [];
   const pagination = data?.pagination;
-
-  const visibleOrders = useMemo(
-    () => orders.filter((o) => matchTab(o, tab)),
-    [orders, tab]
-  );
 
   const retryPay = useRetryVnpayPayment({ autoRedirect: true });
 
@@ -128,13 +122,13 @@ export default function OrdersPage() {
           </div>
         ) : error ? (
           <div className="text-red-600 py-8">Không tải được danh sách đơn.</div>
-        ) : visibleOrders.length === 0 ? (
+        ) : orders.length === 0 ? (
           <div className="bg-white rounded mt-6 p-10 text-center text-gray-600">
             Không có đơn nào.
           </div>
         ) : (
           <div className="mt-6 space-y-4">
-            {visibleOrders.map((o) => (
+            {orders.map((o) => (
               <div key={o.order_id} className="bg-white rounded border p-4">
                 {/* Header → link sang chi tiết */}
                 <Link

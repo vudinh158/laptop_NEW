@@ -7,10 +7,10 @@ const { authenticateToken } = require("../middleware/auth")
 router.use(authenticateToken)
 
 router.post("/", orderController.createOrder)
-router.get("/counters", orderController.getOrderCounters)
+router.get("/counters", orderController.getOrderCountersV2)
 router.post("/:order_id/payment-method", orderController.changePaymentMethod);
 router.put("/:order_id/shipping-address", orderController.updateShippingAddress);
-router.get("/", orderController.getUserOrders)
+router.get("/", orderController.getUserOrdersV2)
 router.get("/:order_id", orderController.getOrderDetail)
 router.post("/:order_id/cancel", orderController.cancelOrder)
 router.post("/preview", orderController.previewOrder);
