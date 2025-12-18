@@ -15,7 +15,7 @@ import { useSelector } from "react-redux";
 import CompareBar from "../components/CompareBar";
 import CompareModal from "../components/CompareModal";
 import ProductRecommendations from "../components/ProductRecommendations";
-import { Reply, MessageSquare, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
+import { Reply, ChevronLeft, ChevronRight, ChevronDown, HelpCircle, Send, Store, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 
@@ -215,7 +215,6 @@ export default function ProductDetailPage() {
 
   const token = localStorage.getItem("token"); // token JWT từ khi đăng nhập
   const isAuthed = !!token;
-  const fmt = (s) => new Date(s).toLocaleString();
 
   const roles = JSON.parse(localStorage.getItem("roles") || "[]");
   const canAnswer = roles.includes("admin") || roles.includes("staff");
@@ -264,15 +263,45 @@ export default function ProductDetailPage() {
       alert("Gửi trả lời thất bại");
     }
   };
-// avatar tròn chữ cái đầu
-const Avatar = ({ name }) => {
-  const ch = (name || "").trim()[0]?.toUpperCase() || "U";
-  return (
-    <div className="h-9 w-9 rounded-full bg-emerald-100 text-emerald-700 grid place-items-center font-semibold">
-      {ch}
+
+  const avatarColor = (name) => {
+    const colors = [
+      "bg-purple-600",
+      "bg-blue-600",
+      "bg-emerald-600",
+      "bg-pink-600",
+      "bg-orange-600",
+    ];
+    const s = String(name || "?");
+    let h = 0;
+    for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+    return colors[h % colors.length];
+  };
+
+  const Avatar = ({ name }) => {
+    const ch = (name || "").trim()[0]?.toUpperCase() || "U";
+    const bg = avatarColor(name);
+    return (
+      <div className={`relative h-9 w-9 rounded-full ${bg} text-white grid place-items-center font-semibold`}>
+        {ch}
+        <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-white/20 backdrop-blur flex items-center justify-center">
+          <User className="w-3 h-3 text-white" />
+        </div>
+      </div>
+    );
+  };
+
+  const AdminAvatar = () => (
+    <div className="h-9 w-9 rounded-full bg-red-600 text-white grid place-items-center font-semibold">
+      <Store className="w-4 h-4" />
     </div>
   );
-};
+
+  const AdminBadge = () => (
+    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-100 text-blue-700">
+      QTV
+    </span>
+  );
 
   const timeAgo = (d) => {
     const diff = Math.max(
@@ -404,8 +433,15 @@ const Avatar = ({ name }) => {
   };
 
   const [openReplies, setOpenReplies] = useState({});
+  const [qaVisibleCount, setQaVisibleCount] = useState(3);
   const toggleReplies = (qid) =>
     setOpenReplies((s) => ({ ...s, [qid]: !s[qid] }));
+
+  useEffect(() => {
+    setQaVisibleCount(3);
+    setOpenReplies({});
+  }, [id]);
+
   if (isLoading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -465,6 +501,14 @@ const Avatar = ({ name }) => {
     }
   };
   const disabledByProduct = productInactive;
+
+  const allQuestions = Array.isArray(product?.questions) ? product.questions : [];
+  const sortedQuestions = [...allQuestions].sort(
+    (a, b) => new Date(b?.created_at || 0).getTime() - new Date(a?.created_at || 0).getTime()
+  );
+  const visibleQuestions = sortedQuestions.slice(0, qaVisibleCount);
+  const qaHasMore = qaVisibleCount < sortedQuestions.length;
+
   return (
     <div className="bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -828,24 +872,25 @@ const Avatar = ({ name }) => {
   <h2 className="text-2xl font-bold text-gray-900 mb-4">Hỏi & Đáp</h2>
 
   {/* Ô đặt câu hỏi nổi bật */}
-  <div className="rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-5 mb-6">
+  <div className="rounded-[12px] border border-gray-200 bg-white shadow-sm p-5 mb-6">
     <div className="flex gap-4 items-start">
       <div className="hidden sm:block">
         <img src="/mascot.svg" onError={({currentTarget})=>{currentTarget.style.display='none'}} alt="" className="w-16 h-16 object-contain" />
       </div>
       <div className="flex-1">
-        <p className="text-gray-800 font-semibold mb-1">Hãy đặt câu hỏi cho chúng tôi</p>
-        <p className="text-sm text-gray-500 mb-3">
-          Thông tin có thể thay đổi theo thời gian, vui lòng đặt câu hỏi để nhận được cập nhật mới nhất!
-        </p>
+        <div className="flex items-center gap-2 text-gray-800 font-semibold mb-1">
+          <HelpCircle className="w-5 h-5 text-red-600" />
+          <span>Hãy đặt câu hỏi cho chúng tôi</span>
+        </div>
+        <p className="text-sm text-gray-500 mb-3">Phản hồi trong vòng 1 giờ</p>
 
         <div className="flex gap-2">
           <textarea
             value={questionText}
             onChange={(e) => setQuestionText(e.target.value)}
-            rows={1}
+            rows={2}
             placeholder="Viết câu hỏi của bạn tại đây…"
-            className="flex-1 resize-none border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 resize-none border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
           />
           <button
             onClick={postQuestion}
@@ -853,7 +898,7 @@ const Avatar = ({ name }) => {
             className="shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 disabled:opacity-50"
             title={!isAuthed ? "Đăng nhập để gửi câu hỏi" : "Gửi câu hỏi"}
           >
-            <MessageSquare className="w-4 h-4" />
+            <Send className="w-4 h-4" />
             Gửi câu hỏi
           </button>
         </div>
@@ -866,11 +911,11 @@ const Avatar = ({ name }) => {
 
   {/* Danh sách Q&A */}
   <div className="space-y-5">
-    {(product.questions || []).length === 0 && (
+    {sortedQuestions.length === 0 && (
       <div className="text-gray-500">Chưa có câu hỏi nào.</div>
     )}
 
-    {(product.questions || []).map((q) => {
+    {visibleQuestions.map((q) => {
       const asker = q.user?.full_name || q.user?.username || "Người dùng";
       const answers = q.answers || [];
       const opened = !!openReplies[q.question_id];
@@ -885,6 +930,9 @@ const Avatar = ({ name }) => {
                 <span className="font-semibold text-gray-900">{asker}</span>
                 <span className="text-xs text-gray-500">• {timeAgo(q.created_at)}</span>
               </div>
+              {q.product_id && (
+                <div className="text-xs text-gray-500 mt-0.5">{product?.product_name}</div>
+              )}
               <div className="mt-1 text-gray-800">{q.question_text}</div>
 
               <div className="mt-2">
@@ -892,8 +940,7 @@ const Avatar = ({ name }) => {
                   onClick={() => toggleReplies(q.question_id)}
                   className="text-sm text-blue-600 hover:text-blue-700 inline-flex items-center gap-1"
                 >
-                  <Reply className="w-4 h-4" />
-                  Phản hồi
+                  {opened ? "Thu gọn phản hồi" : "Xem phản hồi"}
                   <ChevronDown
                     className={`w-4 h-4 transition-transform ${opened ? "rotate-180" : ""}`}
                   />
@@ -902,29 +949,6 @@ const Avatar = ({ name }) => {
             </div>
           </div>
 
-          {/* KHỐI TRẢ LỜI */}
-          <div className={`mt-3 overflow-hidden transition-all ${opened ? "max-h-[2000px]" : "max-h-0"}`}>
-            <div className="pl-12 space-y-3">
-              {answers.map((a) => {
-                const replier = a.user?.full_name || a.user?.username || "Nhân viên";
-                const isAdmin = roles.includes("admin") || roles.includes("staff") || /quản trị|admin|staff/i.test(replier);
-                return (
-                  <div key={a.answer_id} className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                    <div className="flex items-start gap-2">
-                      <Avatar name={replier} />
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-gray-900">{replier}</span>
-                          {isAdmin && <AdminBadge />}
-                          <span className="text-xs text-gray-500">• {timeAgo(a.created_at)}</span>
-                        </div>
-                        <div className="mt-1 text-gray-800 whitespace-pre-wrap">{a.answer_text}</div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-
                   {/* KHỐI TRẢ LỜI */}
                   <div
                     className={`mt-3 overflow-hidden transition-all ${
@@ -932,6 +956,9 @@ const Avatar = ({ name }) => {
                     }`}
                   >
                     <div className="pl-12 space-y-3">
+                      {answers.length === 0 && (q.children || []).length === 0 && !canAnswer && !canShowFollowUp(q) && (
+                        <div className="text-sm text-gray-500">Chưa có phản hồi.</div>
+                      )}
                       {answers.map((a) => {
                         const replier =
                           a.user?.full_name || a.user?.username || "Nhân viên";
@@ -945,7 +972,7 @@ const Avatar = ({ name }) => {
                             className="bg-gray-50 border border-gray-200 rounded-lg p-3"
                           >
                             <div className="flex items-start gap-2">
-                              <Avatar name={replier} />
+                              {isAdmin ? <AdminAvatar /> : <Avatar name={replier} />}
                               <div className="flex-1">
                                 <div className="flex items-center gap-2">
                                   <span className="font-semibold text-gray-900">
@@ -1090,10 +1117,27 @@ const Avatar = ({ name }) => {
                     </div>
                   </div>
                 </div>
-            </div>
-          </div>
-        );
+              );
      })}
+
+    {sortedQuestions.length > 0 && (
+      <div className="pt-2">
+        {qaHasMore ? (
+          <button
+            onClick={() =>
+              setQaVisibleCount((n) =>
+                Math.min(sortedQuestions.length, n + 2)
+              )
+            }
+            className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-800 font-semibold hover:bg-gray-50"
+          >
+            Xem thêm câu hỏi
+          </button>
+        ) : (
+          <div className="text-sm text-gray-500">Đã hết câu hỏi</div>
+        )}
+      </div>
+    )}
   </div>
 </div>
 

@@ -11,6 +11,11 @@ router.get("/search-suggestions", productController.getSearchSuggestions)
 router.get("/", productController.getProducts)
 router.get("/categories", productController.getCategories)
 router.get("/brands", productController.getBrands)
+
+// Global Q&A for HomePage
+router.get("/questions", productController.getGlobalQuestions);
+router.post("/questions", authenticateToken, productController.createGlobalQuestion);
+
 router.get("/:id", productController.getProductDetail)
 
 router.get("/variations/:variation_id/recommendations", productController.getRecommendedByVariation);

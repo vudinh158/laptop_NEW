@@ -873,6 +873,114 @@ exports.createQuestion = async (req, res, next) => {
   }
 };
 
+// === DANH SÁCH Q&A TOÀN HỆ THỐNG (dùng cho HomePage) ===
+exports.getGlobalQuestions = async (req, res, next) => {
+  try {
+    const page = Math.max(1, parseInt(req.query.page || "1", 10));
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit || "3", 10)));
+    const offset =
+      req.query.offset != null
+        ? Math.max(0, parseInt(req.query.offset || "0", 10))
+        : (page - 1) * limit;
+
+    const where = { parent_question_id: null };
+
+    const { count, rows } = await Question.findAndCountAll({
+      where,
+      attributes: [
+        "question_id",
+        "product_id",
+        "question_text",
+        "is_answered",
+        "created_at",
+        "parent_question_id",
+      ],
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["user_id", "username", "full_name"],
+        },
+        {
+          model: Product,
+          attributes: ["product_id", "product_name", "slug"],
+          required: false,
+        },
+        {
+          model: Answer,
+          as: "answers",
+          attributes: ["answer_id", "answer_text", "created_at"],
+          include: [
+            {
+              model: User,
+              as: "user",
+              attributes: ["user_id", "username", "full_name"],
+            },
+          ],
+        },
+      ],
+      order: [
+        ["created_at", "DESC"],
+        [{ model: Answer, as: "answers" }, "created_at", "ASC"],
+      ],
+      limit,
+      offset,
+      distinct: true,
+    });
+
+    return res.json({
+      questions: rows,
+      total: count,
+      page,
+      limit,
+      offset,
+      totalPages: Math.max(1, Math.ceil(count / limit)),
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// === TẠO CÂU HỎI CHUNG (KHÔNG GẮN PRODUCT) ===
+exports.createGlobalQuestion = async (req, res, next) => {
+  try {
+    const { question_text } = req.body;
+    if (!question_text || !question_text.trim()) {
+      return res.status(400).json({ message: "question_text is required" });
+    }
+
+    const q = await Question.create({
+      product_id: null,
+      user_id: req.user.user_id,
+      question_text: question_text.trim(),
+      is_answered: false,
+      parent_question_id: null,
+    });
+
+    const withUser = await Question.findByPk(q.question_id, {
+      attributes: [
+        "question_id",
+        "product_id",
+        "question_text",
+        "is_answered",
+        "created_at",
+        "parent_question_id",
+      ],
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["user_id", "username", "full_name"],
+        },
+      ],
+    });
+
+    return res.status(201).json({ question: withUser });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // === TRẢ LỜI CÂU HỎI (SỬA: dùng req.user.user_id) ===
 exports.createAnswer = async (req, res, next) => {
   try {

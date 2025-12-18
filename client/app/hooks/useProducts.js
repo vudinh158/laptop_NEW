@@ -219,6 +219,30 @@ export function useBrands() {
   });
 }
 
+export function customerUseBrandsFull() {
+  return useQuery({
+    queryKey: ["brands-full"],
+    queryFn: async () => {
+      const { data } = await api.get("/products/brands");
+      const arr = data?.brands ?? data?.data ?? data ?? [];
+      return Array.isArray(arr) ? arr : [];
+    },
+    staleTime: Infinity,
+  });
+}
+
+export function customerUseCategoriesFull() {
+  return useQuery({
+    queryKey: ["categories-full"],
+    queryFn: async () => {
+      const { data } = await api.get("/products/categories");
+      const arr = data?.categories ?? data?.data ?? data ?? [];
+      return Array.isArray(arr) ? arr : [];
+    },
+    staleTime: Infinity,
+  });
+}
+
 export function customerUseBrands() {
   return useQuery({
     queryKey: ["brands"],
