@@ -13,12 +13,18 @@ export function useGetCart() {
       dispatch(setCart(data.cart));
       return data.cart;
     },
-        staleTime: 60_000,
+    staleTime: 60_000,
     enabled: !!isAuthenticated && !!localStorage.getItem("token"),
     retry: false,
     onError: (err) => {
       // Nếu 401 hoặc không có token, dọn giỏ hàng trên FE
-      if (err?.response?.status === 401 || !localStorage.getItem("token")) {
+      const status = err?.response?.status;
+      const msg = err?.response?.data?.message;
+      const isLegacyInvalidToken403 =
+        status === 403 &&
+        (msg === "Invalid or expired token" || msg === "Access token required");
+
+      if (status === 401 || isLegacyInvalidToken403 || !localStorage.getItem("token")) {
         dispatch(clearCart());
       }
     },

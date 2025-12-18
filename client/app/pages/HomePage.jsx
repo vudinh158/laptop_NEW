@@ -3,13 +3,20 @@
 import { useState, useMemo } from "react";
 // THÊM: useSearchParams để đọc URL query string
 import { useSearchParams } from "react-router-dom"; 
-import { useProducts, customerUseBrands, customerUseCategories } from "../hooks/useProducts"
+import {
+  useProducts,
+  useProductsV2,
+  useProductFacets,
+  customerUseBrands,
+  customerUseCategories,
+} from "../hooks/useProducts"
 import ProductCard from "../components/ProductCard";
 import ProductFilter from "../components/ProductFilter";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function HomePage() {
+
   // BƯỚC 1: Đọc tham số search từ URL
   const [searchParams] = useSearchParams();
   const urlSearchQuery = searchParams.get("search") || "";
@@ -24,6 +31,18 @@ export default function HomePage() {
     limit: 30,
   });
 
+  const [specFilters, setSpecFilters] = useState({
+    processor: [],
+    ram: [],
+    storage: [],
+    graphics_card: [],
+    screen_size: [],
+    minWeight: "",
+    maxWeight: "",
+  });
+
+  const [sortBy, setSortBy] = useState("");
+
   // Gộp filters: localFilters luôn có ưu tiên cao hơn, nhưng urlSearchQuery
   // được dùng để khởi tạo và đồng bộ với Header search.
   const filters = useMemo(() => ({
@@ -31,12 +50,32 @@ export default function HomePage() {
     search: urlSearchQuery,
   }), [localFilters, urlSearchQuery]);
 
+  const v2Filters = useMemo(
+    () => ({
+      ...filters,
+      sortBy,
+      processor: specFilters.processor,
+      ram: specFilters.ram,
+      storage: specFilters.storage,
+      graphics_card: specFilters.graphics_card,
+      screen_size: specFilters.screen_size,
+      minWeight: specFilters.minWeight,
+      maxWeight: specFilters.maxWeight,
+    }),
+    [filters, sortBy, specFilters]
+  );
 
   const { data: brandsData } = customerUseBrands();
   const { data: categoriesData } = customerUseCategories();
 
   // Gọi API với filters đã được đồng bộ
-  const { data, isLoading, error } = useProducts(filters);
+  const { data, isLoading, error } = useProductsV2(v2Filters);
+  const { data: facetsData } = useProductFacets();
+
+  const toggleInList = (list, value) => {
+    if (!value) return list;
+    return list.includes(value) ? list.filter((x) => x !== value) : [...list, value];
+  };
 
   const handleFilterChange = (newFilters) => {
     // SỬA: Đảm bảo chỉ cập nhật các giá trị đã thay đổi và reset page
@@ -57,6 +96,16 @@ export default function HomePage() {
       page: 1,
       limit: 30,
     });
+    setSpecFilters({
+      processor: [],
+      ram: [],
+      storage: [],
+      graphics_card: [],
+      screen_size: [],
+      minWeight: "",
+      maxWeight: "",
+    });
+    setSortBy("");
     // LƯU Ý: Nếu muốn xóa luôn thanh search URL, cần dùng setSearchParams
     // navigate("/", { replace: true });
   };
@@ -66,20 +115,17 @@ export default function HomePage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  if (error) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center text-red-600">
-          Có lỗi xảy ra khi tải sản phẩm. Vui lòng thử lại sau.
-        </div>
-      </div>
-    );
-  }
-
   const products = data?.products ?? [];
   const total = data?.total ?? products.length;
   const totalPages =
     data?.totalPages ?? Math.max(1, Math.ceil(total / (filters.limit || 30)));
+
+  const facets = facetsData?.facets ?? {};
+  const processors = facets.processor ?? [];
+  const rams = facets.ram ?? [];
+  const storages = facets.storage ?? [];
+  const gpus = facets.graphics_card ?? [];
+  const screens = facets.screen_size ?? [];
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -119,6 +165,162 @@ export default function HomePage() {
               }
               onClearFilters={handleClearFilters}
             />
+
+            <div className="bg-white rounded-lg border border-gray-200 p-4 mt-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Cấu hình</h3>
+
+              <div className="space-y-4">
+                <div>
+                  <div className="font-medium text-gray-900 mb-2">CPU</div>
+                  <div className="space-y-2 max-h-40 overflow-auto">
+                    {processors.map((v) => (
+                      <label key={v} className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={specFilters.processor.includes(v)}
+                          onChange={() => {
+                            setSpecFilters((prev) => ({
+                              ...prev,
+                              processor: toggleInList(prev.processor, v),
+                            }));
+                            setLocalFilters((prev) => ({ ...prev, page: 1 }));
+                          }}
+                          className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-gray-700">{v}</span>
+                      </label>
+                    ))}
+                    {!processors.length && (
+                      <div className="text-sm text-gray-500">Chưa có dữ liệu.</div>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="font-medium text-gray-900 mb-2">RAM</div>
+                  <div className="space-y-2 max-h-40 overflow-auto">
+                    {rams.map((v) => (
+                      <label key={v} className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={specFilters.ram.includes(v)}
+                          onChange={() => {
+                            setSpecFilters((prev) => ({
+                              ...prev,
+                              ram: toggleInList(prev.ram, v),
+                            }));
+                            setLocalFilters((prev) => ({ ...prev, page: 1 }));
+                          }}
+                          className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-gray-700">{v}</span>
+                      </label>
+                    ))}
+                    {!rams.length && <div className="text-sm text-gray-500">Chưa có dữ liệu.</div>}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="font-medium text-gray-900 mb-2">SSD</div>
+                  <div className="space-y-2 max-h-40 overflow-auto">
+                    {storages.map((v) => (
+                      <label key={v} className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={specFilters.storage.includes(v)}
+                          onChange={() => {
+                            setSpecFilters((prev) => ({
+                              ...prev,
+                              storage: toggleInList(prev.storage, v),
+                            }));
+                            setLocalFilters((prev) => ({ ...prev, page: 1 }));
+                          }}
+                          className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-gray-700">{v}</span>
+                      </label>
+                    ))}
+                    {!storages.length && (
+                      <div className="text-sm text-gray-500">Chưa có dữ liệu.</div>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="font-medium text-gray-900 mb-2">GPU</div>
+                  <div className="space-y-2 max-h-40 overflow-auto">
+                    {gpus.map((v) => (
+                      <label key={v} className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={specFilters.graphics_card.includes(v)}
+                          onChange={() => {
+                            setSpecFilters((prev) => ({
+                              ...prev,
+                              graphics_card: toggleInList(prev.graphics_card, v),
+                            }));
+                            setLocalFilters((prev) => ({ ...prev, page: 1 }));
+                          }}
+                          className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-gray-700">{v}</span>
+                      </label>
+                    ))}
+                    {!gpus.length && <div className="text-sm text-gray-500">Chưa có dữ liệu.</div>}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="font-medium text-gray-900 mb-2">Màn hình</div>
+                  <div className="space-y-2 max-h-40 overflow-auto">
+                    {screens.map((v) => (
+                      <label key={v} className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={specFilters.screen_size.includes(v)}
+                          onChange={() => {
+                            setSpecFilters((prev) => ({
+                              ...prev,
+                              screen_size: toggleInList(prev.screen_size, v),
+                            }));
+                            setLocalFilters((prev) => ({ ...prev, page: 1 }));
+                          }}
+                          className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-gray-700">{v}</span>
+                      </label>
+                    ))}
+                    {!screens.length && (
+                      <div className="text-sm text-gray-500">Chưa có dữ liệu.</div>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="font-medium text-gray-900 mb-2">Weight (kg)</div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      value={specFilters.minWeight}
+                      onChange={(e) => {
+                        setSpecFilters((prev) => ({ ...prev, minWeight: e.target.value }));
+                        setLocalFilters((prev) => ({ ...prev, page: 1 }));
+                      }}
+                      placeholder="Min"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <input
+                      value={specFilters.maxWeight}
+                      onChange={(e) => {
+                        setSpecFilters((prev) => ({ ...prev, maxWeight: e.target.value }));
+                        setLocalFilters((prev) => ({ ...prev, page: 1 }));
+                      }}
+                      placeholder="Max"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           </aside>
 
           <main className="lg:col-span-3">
@@ -133,9 +335,23 @@ export default function HomePage() {
                     Tất cả sản phẩm
                     {urlSearchQuery && <span className="text-blue-600 ml-2">({urlSearchQuery})</span>}
                   </h2>
-                  <p className="text-gray-600">
-                    {data?.products.length || 0} sản phẩm
-                  </p>
+                  <div className="flex items-center gap-3">
+                    <select
+                      value={sortBy}
+                      onChange={(e) => {
+                        setSortBy(e.target.value);
+                        setLocalFilters((prev) => ({ ...prev, page: 1 }));
+                      }}
+                      className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm"
+                    >
+                      <option value="">Sắp xếp</option>
+                      <option value="price_asc">Giá tăng dần</option>
+                      <option value="price_desc">Giá giảm dần</option>
+                      <option value="newest">Mới nhất</option>
+                      <option value="best_selling">Bán chạy</option>
+                    </select>
+                    <p className="text-gray-600">{data?.products.length || 0} sản phẩm</p>
+                  </div>
                 </div>
 
                 {data?.products?.length === 0 ? (

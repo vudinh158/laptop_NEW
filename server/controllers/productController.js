@@ -1,11 +1,14 @@
 // server/controllers/productController.js
 const {
+  sequelize,
   Product,
   ProductVariation,
   ProductImage,
   Category,
   Brand,
   Tag,
+  Order,
+  OrderItem,
   Question,
   Answer,
   User,
@@ -23,6 +26,207 @@ const parseIdList = (input) => {
     .split(",")
     .map((x) => Number(x.trim()))
     .filter(Boolean);
+};
+
+const parseStringList = (input) => {
+  if (!input) return [];
+  if (Array.isArray(input)) return input.map((x) => String(x).trim()).filter(Boolean);
+  return String(input)
+    .split(",")
+    .map((x) => String(x).trim())
+    .filter(Boolean);
+};
+
+exports.getProductFacets = async (req, res, next) => {
+  try {
+    const distinctVariationField = async (field) => {
+      const rows = await ProductVariation.findAll({
+        attributes: [[Sequelize.fn("DISTINCT", Sequelize.col(field)), "value"]],
+        where: {
+          [Op.and]: [
+            Sequelize.where(Sequelize.col(field), { [Op.ne]: null }),
+            Sequelize.where(Sequelize.col(field), { [Op.ne]: "" }),
+          ],
+        },
+        raw: true,
+      });
+      return rows
+        .map((r) => r.value)
+        .filter(Boolean)
+        .map((v) => String(v))
+        .sort((a, b) => a.localeCompare(b));
+    };
+
+    const [processors, rams, storages, gpus, screens] = await Promise.all([
+      distinctVariationField("processor"),
+      distinctVariationField("ram"),
+      distinctVariationField("storage"),
+      distinctVariationField("graphics_card"),
+      distinctVariationField("screen_size"),
+    ]);
+
+    let weights = [];
+    try {
+      const [rows] = await sequelize.query(
+        `SELECT DISTINCT (specs->>'weight') AS value
+         FROM products
+         WHERE specs ? 'weight'
+           AND (specs->>'weight') IS NOT NULL
+           AND (specs->>'weight') <> ''
+         LIMIT 200;`
+      );
+      weights = (rows || [])
+        .map((r) => r.value)
+        .filter(Boolean)
+        .map((v) => String(v))
+        .sort((a, b) => a.localeCompare(b));
+    } catch (_) {
+      weights = [];
+    }
+
+    res.json({
+      facets: {
+        processor: processors,
+        ram: rams,
+        storage: storages,
+        graphics_card: gpus,
+        screen_size: screens,
+        weight: weights,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getProductsV2 = async (req, res, next) => {
+  try {
+    const page = Math.max(1, Number.parseInt(req.query.page ?? 1));
+    const limit = Math.max(1, Number.parseInt(req.query.limit ?? 12));
+    const offset = (page - 1) * limit;
+
+    const categoryIds = parseIdList(req.query.category_id || req.query["category_id[]"]);
+    const brandIds = parseIdList(req.query.brand_id || req.query["brand_id[]"]);
+
+    const minPrice = req.query.min_price != null ? Number(req.query.min_price) : undefined;
+    const maxPrice = req.query.max_price != null ? Number(req.query.max_price) : undefined;
+
+    const processors = parseStringList(req.query.processor || req.query.cpu);
+    const rams = parseStringList(req.query.ram);
+    const storages = parseStringList(req.query.storage || req.query.ssd);
+    const gpus = parseStringList(req.query.graphics_card || req.query.gpu);
+    const screens = parseStringList(req.query.screen_size || req.query.screenSize);
+
+    const minWeight = req.query.min_weight != null ? Number(req.query.min_weight) : undefined;
+    const maxWeight = req.query.max_weight != null ? Number(req.query.max_weight) : undefined;
+
+    const search = (req.query.search || "").trim();
+    const sortBy = String(req.query.sort_by ?? req.query.sortBy ?? "")
+      .trim()
+      .toLowerCase();
+
+    const where = { is_active: true };
+    if (categoryIds.length === 1) where.category_id = categoryIds[0];
+    else if (categoryIds.length > 1) where.category_id = { [Op.in]: categoryIds };
+
+    if (brandIds.length === 1) where.brand_id = brandIds[0];
+    else if (brandIds.length > 1) where.brand_id = { [Op.in]: brandIds };
+
+    if (search) where.product_name = { [Op.iLike]: `%${search}%` };
+
+    if (minPrice != null || maxPrice != null) {
+      where.base_price = {};
+      if (minPrice != null) where.base_price[Op.gte] = minPrice;
+      if (maxPrice != null) where.base_price[Op.lte] = maxPrice;
+    }
+
+    if (minWeight != null || maxWeight != null) {
+      const weightExpr = Sequelize.literal(
+        `NULLIF(REGEXP_REPLACE("Product"."specs"->>'weight','[^0-9\\.]','','g'),'')::numeric`
+      );
+      const ands = where[Op.and] ? [...where[Op.and]] : [];
+      if (minWeight != null) ands.push(Sequelize.where(weightExpr, { [Op.gte]: minWeight }));
+      if (maxWeight != null) ands.push(Sequelize.where(weightExpr, { [Op.lte]: maxWeight }));
+      if (ands.length) where[Op.and] = ands;
+    }
+
+    const variationWhere = {};
+    if (processors.length) variationWhere.processor = { [Op.in]: processors };
+    if (rams.length) variationWhere.ram = { [Op.in]: rams };
+    if (storages.length) variationWhere.storage = { [Op.in]: storages };
+    if (gpus.length) variationWhere.graphics_card = { [Op.in]: gpus };
+    if (screens.length) variationWhere.screen_size = { [Op.in]: screens };
+
+    const soldQtyExpr = Sequelize.literal(
+      `(
+        SELECT COALESCE(SUM(oi.quantity), 0)
+        FROM order_items oi
+        JOIN orders o ON o.order_id = oi.order_id
+        JOIN product_variations pv ON pv.variation_id = oi.variation_id
+        WHERE pv.product_id = "Product"."product_id"
+          AND o.status IN ('confirmed','processing','shipping','delivered','PAID')
+      )`
+    );
+
+    const attributes = sortBy === "best_selling" ? { include: [[soldQtyExpr, "sold_qty"]] } : undefined;
+    const orderClause = (() => {
+      if (sortBy === "price_asc") return [["base_price", "ASC"]];
+      if (sortBy === "price_desc") return [["base_price", "DESC"]];
+      if (sortBy === "newest") return [["created_at", "DESC"]];
+      if (sortBy === "best_selling") return [[Sequelize.literal('"sold_qty"'), "DESC"], ["created_at", "DESC"]];
+      return [["created_at", "DESC"]];
+    })();
+
+    const { count, rows } = await Product.findAndCountAll({
+      where,
+      attributes,
+      include: [
+        {
+          model: Category,
+          as: "category",
+          attributes: ["category_id", "category_name", "slug"],
+        },
+        {
+          model: Brand,
+          as: "brand",
+          attributes: ["brand_id", "brand_name", "slug", "logo_url"],
+        },
+        {
+          model: ProductVariation,
+          as: "variations",
+          attributes: ["variation_id", "price", "stock_quantity"],
+          ...(Object.keys(variationWhere).length
+            ? { where: variationWhere, required: true }
+            : {}),
+        },
+        {
+          model: ProductImage,
+          as: "images",
+          where: { is_primary: true },
+          required: false,
+          attributes: ["image_url"],
+        },
+      ],
+      limit,
+      offset,
+      order: orderClause,
+      distinct: true,
+    });
+
+    res.json({
+      products: rows,
+      pagination: {
+        total: count,
+        page,
+        limit,
+        totalPages: Math.ceil(count / limit),
+      },
+      total: count,
+      totalPages: Math.ceil(count / limit),
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 // Get all products with filters
 exports.getProducts = async (req, res, next) => {

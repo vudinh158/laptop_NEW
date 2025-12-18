@@ -36,6 +36,56 @@ export function useProducts(filters = {}) {
   });
 }
 
+export function useProductsV2(filters = {}) {
+  return useQuery({
+    queryKey: ["products-v2", filters],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (filters.search) params.append("search", filters.search);
+      if (Array.isArray(filters.category_id) && filters.category_id.length)
+        params.append("category_id", filters.category_id.join(","));
+      if (Array.isArray(filters.brand_id) && filters.brand_id.length)
+        params.append("brand_id", filters.brand_id.join(","));
+      if (filters.minPrice) params.append("min_price", filters.minPrice);
+      if (filters.maxPrice) params.append("max_price", filters.maxPrice);
+
+      if (filters.sortBy) params.append("sort_by", filters.sortBy);
+
+      if (Array.isArray(filters.processor) && filters.processor.length)
+        params.append("processor", filters.processor.join(","));
+      if (Array.isArray(filters.ram) && filters.ram.length)
+        params.append("ram", filters.ram.join(","));
+      if (Array.isArray(filters.storage) && filters.storage.length)
+        params.append("storage", filters.storage.join(","));
+      if (Array.isArray(filters.graphics_card) && filters.graphics_card.length)
+        params.append("graphics_card", filters.graphics_card.join(","));
+      if (Array.isArray(filters.screen_size) && filters.screen_size.length)
+        params.append("screen_size", filters.screen_size.join(","));
+      if (filters.minWeight != null && filters.minWeight !== "")
+        params.append("min_weight", filters.minWeight);
+      if (filters.maxWeight != null && filters.maxWeight !== "")
+        params.append("max_weight", filters.maxWeight);
+
+      if (filters.page) params.append("page", filters.page);
+      if (filters.limit) params.append("limit", filters.limit);
+
+      const { data } = await api.get(`/products/v2?${params.toString()}`);
+      return data;
+    },
+  });
+}
+
+export function useProductFacets() {
+  return useQuery({
+    queryKey: ["product-facets"],
+    queryFn: async () => {
+      const { data } = await api.get("/products/facets");
+      return data;
+    },
+    staleTime: 10 * 60 * 1000,
+  });
+}
+
 export function useProduct(id) {
   return useQuery({
     queryKey: ["product", id],

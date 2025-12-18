@@ -32,11 +32,16 @@ api.interceptors.response.use(
   (error) => {
     // KHÔNG redirect 401 cho các request auth, để Login/Register tự hiển thị lỗi chính xác
     const status = error.response?.status;
+    const message = error.response?.data?.message;
     const url = error.config?.url || "";
     const isAuthEndpoint =
       url.includes("/auth/login") || url.includes("/auth/register");
 
-    if (status === 401 && !isAuthEndpoint) {
+    const isLegacyInvalidToken403 =
+      status === 403 &&
+      (message === "Invalid or expired token" || message === "Access token required");
+
+    if ((status === 401 || isLegacyInvalidToken403) && !isAuthEndpoint) {
       // 1) Xoá thông tin auth phía client
       localStorage.removeItem("token");
       localStorage.removeItem("user");
@@ -58,8 +63,11 @@ api.interceptors.response.use(
 // Auth API
 export const authAPI = {
   register: (data) => api.post("/auth/register", data),
+  registerEmail: (data) => api.post("/auth/register-email", data),
   login: (data) => api.post("/auth/login", data),
   getCurrentUser: () => api.get("/auth/me"),
+  forgotPassword: (data) => api.post("/auth/forgot-password", data),
+  resetPassword: (data) => api.post("/auth/reset-password", data),
 };
 
 // Products API

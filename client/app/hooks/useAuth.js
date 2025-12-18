@@ -26,6 +26,34 @@ export function useRegister() {
   });
 }
 
+export function useRegisterEmailVerification() {
+  return useMutation({
+    mutationFn: async (payload) => {
+      // payload: { username, email, password, full_name, phone_number }
+      const { data } = await authAPI.registerEmail(payload);
+      return data;
+    },
+  });
+}
+
+export function useForgotPassword() {
+  return useMutation({
+    mutationFn: async ({ email }) => {
+      const { data } = await authAPI.forgotPassword({ email });
+      return data;
+    },
+  });
+}
+
+export function useResetPassword() {
+  return useMutation({
+    mutationFn: async ({ token, password }) => {
+      const { data } = await authAPI.resetPassword({ token, password });
+      return data;
+    },
+  });
+}
+
 export function useLogin() {
   const dispatch = useDispatch();
   const qc = useQueryClient();
@@ -88,7 +116,13 @@ export function useCurrentUser() {
     },
     onError: (err) => {
       // Nếu token hết hạn/không hợp lệ → coi như logout “mềm”
-      if (err?.response?.status === 401) {
+      const status = err?.response?.status;
+      const msg = err?.response?.data?.message;
+      const isLegacyInvalidToken403 =
+        status === 403 &&
+        (msg === "Invalid or expired token" || msg === "Access token required");
+
+      if (status === 401 || isLegacyInvalidToken403) {
         // gỡ header, xoá token, clear cart & auth
         setAuthHeader(null);
         localStorage.removeItem("token");

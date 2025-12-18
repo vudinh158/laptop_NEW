@@ -1,7 +1,7 @@
 // client/app/pages/RegisterPage.jsx
 import { useState, useMemo, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useRegister } from "../hooks/useAuth";
+import { useRegisterEmailVerification } from "../hooks/useAuth";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../store/slices/authSlice";
 import api from "../services/api";
@@ -12,7 +12,10 @@ import { FaFacebookSquare } from "react-icons/fa";
 export default function RegisterPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const register = useRegister();
+  const register = useRegisterEmailVerification();
+
+  const [emailSent, setEmailSent] = useState(false);
+  const [sentTo, setSentTo] = useState("");
 
   const [formData, setFormData] = useState({
     username: "",
@@ -46,7 +49,8 @@ export default function RegisterPage() {
         full_name: formData.full_name.trim(),
         phone_number: formData.phone_number.trim(),
       });
-      navigate("/login");
+      setEmailSent(true);
+      setSentTo(formData.email.trim());
     } catch (error) {
       const res = error?.response?.data;
       const next = {};
@@ -94,6 +98,48 @@ export default function RegisterPage() {
     if (fieldErrors.phone_number) arr.push(fieldErrors.phone_number);
     return arr;
   }, [fieldErrors]);
+
+  if (emailSent) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full">
+          <div className="bg-white rounded-lg shadow-sm p-8">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-gray-900">Kiểm tra email của bạn</h2>
+              <p className="mt-3 text-gray-600">
+                Hệ thống đã gửi email xác nhận.
+              </p>
+              {sentTo && (
+                <p className="mt-2 text-gray-700 font-medium">{sentTo}</p>
+              )}
+              <p className="mt-3 text-gray-600">
+                Vui lòng bấm nút <span className="font-semibold">Xác nhận</span> trong email để kích hoạt tài khoản.
+              </p>
+              <div className="mt-6 space-y-3">
+                <button
+                  type="button"
+                  onClick={() => navigate("/login")}
+                  className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-semibold"
+                >
+                  Về trang đăng nhập
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEmailSent(false);
+                    setSentTo("");
+                  }}
+                  className="w-full border py-3 rounded-lg font-semibold hover:bg-gray-50"
+                >
+                  Quay lại đăng ký
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

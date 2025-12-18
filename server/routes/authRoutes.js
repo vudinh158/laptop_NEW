@@ -19,9 +19,34 @@ const loginValidation = [
   body("password").notEmpty().withMessage("Password is required"),
 ]
 
+const emailOnlyValidation = [
+  body("email").isEmail().normalizeEmail().withMessage("Invalid email"),
+]
+
+const resetPasswordValidation = [
+  body("token").notEmpty().withMessage("Token is required"),
+  body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters"),
+]
+
 // Routes
 router.post("/register", registerValidation, authController.register)
+router.post(
+  "/register-email",
+  registerValidation,
+  authController.registerEmailVerification
+)
+router.get("/verify-email", authController.verifyEmail)
 router.post("/login", loginValidation, authController.login)
+router.post("/forgot-password", emailOnlyValidation, authController.forgotPassword)
+router.get(
+  "/reset-password/verify",
+  authController.resetPasswordRedirect
+)
+router.post(
+  "/reset-password",
+  resetPasswordValidation,
+  authController.resetPassword
+)
 router.get("/me", authenticateToken, authController.getCurrentUser)
 router.put("/profile", authenticateToken, authController.updateProfile)
 
