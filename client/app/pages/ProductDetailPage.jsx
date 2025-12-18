@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useProduct, useRecommendedByVariation } from "../hooks/useProducts";
+import { useAddToCart } from "../hooks/useCart";
 import { addItem } from "../store/slices/cartSlice";
 import ProductCard from "../components/ProductCard";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -27,6 +28,8 @@ export default function ProductDetailPage() {
 
   const [cmpOpen, setCmpOpen] = useState(false);
   const compareItems = useSelector((s) => s.compare?.items ?? []);
+
+  const addToCart = useAddToCart();
 
   const ATTRS = [
     "processor",
@@ -116,6 +119,10 @@ export default function ProductDetailPage() {
         return null;
       }
     })();
+
+  const isAuthenticated =
+    Boolean(useSelector((s) => s.auth?.isAuthenticated)) ||
+    Boolean(localStorage.getItem("token"));
 
   const currentUserId = currentUser?.user_id ?? null;
 
