@@ -50,12 +50,19 @@ const PORT = process.env.PORT || 5000
 
 const startServer = async () => {
   try {
+
+    console.log("Starting server...");
     await sequelize.authenticate()
     console.log("Database connection established successfully.")
 
-    // Sẽ tạo các bảng trong Neon Postgres nếu chưa tồn tại
-    await sequelize.sync({ alter: true })
-    console.log("Database models synchronized.")
+    // NOTE: sequelize.sync({ alter: true }) rất chậm (đặc biệt DB remote như Neon)
+    // Chỉ chạy khi cần bằng cách set DB_SYNC_ALTER=true trong .env
+    if (String(process.env.DB_SYNC_ALTER || "").toLowerCase() === "true") {
+      await sequelize.sync({ alter: true })
+      console.log("Database models synchronized.")
+    } else {
+      console.log("DB sync skipped (set DB_SYNC_ALTER=true to enable).")
+    }
 
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`)
