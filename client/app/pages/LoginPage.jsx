@@ -45,6 +45,21 @@ export default function LoginPage() {
         username: formData.username.trim(),
         password: formData.password,
       });
+
+      // Kiểm tra xem có pending checkout data không
+      const pendingCheckout = localStorage.getItem('pendingCheckout');
+      if (pendingCheckout) {
+        try {
+          const checkoutData = JSON.parse(pendingCheckout);
+          localStorage.removeItem('pendingCheckout'); // Xóa sau khi sử dụng
+          // Navigate đến checkout với data đã lưu
+          navigate('/checkout', { state: checkoutData });
+          return;
+        } catch (e) {
+          console.error('Error parsing pending checkout data:', e);
+        }
+      }
+
       const redirect = searchParams.get("redirect") || "/";
       navigate(redirect);
     } catch (error) {

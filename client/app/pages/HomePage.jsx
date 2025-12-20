@@ -163,6 +163,8 @@ export default function HomePage() {
       screen_size: specFilters.screen_size,
       minWeight: specFilters.minWeight,
       maxWeight: specFilters.maxWeight,
+      // Thêm version để force refresh cache sau khi sửa backend hiển thị inactive products
+      _version: 'inactive_enabled',
     }),
     [filters, sortBy, specFilters]
   );
@@ -171,7 +173,13 @@ export default function HomePage() {
   const { data: categoriesFullData } = customerUseCategoriesFull();
 
   const featuredFilters = useMemo(
-    () => ({ page: 1, limit: 12, sortBy: "best_selling" }),
+    () => ({
+      page: 1,
+      limit: 12,
+      sortBy: "best_selling",
+      // Thêm version để force refresh cache cho featured products
+      _version: 'inactive_enabled'
+    }),
     []
   );
 

@@ -19,6 +19,7 @@ import AdminProductNewPage from "./pages/admin/AdminProductNewPage";
 import AdminProductEditPage from "./pages/admin/AdminProductEditPage";
 import VnpayReturn from "./pages/checkout/VnpayReturn";
 import OrderDetailPage from "./pages/OrderDetailPage";
+import CheckoutSuccessPage from "./pages/CheckoutSuccessPage";
 import OAuthSuccess from "./pages/OAuthSuccess";
 
 function App() {
@@ -47,6 +48,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="checkout/success" element={<CheckoutSuccessPage />} />
           <Route path="checkout/vnpay-return" element={<VnpayReturn />} />
 
           <Route

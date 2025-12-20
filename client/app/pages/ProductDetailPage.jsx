@@ -16,8 +16,8 @@ import { useSelector } from "react-redux";
 import CompareBar from "../components/CompareBar";
 import CompareModal from "../components/CompareModal";
 import ProductRecommendations from "../components/ProductRecommendations";
-import { Reply, ChevronLeft, ChevronRight, ChevronDown, HelpCircle, Send, Store, User } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Reply, ChevronLeft, ChevronRight, ChevronDown, HelpCircle, Send, Store, User, Home, Cpu } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
 
 
 export default function ProductDetailPage() {
@@ -390,7 +390,25 @@ export default function ProductDetailPage() {
       return;
     }
     if (!isAuthenticated) {
-      navigate(`/login?redirect=/products/${id}`);
+      // Lưu thông tin checkout để sau khi đăng nhập thành công sẽ redirect tới checkout
+      const checkoutData = {
+        mode: "buy_now",
+        items: [
+          {
+            variation_id: matched.variation_id,
+            quantity: qty,
+            product: {
+              product_name: product.product_name,
+              thumbnail_url: product.thumbnail_url,
+              discount_percentage: product.discount_percentage,
+              variation: { price: Number(matched.price) },
+            },
+          },
+        ],
+        redirectAfterLogin: true,
+      };
+      localStorage.setItem('pendingCheckout', JSON.stringify(checkoutData));
+      navigate(`/login?redirect=/checkout`);
       return;
     }
 
@@ -484,6 +502,7 @@ export default function ProductDetailPage() {
   const getValidationReason = () => {
     if (productInactive) return "inactive"; // SP ngừng KD
     if (!isReady) return "choose-attrs"; // chưa chọn đủ
+    if (stockQty === 0) return "out-of-stock"; // hết hàng khi đã chọn đủ
     if (!varAvailable) return "soldout"; // biến thể hết hàng
     if (qty > stockQty) return "exceed-stock"; // vượt tồn
     return null;
@@ -499,6 +518,8 @@ export default function ProductDetailPage() {
         return "Sản phẩm không còn kinh doanh.";
       case "choose-attrs":
         return "Chọn cấu hình để tiếp tục.";
+      case "out-of-stock":
+        return "Sản phẩm đã hết hàng.";
       case "soldout":
         return "Sản phẩm đã hết hàng.";
       case "exceed-stock":
@@ -526,6 +547,29 @@ export default function ProductDetailPage() {
             onClose={() => setCmpOpen(false)}
             products={compareItems}
           />
+
+          {/* Breadcrumb */}
+          <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
+            <Link to="/" className="flex items-center hover:text-blue-600">
+              <Home className="w-4 h-4 mr-1" />
+              Trang chủ
+            </Link>
+            <ChevronRight className="w-4 h-4" />
+            <Link to="/" className="hover:text-blue-600">
+              Laptop
+            </Link>
+            {product?.Brand?.brand_name && (
+              <>
+                <ChevronRight className="w-4 h-4" />
+                <Link to={`/?brand_id=${product.Brand.brand_id}`} className="hover:text-blue-600">
+                  {product.Brand.brand_name}
+                </Link>
+              </>
+            )}
+            <ChevronRight className="w-4 h-4" />
+            <span className="text-gray-900 font-medium">{productName}</span>
+          </nav>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* CỘT TRÁI: HÌNH ẢNH */}
             <div>
@@ -605,21 +649,13 @@ export default function ProductDetailPage() {
               </h1>{" "}
               {/* FIX: Hiển thị productName */}
               <div className="flex items-center gap-4 mb-4">
-                <div className="flex items-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-5 h-5 ${
-                        i < Math.floor(product.rating_average || 0) // FIX: Dùng rating_average
-                          ? "fill-yellow-400 text-yellow-400"
-                          : "text-gray-300"
-                      }`}
-                    />
-                  ))}
-                </div>
-                <span className="text-gray-600">
-                  ({product.review_count || 0} đánh giá)
-                </span>
+                <button
+                  onClick={() => setSpecOpen(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
+                >
+                  <Cpu className="w-4 h-4" />
+                  <span className="text-sm font-medium">Xem thông số kỹ thuật</span>
+                </button>
                 <button
                   onClick={() =>
                     dispatch(
@@ -653,9 +689,9 @@ export default function ProductDetailPage() {
                   )}
                 </div>
               </div>
-              {productInactive && (
-                <div className="mb-4 rounded-md border border-rose-200 bg-rose-50 p-3 text-rose-700 text-sm">
-                  Sản phẩm không còn kinh doanh.
+              {isReady && selectedVar && stockQty === 0 && (
+                <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-red-700 text-sm font-bold">
+                  Hết hàng
                 </div>
               )}
               {/* ---- THAY block variations cũ bằng UI lựa chọn như ảnh demo ---- */}
@@ -671,6 +707,12 @@ export default function ProductDetailPage() {
                       </span>
                     )}
                   </div>
+
+                  {productInactive && (
+                    <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-red-700 text-sm font-bold">
+                      Sản phẩm đã DỪNG KINH DOANH
+                    </div>
+                  )}
 
                   <div className="space-y-4 rounded-lg border p-4">
                     <div className="flex items-center justify-between">
@@ -814,15 +856,21 @@ export default function ProductDetailPage() {
                 >
                   <span className="font-semibold">Mua ngay</span>
                 </button>
-                {isReady && (
-                  <div className="mt-2 text-sm">
-                    {varAvailable ? (
-                      <span className="text-gray-600">Còn {stockQty} máy</span>
-                    ) : (
-                      <span className="text-rose-600 font-medium">
-                        Đã hết hàng
-                      </span>
-                    )}
+                {isReady && selectedVar && (
+                  <div className="mt-3 p-3 bg-gray-50 rounded-lg border">
+                    <div className="flex items-center gap-2 text-sm">
+                      {stockQty > 0 ? (
+                        <>
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <span className="text-green-700 font-medium">Còn {stockQty} máy trong kho</span>
+                        </>
+                      ) : (
+                        <>
+                          <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                          <span className="text-red-700 font-medium">Đã hết hàng</span>
+                        </>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>

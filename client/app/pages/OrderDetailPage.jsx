@@ -129,6 +129,112 @@ export default function OrderDetailPage() {
           </div>
         </div>
 
+        {/* Order Timeline */}
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <h2 className="text-lg font-semibold mb-4">Dòng thời gian đơn hàng</h2>
+          <div className="relative">
+            <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+            <div className="space-y-6">
+              {/* Đã đặt hàng */}
+              <div className="relative flex items-start gap-4">
+                <div className="relative z-10 flex items-center justify-center w-8 h-8 bg-blue-500 rounded-full text-white text-sm font-bold">
+                  ✓
+                </div>
+                <div className="flex-1 pt-1">
+                  <div className="font-semibold text-gray-900">Đã đặt hàng</div>
+                  <div className="text-sm text-gray-500">
+                    {new Date(o.created_at).toLocaleString("vi-VN")}
+                  </div>
+                </div>
+              </div>
+
+              {/* Đã thanh toán (nếu VNPAY completed) */}
+              {pay?.provider === "VNPAY" && pay?.payment_status === "completed" && (
+                <div className="relative flex items-start gap-4">
+                  <div className="relative z-10 flex items-center justify-center w-8 h-8 bg-green-500 rounded-full text-white text-sm font-bold">
+                    ✓
+                  </div>
+                  <div className="flex-1 pt-1">
+                    <div className="font-semibold text-gray-900">Đã thanh toán</div>
+                    <div className="text-sm text-gray-500">
+                      {pay.paid_at ? new Date(pay.paid_at).toLocaleString("vi-VN") : ""}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Đang xử lý */}
+              {["processing", "shipping", "delivered"].includes(o.status) && (
+                <div className="relative flex items-start gap-4">
+                  <div className={`relative z-10 flex items-center justify-center w-8 h-8 rounded-full text-white text-sm font-bold ${
+                    ["shipping", "delivered"].includes(o.status) ? "bg-blue-500" : "bg-blue-400"
+                  }`}>
+                    ✓
+                  </div>
+                  <div className="flex-1 pt-1">
+                    <div className="font-semibold text-gray-900">Đang xử lý</div>
+                    <div className="text-sm text-gray-500">
+                      Đơn hàng đang được chuẩn bị
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Đang vận chuyển */}
+              {["shipping", "delivered"].includes(o.status) && (
+                <div className="relative flex items-start gap-4">
+                  <div className={`relative z-10 flex items-center justify-center w-8 h-8 rounded-full text-white text-sm font-bold ${
+                    o.status === "delivered" ? "bg-blue-500" : "bg-blue-400"
+                  }`}>
+                    {o.status === "delivered" ? "✓" : "🚚"}
+                  </div>
+                  <div className="flex-1 pt-1">
+                    <div className="font-semibold text-gray-900">Đang vận chuyển</div>
+                    <div className="text-sm text-gray-500">
+                      Đơn hàng đang trên đường giao đến bạn
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Đã giao */}
+              {o.status === "delivered" && (
+                <div className="relative flex items-start gap-4">
+                  <div className="relative z-10 flex items-center justify-center w-8 h-8 bg-green-500 rounded-full text-white text-sm font-bold">
+                    ✓
+                  </div>
+                  <div className="flex-1 pt-1">
+                    <div className="font-semibold text-gray-900">Đã giao hàng</div>
+                    <div className="text-sm text-gray-500">
+                      {o.updated_at ? new Date(o.updated_at).toLocaleString("vi-VN") : ""}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Đã hủy */}
+              {(o.status === "cancelled" || o.status === "FAILED") && (
+                <div className="relative flex items-start gap-4">
+                  <div className="relative z-10 flex items-center justify-center w-8 h-8 bg-red-500 rounded-full text-white text-sm font-bold">
+                    ✕
+                  </div>
+                  <div className="flex-1 pt-1">
+                    <div className="font-semibold text-gray-900">
+                      {o.status === "FAILED" ? "Thanh toán thất bại" : "Đã hủy"}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {o.updated_at ? new Date(o.updated_at).toLocaleString("vi-VN") : ""}
+                      {o.note && (
+                        <div className="mt-1 text-red-600">{o.note}</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
         {/* 2 cột */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Cột trái: items */}

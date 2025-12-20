@@ -19,6 +19,21 @@ export default function OAuthSuccess() {
       // gọi /auth/me để lấy user rồi set vào store
       api.get("/auth/me").then(({ data }) => {
         dispatch(setCredentials({ token, user: data.user }));
+
+        // Kiểm tra xem có pending checkout data không
+        const pendingCheckout = localStorage.getItem('pendingCheckout');
+        if (pendingCheckout) {
+          try {
+            const checkoutData = JSON.parse(pendingCheckout);
+            localStorage.removeItem('pendingCheckout'); // Xóa sau khi sử dụng
+            // Navigate đến checkout với data đã lưu
+            navigate('/checkout', { state: checkoutData, replace: true });
+            return;
+          } catch (e) {
+            console.error('Error parsing pending checkout data:', e);
+          }
+        }
+
         navigate("/", { replace: true });
       }).catch(() => {
         navigate("/login?oauth=failed", { replace: true });

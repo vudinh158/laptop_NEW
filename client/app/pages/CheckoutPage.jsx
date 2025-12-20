@@ -89,6 +89,7 @@ export default function CheckoutPage() {
   const [locationConfirmed, setLocationConfirmed] = useState(false);
 
   const [locBanner, setLocBanner] = useState({ type: "info", text: "" });
+  const [addressBlurred, setAddressBlurred] = useState(false);
 
   const [payment, setPayment] = useState({
     payment_provider: "COD",
@@ -286,16 +287,41 @@ export default function CheckoutPage() {
 }
 
 
-  useEffect(() => {
+  // Hàm xử lý khi blur address field
+  const handleAddressBlur = async () => {
     if (!provinceId || !wardId || !formData.address?.trim()) return;
+
+    setAddressBlurred(true);
+    setLocBanner({ type: "info", text: "Đang tìm kiếm vị trí..." });
+
     const cleaned = cleanAddressDetail(
       formData.address,
       wardName,
       provinceName
     );
-    const t = setTimeout(() => geocodeAddress(cleaned), 500);
-    return () => clearTimeout(t);
-  }, [provinceId, wardId, formData.address, wardName, provinceName]);
+
+    try {
+      const center = await geocodeSimple(cleaned);
+      if (center) {
+        setLocationLL(center);
+        setLocationConfirmed(false);
+        setMapCenter(center);
+        setMapZoom(15);
+        setLocBanner({ type: "success", text: "Đã tìm thấy vị trí phù hợp!" });
+      } else {
+        setLocBanner({
+          type: "warning",
+          text: "Không tìm thấy vị trí phù hợp, quý khách vui lòng định vị thủ công, xin lỗi vì sự bất tiện này"
+        });
+      }
+    } catch (error) {
+      console.error("Geocode error:", error);
+      setLocBanner({
+        type: "error",
+        text: "Lỗi khi tìm kiếm vị trí, vui lòng thử lại hoặc định vị thủ công"
+      });
+    }
+  };
 
   useEffect(() => {
     (async () => {
@@ -414,7 +440,16 @@ export default function CheckoutPage() {
         }
       }
       // buy_now: không chạm vào cart
-      navigate("/orders");
+
+      // Chuyển hướng đến trang cảm ơn với thông tin đơn hàng
+      navigate("/checkout/success", {
+        state: {
+          order_code: res?.order?.order_code || res?.order_code,
+          customer_name: formData.full_name,
+          payment_provider: payment.payment_provider,
+        },
+        replace: true
+      });
     } catch (error) {
       console.error(
         "CREATE ORDER ERROR:",
@@ -522,6 +557,11 @@ export default function CheckoutPage() {
                       onChange={(e) => {
                         handleChange(e);
                         setLocationConfirmed(false);
+                      }}
+                      onBlur={() => {
+                        if (!addressBlurred && formData.address?.trim()) {
+                          handleAddressBlur();
+                        }
                       }}
                       required
                       disabled={!provinceId || !wardId}

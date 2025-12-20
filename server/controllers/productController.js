@@ -125,7 +125,7 @@ exports.getProductsV2 = async (req, res, next) => {
       .trim()
       .toLowerCase();
 
-    const where = { is_active: true };
+    const where = {};
     if (categoryIds.length === 1) where.category_id = categoryIds[0];
     else if (categoryIds.length > 1) where.category_id = { [Op.in]: categoryIds };
 
@@ -266,7 +266,7 @@ exports.getProducts = async (req, res, next) => {
     // ĐỌC THAM SỐ TÌM KIẾM TỪ HEADER (search query)
     const search = (req.query.search || "").trim();
 
-    const where = { is_active: true };
+    const where = {};
 
     // Lọc theo Danh mục
     if (categoryIds.length === 1) where.category_id = categoryIds[0];

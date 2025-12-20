@@ -13,7 +13,7 @@ export default function PaymentOptions({ onChange }) {
 
   const selectProvider = (p) => {
     setProvider(p);
-    const m = p === "COD" ? "COD" : VNPAY_METHODS[0].key;
+    const m = p === "COD" ? "COD" : "VNPAYQR"; // Mặc định VNPAYQR khi chọn VNPAY
     setMethod(m);
     onChange({ payment_provider: p, payment_method: m });
   };
@@ -41,17 +41,7 @@ export default function PaymentOptions({ onChange }) {
         </button>
       </div>
 
-      {provider === "VNPAY" && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {VNPAY_METHODS.map(m => (
-            <button key={m.key} type="button"
-              onClick={() => selectMethod(m.key)}
-              className={`rounded-xl border p-3 text-left ${method===m.key ? "border-blue-600 ring-1 ring-blue-200":"border-gray-200"}`}>
-              <div className="text-sm font-medium">{m.label}</div>
-            </button>
-          ))}
-        </div>
-      )}
+      {/* Ẩn phần chọn phương thức VNPAY con để đơn giản hóa UI */}
     </div>
   );
 }

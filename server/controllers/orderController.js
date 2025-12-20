@@ -364,6 +364,20 @@ exports.createOrder = async (req, res, next) => {
     }
 
     await t.commit();
+
+    // Gửi email xác nhận đơn hàng (không block response)
+    try {
+      const { sendOrderConfirmationEmail } = require("../services/emailService");
+      sendOrderConfirmationEmail({
+        order,
+        items_breakdown,
+        payment_provider: payment_provider,
+        payment_method: payment_method,
+      }).catch(err => console.error("Email send failed:", err));
+    } catch (emailError) {
+      console.error("Failed to queue order confirmation email:", emailError);
+    }
+
     return res.status(201).json({
       message: "Order created successfully",
       order: {

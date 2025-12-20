@@ -3,10 +3,11 @@
 import { useState, useMemo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingBag, Minus, Plus, Trash2 } from "lucide-react";
+import { ShoppingBag, Minus, Plus, Trash2, X } from "lucide-react";
 
 import {
   useGetCart,
+  useAddToCart,
   useUpdateCartItem,
   useRemoveFromCart,
 } from "../hooks/useCart";
@@ -22,11 +23,30 @@ export default function CartPage() {
 
   // ---- CALL ALL HOOKS UNCONDITIONALLY (trước mọi return) ----
   const { data: serverCart } = useGetCart(); // sẽ tự setCart trong onSuccess của hook
+  const addToCart = useAddToCart();
   const updateItem = useUpdateCartItem();
   const removeItemSrv = useRemoveFromCart();
 
   // --- Trạng thái tick chọn ---
   const [selectedIds, setSelectedIds] = useState(() => new Set());
+
+  // Optimistic UI cho số lượng (do updateItem mất 0.5s-1s)
+  const [optimisticQty, setOptimisticQty] = useState({}); // { [cart_item_id]: qty }
+
+  // Modal confirm (thay window.confirm) + modal đổi cấu hình
+  const [confirmState, setConfirmState] = useState({
+    open: false,
+    kind: null, // 'clear' | 'remove'
+    targetId: null,
+  });
+  const [variantModal, setVariantModal] = useState({
+    open: false,
+    item: null,
+  });
+  const [variantLoading, setVariantLoading] = useState(false);
+  const [variantProduct, setVariantProduct] = useState(null); // product detail
+  const [variantSel, setVariantSel] = useState({ ram: "", storage: "", color: "" });
+  const [variantError, setVariantError] = useState("");
 
   const isAllSelected = useMemo(() => {
     return items.length > 0 && selectedIds.size === items.length;
@@ -61,16 +81,57 @@ export default function CartPage() {
     });
   };
 
-  // --- Cập nhật số lượng / xoá ---
-  const handleUpdateQuantity = (id, newQuantity) => {
-    if (newQuantity <= 0) {
-      handleRemoveItem(id);
-      return;
-    }
-    updateItem.mutate({ itemId: id, quantity: newQuantity });
+  const normalizeImg = (url) => {
+    if (!url) return "/placeholder.svg";
+    const s = String(url).trim();
+    if (!s) return "/placeholder.svg";
+    // Normalize relative paths like "uploads/..." -> "/uploads/..."
+    if (!/^https?:\/\//i.test(s) && !s.startsWith("/") && !s.startsWith("data:")) return `/${s}`;
+    return s;
   };
 
-  const handleRemoveItem = (id) => {
+  const resolveItemImage = (item) => {
+    // ưu tiên thumbnail_url từ BE; fallback sang images[0]; fallback placeholder
+    const p = item?.product || {};
+    const t = p?.thumbnail_url;
+    if (t) return normalizeImg(t);
+    const imgs = p?.images || [];
+    const img0 = Array.isArray(imgs) ? imgs[0]?.image_url || imgs[0]?.url : null;
+    return normalizeImg(img0 || "/placeholder.svg");
+  };
+
+  // --- Cập nhật số lượng / xoá ---
+  const handleUpdateQuantity = (id, newQuantity) => {
+    const current = items.find((x) => x.cart_item_id === id);
+    const prevQty = Number(optimisticQty[id] ?? current?.quantity ?? 1);
+
+    if (newQuantity <= 0) {
+      // thay vì xoá thẳng, mở modal confirm
+      setConfirmState({ open: true, kind: "remove", targetId: id });
+      return;
+    }
+
+    setOptimisticQty((s) => ({ ...s, [id]: newQuantity }));
+    updateItem.mutate(
+      { itemId: id, quantity: newQuantity },
+      {
+        onError: () => {
+          // revert ngay UI nếu lỗi
+          setOptimisticQty((s) => ({ ...s, [id]: prevQty }));
+        },
+        onSettled: () => {
+          // xoá override để Redux/BE làm nguồn sự thật
+          setOptimisticQty((s) => {
+            const next = { ...s };
+            delete next[id];
+            return next;
+          });
+        },
+      }
+    );
+  };
+
+  const doRemoveItem = (id) => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
       next.delete(id);
@@ -79,10 +140,16 @@ export default function CartPage() {
     removeItemSrv.mutate(id);
   };
 
+  const handleRemoveItem = (id) => {
+    setConfirmState({ open: true, kind: "remove", targetId: id });
+  };
+
   // --- Xoá toàn bộ (gọi BE) ---
   const handleClearCart = async () => {
-    if (!window.confirm("Bạn có chắc muốn xóa tất cả sản phẩm trong giỏ hàng?"))
-      return;
+    setConfirmState({ open: true, kind: "clear", targetId: null });
+  };
+
+  const doClearCart = async () => {
     try {
       const { data } = await api.delete("/cart"); // BE trả về giỏ rỗng
       dispatch(setCart(data.cart)); // đồng bộ lại Redux từ server
@@ -91,6 +158,105 @@ export default function CartPage() {
       console.error(e);
       alert("Không xoá được giỏ hàng. Vui lòng thử lại.");
     }
+  };
+
+  const closeConfirm = () => setConfirmState({ open: false, kind: null, targetId: null });
+
+  const confirmYes = async () => {
+    const { kind, targetId } = confirmState;
+    closeConfirm();
+    if (kind === "clear") {
+      await doClearCart();
+      return;
+    }
+    if (kind === "remove" && targetId) {
+      doRemoveItem(targetId);
+    }
+  };
+
+  const openVariantModal = async (item) => {
+    setVariantError("");
+    setVariantModal({ open: true, item });
+    setVariantProduct(null);
+    setVariantLoading(true);
+    setVariantSel({ ram: "", storage: "", color: "" });
+    try {
+      const productId = item?.product?.product_id;
+      if (!productId) throw new Error("Thiếu product_id");
+      const { data } = await api.get(`/products/${productId}`);
+      const p = data?.product;
+      setVariantProduct(p || null);
+
+      const currentVarId = item?.variation_id ?? item?.variation?.variation_id;
+      const currentVar = (p?.variations || []).find((v) => String(v.variation_id) === String(currentVarId));
+      setVariantSel({
+        ram: currentVar?.ram || "",
+        storage: currentVar?.storage || "",
+        color: currentVar?.color || "",
+      });
+    } catch (e) {
+      console.error(e);
+      setVariantError("Không tải được danh sách cấu hình. Vui lòng thử lại.");
+    } finally {
+      setVariantLoading(false);
+    }
+  };
+
+  const closeVariantModal = () => {
+    setVariantModal({ open: false, item: null });
+    setVariantProduct(null);
+    setVariantLoading(false);
+    setVariantSel({ ram: "", storage: "", color: "" });
+    setVariantError("");
+  };
+
+  const getUnique = (vars, key) => {
+    const set = new Set((vars || []).map((v) => v?.[key]).filter(Boolean));
+    return [...set];
+  };
+
+  const matchVariation = (vars, sel) => {
+    const keys = ["ram", "storage", "color"].filter((k) => sel[k]);
+    if (!keys.length) return null;
+    return (vars || []).find((v) => keys.every((k) => String(v?.[k] || "") === String(sel[k] || ""))) || null;
+  };
+
+  const handleApplyVariation = () => {
+    const item = variantModal.item;
+    const vars = variantProduct?.variations || [];
+    const chosen = matchVariation(vars, variantSel);
+    if (!chosen) {
+      setVariantError("Không tìm thấy cấu hình phù hợp. Hãy chọn lại.");
+      return;
+    }
+
+    const stock = Number(chosen.stock_quantity || 0);
+    if (chosen.is_available === false || stock <= 0) {
+      setVariantError("Cấu hình này đã hết hàng.");
+      return;
+    }
+
+    const oldItemId = item?.cart_item_id;
+    const oldVarId = item?.variation_id;
+    const qty = Number(item?.quantity ?? 1);
+    if (!oldItemId || !chosen.variation_id) return;
+    if (String(oldVarId) === String(chosen.variation_id)) {
+      closeVariantModal();
+      return;
+    }
+
+    // Cách an toàn không đụng BE: add variation mới rồi xoá item cũ
+    addToCart.mutate(
+      { variation_id: chosen.variation_id, quantity: qty },
+      {
+        onSuccess: () => {
+          removeItemSrv.mutate(oldItemId, { onSuccess: () => closeVariantModal() });
+        },
+        onError: () => {
+          setVariantError("Không đổi được cấu hình. Vui lòng thử lại.");
+        },
+      }
+    );
   };
 
   // --- Tính tổng chỉ dựa trên item đã tick ---
@@ -228,14 +394,14 @@ export default function CartPage() {
                 const unitPrice = Number(
                   item.price ?? item.unit_price_after_discount ?? 0
                 );
-                const imageUrl =
-                  item.product?.thumbnail_url || "/placeholder.svg";
+                const imageUrl = resolveItemImage(item);
 
                 const isAvailable =
                   item?.variation?.is_available !== false && stockQuantity > 0;
                 const isMaxQuantity =
                   stockQuantity > 0 && item.quantity >= stockQuantity;
                 const checked = selectedIds.has(item.cart_item_id);
+                const shownQty = Number(optimisticQty[item.cart_item_id] ?? item.quantity ?? 1);
 
                 return (
                   <div
@@ -260,6 +426,10 @@ export default function CartPage() {
                         src={imageUrl}
                         alt={item.product?.product_name}
                         className="w-24 h-24 object-cover rounded-lg"
+                        onError={(e) => {
+                          e.currentTarget.src = "/placeholder.svg";
+                          e.currentTarget.onerror = null;
+                        }}
                       />
                     </Link>
 
@@ -273,15 +443,30 @@ export default function CartPage() {
 
                       {/* Thông tin biến thể (nếu có) */}
                       {item.variation && (
-                        <p className="text-sm text-gray-600 mt-1">
-                          {[
-                            item.variation.processor,
-                            item.variation.ram,
-                            item.variation.storage,
-                          ]
-                            .filter(Boolean)
-                            .join(" / ")}
-                        </p>
+                        <div className="mt-1 flex flex-wrap items-center gap-2">
+                          <p className="text-sm text-gray-600">
+                            {[
+                              item.variation.processor,
+                              item.variation.ram,
+                              item.variation.storage,
+                              item.variation.color,
+                            ]
+                              .filter(Boolean)
+                              .join(" / ")}
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() => openVariantModal(item)}
+                            className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold text-blue-600 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 hover:border-blue-300 transition-colors"
+                            title="Đổi cấu hình sản phẩm"
+                          >
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            Đổi cấu hình
+                          </button>
+                        </div>
                       )}
 
                       <div className="flex items-center justify-between mt-3">
@@ -291,7 +476,7 @@ export default function CartPage() {
                               onClick={() =>
                                 handleUpdateQuantity(
                                   item.cart_item_id,
-                                  item.quantity - 1
+                                  shownQty - 1
                                 )
                               }
                               className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-50"
@@ -300,14 +485,14 @@ export default function CartPage() {
                             </button>
 
                             <span className="w-12 text-center font-medium">
-                              {item.quantity}
+                              {shownQty}
                             </span>
 
                             <button
                               onClick={() =>
                                 handleUpdateQuantity(
                                   item.cart_item_id,
-                                  item.quantity + 1
+                                  shownQty + 1
                                 )
                               }
                               disabled={isMaxQuantity}
@@ -335,7 +520,7 @@ export default function CartPage() {
 
                         <div className="text-right">
                           <div className="font-bold text-blue-600">
-                            {formatPrice(unitPrice * item.quantity)}
+                            {formatPrice(unitPrice * shownQty)}
                           </div>
                         </div>
                       </div>
@@ -516,6 +701,186 @@ export default function CartPage() {
           </div>
         </div>
       </div>
+
+      {/* Confirm Modal (thay window.confirm) */}
+      {confirmState.open && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-md rounded-2xl bg-white shadow-xl border border-gray-200 overflow-hidden">
+            <div className="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
+              <div className="font-bold text-gray-900">
+                {confirmState.kind === "clear"
+                  ? "Xóa tất cả sản phẩm?"
+                  : "Xóa sản phẩm khỏi giỏ?"}
+              </div>
+              <button
+                type="button"
+                onClick={closeConfirm}
+                className="p-2 rounded-lg hover:bg-gray-100 text-gray-600"
+                aria-label="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="px-5 py-4 text-sm text-gray-700">
+              {confirmState.kind === "clear"
+                ? "Bạn có chắc muốn xóa tất cả sản phẩm trong giỏ hàng?"
+                : "Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?"}
+            </div>
+            <div className="px-5 py-4 border-t border-gray-200 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={closeConfirm}
+                className="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-800 font-semibold hover:bg-gray-50"
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                onClick={confirmYes}
+                className="px-4 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700"
+              >
+                Xóa
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal đổi cấu hình (variation) */}
+      {variantModal.open && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl border border-gray-200 overflow-hidden">
+            <div className="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
+              <div>
+                <div className="font-bold text-gray-900">Đổi cấu hình</div>
+                <div className="text-sm text-gray-500 line-clamp-1">
+                  {variantModal.item?.product?.product_name}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={closeVariantModal}
+                className="p-2 rounded-lg hover:bg-gray-100 text-gray-600"
+                aria-label="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="px-5 py-4">
+              {variantLoading ? (
+                <div className="text-sm text-gray-600">Đang tải cấu hình...</div>
+              ) : variantError ? (
+                <div className="text-sm text-red-600">{variantError}</div>
+              ) : (
+                <>
+                  {(() => {
+                    const vars = variantProduct?.variations || [];
+                    const ramOpts = getUnique(vars, "ram");
+                    const storageOpts = getUnique(vars, "storage");
+                    const colorOpts = getUnique(vars, "color");
+                    const chosen = matchVariation(vars, variantSel);
+                    const chosenStock = Number(chosen?.stock_quantity || 0);
+                    const chosenOk = chosen && chosen?.is_available !== false && chosenStock > 0;
+
+                    return (
+                      <div className="space-y-4">
+                        {!!ramOpts.length && (
+                          <div>
+                            <div className="text-sm font-semibold text-gray-800 mb-1">RAM</div>
+                            <select
+                              className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                              value={variantSel.ram}
+                              onChange={(e) => setVariantSel((s) => ({ ...s, ram: e.target.value }))}
+                            >
+                              <option value="">Chọn RAM</option>
+                              {ramOpts.map((v) => (
+                                <option key={v} value={v}>
+                                  {v}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
+
+                        {!!storageOpts.length && (
+                          <div>
+                            <div className="text-sm font-semibold text-gray-800 mb-1">SSD/Storage</div>
+                            <select
+                              className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                              value={variantSel.storage}
+                              onChange={(e) => setVariantSel((s) => ({ ...s, storage: e.target.value }))}
+                            >
+                              <option value="">Chọn SSD/Storage</option>
+                              {storageOpts.map((v) => (
+                                <option key={v} value={v}>
+                                  {v}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
+
+                        {!!colorOpts.length && (
+                          <div>
+                            <div className="text-sm font-semibold text-gray-800 mb-1">Màu sắc</div>
+                            <select
+                              className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                              value={variantSel.color}
+                              onChange={(e) => setVariantSel((s) => ({ ...s, color: e.target.value }))}
+                            >
+                              <option value="">Chọn màu</option>
+                              {colorOpts.map((v) => (
+                                <option key={v} value={v}>
+                                  {v}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
+
+                        <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 text-sm">
+                          {chosen ? (
+                            <div className="flex items-center justify-between gap-3">
+                              <div className="text-gray-700">
+                                Cấu hình:{" "}
+                                {[chosen.ram, chosen.storage, chosen.color].filter(Boolean).join(" / ") || "—"}
+                              </div>
+                              <div className={chosenOk ? "text-green-700 font-semibold" : "text-red-700 font-semibold"}>
+                                {chosenOk ? `Còn ${chosenStock} máy` : "Hết hàng"}
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="text-gray-600">Hãy chọn RAM/SSD/Màu để tìm cấu hình phù hợp.</div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </>
+              )}
+            </div>
+
+            <div className="px-5 py-4 border-t border-gray-200 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={closeVariantModal}
+                className="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-800 font-semibold hover:bg-gray-50"
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                onClick={handleApplyVariation}
+                disabled={variantLoading || addToCart.isPending || removeItemSrv.isPending}
+                className="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Áp dụng
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
