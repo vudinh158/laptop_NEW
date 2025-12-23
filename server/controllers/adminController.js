@@ -1,4 +1,5 @@
-const { Product, ProductVariation, ProductImage, Category, Brand, Order, User, Role } = require("../models")
+const { Product, ProductVariation, ProductImage, Category, Brand, Order, OrderItem, Payment, User, Role, Question, Answer } = require("../models")
+const { Op, Sequelize } = require("sequelize")
 const sequelize = require("../config/database")
 
 // Product Management
@@ -224,6 +225,11 @@ exports.getAllOrders = async (req, res, next) => {
           as: "user",
           attributes: ["user_id", "username", "email", "full_name", "phone_number"],
         },
+        {
+          model: Payment,
+          as: "payment",
+          attributes: ["payment_id", "payment_method", "payment_status", "provider"],
+        },
       ],
       limit: Number.parseInt(limit),
       offset: Number.parseInt(offset),
@@ -244,6 +250,46 @@ exports.getAllOrders = async (req, res, next) => {
   }
 }
 
+exports.getOrderDetail = async (req, res, next) => {
+  try {
+    const { order_id } = req.params
+
+    const order = await Order.findOne({
+      where: { order_id },
+      include: [
+        {
+          model: OrderItem,
+          as: "items",
+          include: [
+            {
+              model: ProductVariation,
+              as: "variation",
+              include: [{ model: Product, as: "product" }],
+            },
+          ],
+        },
+        {
+          model: Payment,
+          as: "payment",
+        },
+        {
+          model: User,
+          as: "user",
+          attributes: ["user_id", "username", "email", "full_name", "phone_number"],
+        },
+      ],
+    })
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" })
+    }
+
+    res.json({ order })
+  } catch (error) {
+    next(error)
+  }
+}
+
 exports.updateOrderStatus = async (req, res, next) => {
   try {
     const { order_id } = req.params
@@ -258,6 +304,90 @@ exports.updateOrderStatus = async (req, res, next) => {
 
     res.json({
       message: "Order status updated successfully",
+      order,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+// Ship order (processing -> shipping)
+exports.shipOrder = async (req, res, next) => {
+  try {
+    const { order_id } = req.params
+
+    const order = await Order.findByPk(order_id)
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" })
+    }
+
+    if (order.status !== 'processing') {
+      return res.status(400).json({ message: "Order must be in processing status to ship" })
+    }
+
+    await order.update({ status: 'shipping' })
+
+    res.json({
+      message: "Order shipped successfully",
+      order,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+// Deliver order (shipping -> delivered)
+exports.deliverOrder = async (req, res, next) => {
+  try {
+    const { order_id } = req.params
+
+    const order = await Order.findByPk(order_id)
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" })
+    }
+
+    if (order.status !== 'shipping') {
+      return res.status(400).json({ message: "Order must be in shipping status to deliver" })
+    }
+
+    await order.update({ status: 'delivered' })
+
+    res.json({
+      message: "Order delivered successfully",
+      order,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+// Refund order (for cancelled VNPAY orders)
+exports.refundOrder = async (req, res, next) => {
+  try {
+    const { order_id } = req.params
+
+    const order = await Order.findByPk(order_id, {
+      include: [{ model: Payment, as: 'payment' }]
+    })
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" })
+    }
+
+    if (order.status !== 'cancelled') {
+      return res.status(400).json({ message: "Order must be cancelled to refund" })
+    }
+
+    if (order.payment?.provider !== 'VNPAY') {
+      return res.status(400).json({ message: "Only VNPAY orders can be refunded through admin" })
+    }
+
+    // Update payment status to indicate refund processed
+    if (order.payment) {
+      await order.payment.update({ payment_status: 'refunded' })
+    }
+
+    res.json({
+      message: "Order refunded successfully",
       order,
     })
   } catch (error) {
@@ -432,6 +562,238 @@ exports.updateBrand = async (req, res, next) => {
     res.json({
       message: "Brand updated successfully",
       brand,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+// Role Management
+exports.getAllRoles = async (req, res, next) => {
+  try {
+    const roles = await Role.findAll({
+      include: [
+        {
+          model: User,
+          through: { attributes: [] },
+        },
+      ],
+    })
+
+    res.json({ roles })
+  } catch (error) {
+    next(error)
+  }
+}
+
+exports.createRole = async (req, res, next) => {
+  try {
+    const { role_name, description } = req.body
+
+    const role = await Role.create({ role_name, description })
+
+    res.status(201).json({
+      message: "Role created successfully",
+      role,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+exports.updateRole = async (req, res, next) => {
+  try {
+    const { role_id } = req.params
+
+    const role = await Role.findByPk(role_id)
+    if (!role) {
+      return res.status(404).json({ message: "Role not found" })
+    }
+
+    await role.update(req.body)
+
+    res.json({
+      message: "Role updated successfully",
+      role,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+exports.deleteRole = async (req, res, next) => {
+  try {
+    const { role_id } = req.params
+
+    const role = await Role.findByPk(role_id)
+    if (!role) {
+      return res.status(404).json({ message: "Role not found" })
+    }
+
+    // Check if role is assigned to users
+    const userCount = await role.countUsers()
+    if (userCount > 0) {
+      return res.status(400).json({ message: "Cannot delete role with assigned users" })
+    }
+
+    await role.destroy()
+
+    res.json({ message: "Role deleted successfully" })
+  } catch (error) {
+    next(error)
+  }
+}
+
+exports.updateUserRoles = async (req, res, next) => {
+  try {
+    const { user_id } = req.params
+    const { role_ids } = req.body
+
+    const user = await User.findByPk(user_id)
+    if (!user) {
+      return res.status(404).json({ message: "User not found" })
+    }
+
+    const roles = await Role.findAll({ where: { role_id: role_ids } })
+    await user.setRoles(roles)
+
+    res.json({
+      message: "User roles updated successfully",
+      user: {
+        user_id: user.user_id,
+        username: user.username,
+        roles: roles.map(r => ({ role_id: r.role_id, role_name: r.role_name })),
+      },
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+// Analytics & Dashboard
+exports.getDashboardAnalytics = async (req, res, next) => {
+  try {
+    // Get total counts
+    const [totalUsers, totalProducts, totalOrders, totalRevenue] = await Promise.all([
+      User.count(),
+      Product.count({ where: { is_active: true } }),
+      Order.count(),
+      Order.sum('final_amount', { where: { status: 'delivered' } }),
+    ])
+
+    // Get recent orders (last 7 days)
+    const sevenDaysAgo = new Date()
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+
+    const recentOrders = await Order.count({
+      where: {
+        created_at: { [Op.gte]: sevenDaysAgo },
+      },
+    })
+
+    // Get order status breakdown
+    const orderStatusStats = await Order.findAll({
+      attributes: [
+        'status',
+        [Sequelize.fn('COUNT', Sequelize.col('order_id')), 'count'],
+      ],
+      group: ['status'],
+      raw: true,
+    })
+
+    // Get top selling products
+    const topProducts = await OrderItem.findAll({
+      attributes: [
+        [Sequelize.fn('SUM', Sequelize.col('quantity')), 'total_quantity'],
+      ],
+      include: [
+        {
+          model: ProductVariation,
+          as: 'variation',
+          include: [{ model: Product, as: 'product' }],
+        },
+      ],
+      group: ['variation.product_id'],
+      order: [[Sequelize.literal('total_quantity'), 'DESC']],
+      limit: 5,
+      raw: true,
+    })
+
+    res.json({
+      totals: {
+        users: totalUsers,
+        products: totalProducts,
+        orders: totalOrders,
+        revenue: totalRevenue || 0,
+      },
+      recent: {
+        orders_last_7_days: recentOrders,
+      },
+      order_status_breakdown: orderStatusStats,
+      top_products: topProducts,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+exports.getSalesAnalytics = async (req, res, next) => {
+  try {
+    const { period = '30' } = req.query // days
+    const startDate = new Date()
+    startDate.setDate(startDate.getDate() - parseInt(period))
+
+    // Daily sales data
+    const salesData = await Order.findAll({
+      attributes: [
+        [Sequelize.fn('DATE', Sequelize.col('created_at')), 'date'],
+        [Sequelize.fn('COUNT', Sequelize.col('order_id')), 'order_count'],
+        [Sequelize.fn('SUM', Sequelize.col('final_amount')), 'total_revenue'],
+      ],
+      where: {
+        created_at: { [Op.gte]: startDate },
+        status: 'delivered', // Only completed orders
+      },
+      group: [Sequelize.fn('DATE', Sequelize.col('created_at'))],
+      order: [[Sequelize.fn('DATE', Sequelize.col('created_at')), 'ASC']],
+      raw: true,
+    })
+
+    // Monthly comparison
+    const currentMonth = new Date()
+    const lastMonth = new Date()
+    lastMonth.setMonth(lastMonth.getMonth() - 1)
+
+    const [currentMonthSales, lastMonthSales] = await Promise.all([
+      Order.sum('final_amount', {
+        where: {
+          created_at: {
+            [Op.gte]: new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1),
+            [Op.lt]: new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1),
+          },
+          status: 'delivered',
+        },
+      }),
+      Order.sum('final_amount', {
+        where: {
+          created_at: {
+            [Op.gte]: new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 1),
+            [Op.lt]: new Date(lastMonth.getFullYear(), lastMonth.getMonth() + 1, 1),
+          },
+          status: 'delivered',
+        },
+      }),
+    ])
+
+    res.json({
+      sales_data: salesData,
+      comparison: {
+        current_month: currentMonthSales || 0,
+        last_month: lastMonthSales || 0,
+        growth_percentage: lastMonthSales
+          ? ((currentMonthSales - lastMonthSales) / lastMonthSales * 100).toFixed(2)
+          : 0,
+      },
     })
   } catch (error) {
     next(error)

@@ -1,20 +1,30 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 import { setCart, clearCart } from "../store/slices/cartSlice";
 import api from "../services/api";
 
 export function useGetCart() {
   const dispatch = useDispatch();
-  const isAuthenticated = useSelector((s) => s.auth?.isAuthenticated);
+  const queryClient = useQueryClient();
+  const { user, isAuthenticated } = useSelector((s) => s.auth);
+
+  // Invalidate cart cache khi user thay đổi
+  useEffect(() => {
+    if (user?.user_id) {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    }
+  }, [user?.user_id, queryClient]);
+
   return useQuery({
-    queryKey: ["cart"],
+    queryKey: ["cart", user?.user_id], // cache theo user_id
     queryFn: async () => {
       const { data } = await api.get("/cart");
       dispatch(setCart(data.cart));
       return data.cart;
     },
     staleTime: 60_000,
-    enabled: !!isAuthenticated && !!localStorage.getItem("token"),
+    enabled: !!isAuthenticated && !!localStorage.getItem("token") && !!user?.user_id,
     retry: false,
     onError: (err) => {
       // Nếu 401 hoặc không có token, dọn giỏ hàng trên FE
@@ -34,6 +44,7 @@ export function useGetCart() {
 export function useAddToCart() {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
+  const { user } = useSelector((s) => s.auth);
   return useMutation({
     mutationFn: async ({ variation_id, quantity }) => {
       const { data } = await api.post("/cart", { variation_id, quantity });
@@ -41,7 +52,7 @@ export function useAddToCart() {
     },
     onSuccess: (data) => {
       dispatch(setCart(data.cart));
-      queryClient.invalidateQueries({ queryKey: ["cart"] });
+      queryClient.invalidateQueries({ queryKey: ["cart", user?.user_id] });
     },
   });
 }
@@ -49,6 +60,7 @@ export function useAddToCart() {
 export function useUpdateCartItem() {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
+  const { user } = useSelector((s) => s.auth);
   return useMutation({
     mutationFn: async ({ itemId, quantity }) => {
       const { data } = await api.put(`/cart/${itemId}`, { quantity });
@@ -56,7 +68,7 @@ export function useUpdateCartItem() {
     },
     onSuccess: (data) => {
       dispatch(setCart(data.cart));
-      queryClient.invalidateQueries({ queryKey: ["cart"] });
+      queryClient.invalidateQueries({ queryKey: ["cart", user?.user_id] });
     },
   });
 }
@@ -64,6 +76,7 @@ export function useUpdateCartItem() {
 export function useRemoveFromCart() {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
+  const { user } = useSelector((s) => s.auth);
   return useMutation({
     mutationFn: async (itemId) => {
       const { data } = await api.delete(`/cart/${itemId}`);
@@ -71,7 +84,7 @@ export function useRemoveFromCart() {
     },
     onSuccess: (data) => {
       dispatch(setCart(data.cart));
-      queryClient.invalidateQueries({ queryKey: ["cart"] });
+      queryClient.invalidateQueries({ queryKey: ["cart", user?.user_id] });
     },
   });
 }

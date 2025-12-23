@@ -1,8 +1,7 @@
 // server/jobs/releaseReservations.js
 const cron = require("node-cron");
 const { sequelize, Order, OrderItem, ProductVariation, Payment, Sequelize } = require("../models");
-const { Op } = Sequelize;
-
+const { Op } = require('sequelize');
 async function withPgAdvisoryLock(lockKey, fn) {
   const [row] = await sequelize.query(`SELECT pg_try_advisory_lock(${lockKey}) AS locked;`);
   const locked = row?.[0]?.locked || row?.locked;

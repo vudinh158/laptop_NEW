@@ -1,0 +1,35 @@
+# Database Configuration
+POSTGRES_DB=laptop_store
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=password
+
+# JWT Configuration
+JWT_SECRET=your_super_secret_jwt_key_here_change_this_in_production
+
+# Cloudinary Configuration (for image uploads)
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+# VNPay Configuration (for payments)
+VNPAY_TMN_CODE=your_tmn_code
+VNPAY_HASH_SECRET=your_hash_secret
+VNPAY_URL=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+VNPAY_RETURN_URL=http://localhost:3000/checkout/vnpay-return
+
+# Email Configuration (for order confirmations)
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASS=your_email_app_password
+
+# URLs
+CLIENT_URL=http://localhost:3000
+API_BASE_URL=http://localhost:5000/api
+RECOMMENDATION_BASE_URL=http://localhost:5001
+
+# Docker Hub (for CI/CD)
+DOCKERHUB_USERNAME=your_dockerhub_username
+
+# Server SSH (for deployment)
+SERVER_HOST=your_server_ip
+SERVER_USER=your_server_username
+# SERVER_SSH_KEY=your_private_key_here

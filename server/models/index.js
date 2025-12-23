@@ -77,7 +77,7 @@ Payment.belongsTo(Order, { foreignKey: "order_id" })
 
 // Product - Question (One-to-Many)
 Product.hasMany(Question, { foreignKey: "product_id", as: "questions" })
-Question.belongsTo(Product, { foreignKey: "product_id" })
+Question.belongsTo(Product, { foreignKey: "product_id", as: "product" })
 
 // User - Question (One-to-Many)
 User.hasMany(Question, { foreignKey: "user_id" })

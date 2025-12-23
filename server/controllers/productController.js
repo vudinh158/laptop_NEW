@@ -903,6 +903,7 @@ exports.getGlobalQuestions = async (req, res, next) => {
         },
         {
           model: Product,
+          as: "product",
           attributes: ["product_id", "product_name", "slug"],
           required: false,
         },
@@ -928,6 +929,7 @@ exports.getGlobalQuestions = async (req, res, next) => {
       distinct: true,
     });
 
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
     return res.json({
       questions: rows,
       total: count,

@@ -48,11 +48,15 @@ export default function LoginPage() {
 
       // Kiểm tra xem có pending checkout data không
       const pendingCheckout = localStorage.getItem('pendingCheckout');
+      console.log('Login success, checking pendingCheckout:', pendingCheckout);
+
       if (pendingCheckout) {
         try {
           const checkoutData = JSON.parse(pendingCheckout);
+          console.log('Parsed checkoutData:', checkoutData);
           localStorage.removeItem('pendingCheckout'); // Xóa sau khi sử dụng
           // Navigate đến checkout với data đã lưu
+          console.log('Navigating to checkout with state');
           navigate('/checkout', { state: checkoutData });
           return;
         } catch (e) {
@@ -348,7 +352,7 @@ export default function LoginPage() {
                 className="w-full border py-3 rounded-lg font-semibold flex items-center justify-center gap-3 hover:bg-gray-50"
               >
                 <FcGoogle className="text-xl" aria-hidden="true" />
-                <span>Đăng ký bằng Google</span>
+                <span>Đăng nhập bằng Google</span>
               </button>
 
               <button
@@ -362,7 +366,7 @@ export default function LoginPage() {
                   className="text-xl text-[#1877F2]"
                   aria-hidden="true"
                 />
-                <span>Đăng ký bằng Facebook</span>
+                <span>Đăng nhập bằng Facebook</span>
               </button>
 
               <div className="flex items-center gap-3 my-3">

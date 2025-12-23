@@ -155,10 +155,15 @@ export function useLogout() {
       dispatch(clearCart());
       dispatch(logout());
 
-      // 3) Dọn cache query để không tự fetch lại giỏ
+      // 3) Dọn cache query để không tự fetch lại giỏ và orders
       qc.removeQueries({ queryKey: ["cart"] });
+      qc.removeQueries({ queryKey: ["orders"] });
+      qc.removeQueries({ queryKey: ["order-counters"] });
       qc.removeQueries({ queryKey: ["me"] });
       qc.removeQueries({ queryKey: ["currentUser"] });
+
+      // 4) Xóa pendingCheckout để tránh conflict khi user khác login
+      localStorage.removeItem("pendingCheckout");
     } catch (e) {
       // no-op
     }

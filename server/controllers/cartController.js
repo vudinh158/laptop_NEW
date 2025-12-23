@@ -45,7 +45,7 @@ function normalizeItem(ci) {
       ? {
           product_id: p.product_id,
           product_name: p.product_name,
-          thumbnail_url: primaryImg,
+          thumbnail_url: p?.thumbnail_url || primaryImg, // Ưu tiên thumbnail của product, fallback sang primary image
           discount_percentage: discountPct,
           variation: { price },
           // có thể thêm thuộc tính khác nếu cần

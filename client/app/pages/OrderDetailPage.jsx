@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { useOrder } from "../hooks/useOrders";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { formatPrice } from "../utils/formatters";
@@ -11,6 +12,9 @@ import {
   useChangePaymentMethod,
   useUpdateShippingAddress,
 } from "../hooks/useOrders";
+import { useProvinces } from "../hooks/useProvinces";
+import { useWards } from "../hooks/useWards";
+import { Clock, AlertTriangle } from "lucide-react";
 
 function Badge({ children, tone = "gray" }) {
   const map = {
@@ -50,8 +54,82 @@ function statusTone(status) {
   }
 }
 
+function PaymentCountdown({ expiresAt, onExpired }) {
+  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
+  const [isExpired, setIsExpired] = useState(false);
+
+  useEffect(() => {
+    if (!expiresAt) return;
+
+    const updateTimer = () => {
+      const now = new Date().getTime();
+      const expiry = new Date(expiresAt).getTime();
+      const diff = expiry - now;
+
+      if (diff <= 0) {
+        setIsExpired(true);
+        setTimeLeft({ hours: 0, minutes: 0, seconds: 0 });
+        onExpired && onExpired();
+        return;
+      }
+
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      setTimeLeft({ hours, minutes, seconds });
+      setIsExpired(false);
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000); // Update every second
+
+    return () => clearInterval(interval);
+  }, [expiresAt, onExpired]);
+
+  const isWarning = timeLeft.hours === 0 && timeLeft.minutes <= 10;
+
+  return (
+    <div className="mt-4 p-4 rounded-lg border bg-orange-50 border-orange-200">
+      <div className="flex items-center gap-2 mb-2">
+        {isExpired ? (
+          <AlertTriangle className="w-5 h-5 text-red-600" />
+        ) : (
+          <Clock className="w-5 h-5 text-orange-600" />
+        )}
+        <span className="font-medium text-orange-800">
+          {isExpired ? "Đã hết thời gian thanh toán" : "Thời gian còn lại để thanh toán"}
+        </span>
+      </div>
+
+      {!isExpired && (
+        <div className="text-2xl font-mono font-bold text-center">
+          <span className={isWarning ? "text-red-600" : "text-orange-800"}>
+            {String(timeLeft.hours).padStart(2, '0')}:
+            {String(timeLeft.minutes).padStart(2, '0')}:
+            {String(timeLeft.seconds).padStart(2, '0')}
+          </span>
+        </div>
+      )}
+
+      {isWarning && !isExpired && (
+        <p className="text-sm text-red-600 text-center mt-2">
+          ⚠️ Chỉ còn ít thời gian! Vui lòng thanh toán ngay để tránh đơn hàng bị hủy.
+        </p>
+      )}
+
+      {isExpired && (
+        <p className="text-sm text-red-600 text-center mt-2">
+          Đơn hàng đã hết thời gian thanh toán và có thể bị hủy.
+        </p>
+      )}
+    </div>
+  );
+}
+
 export default function OrderDetailPage() {
   const { id } = useParams(); // route: /orders/:id
+  const queryClient = useQueryClient();
   const { data, isLoading, error } = useOrder(id);
   const cancelOrder = useCancelOrder();
   const navigate = useNavigate();
@@ -60,6 +138,9 @@ export default function OrderDetailPage() {
   const retryPay = useRetryVnpayPayment({ autoRedirect: true });
   const changePM = useChangePaymentMethod({ autoRedirect: true });
   const updateAddr = useUpdateShippingAddress();
+
+  // Preload provinces data to avoid modal timing issues
+  const { data: provincesData } = useProvinces();
   if (isLoading) {
     return (
       <div className="py-16 flex justify-center">
@@ -129,6 +210,38 @@ export default function OrderDetailPage() {
           </div>
         </div>
 
+        {/* Refund Notification for Cancelled Orders */}
+        {o.status === "cancelled" && pay.payment_status === "refunded" && (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-green-800">
+                  Đã hoàn tiền
+                </h3>
+                <div className="mt-2 text-sm text-green-700">
+                  <p>Số tiền {formatPrice(o.final_amount)} đã được hoàn lại vào tài khoản của bạn.</p>
+                  <p className="mt-1">Thời gian xử lý hoàn tiền có thể mất 3-5 ngày làm việc tùy thuộc vào ngân hàng.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Payment Countdown for AWAITING_PAYMENT */}
+        {o.status === "AWAITING_PAYMENT" && o.reserve_expires_at && (
+          <PaymentCountdown
+            expiresAt={o.reserve_expires_at}
+            onExpired={() => {
+              // Optional: could trigger a refetch or show a message
+            }}
+          />
+        )}
+
         {/* Order Timeline */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <h2 className="text-lg font-semibold mb-4">Dòng thời gian đơn hàng</h2>
@@ -148,20 +261,61 @@ export default function OrderDetailPage() {
                 </div>
               </div>
 
-              {/* Đã thanh toán (nếu VNPAY completed) */}
-              {pay?.provider === "VNPAY" && pay?.payment_status === "completed" && (
-                <div className="relative flex items-start gap-4">
-                  <div className="relative z-10 flex items-center justify-center w-8 h-8 bg-green-500 rounded-full text-white text-sm font-bold">
-                    ✓
-                  </div>
-                  <div className="flex-1 pt-1">
-                    <div className="font-semibold text-gray-900">Đã thanh toán</div>
-                    <div className="text-sm text-gray-500">
-                      {pay.paid_at ? new Date(pay.paid_at).toLocaleString("vi-VN") : ""}
+              {/* Thanh toán Status */}
+              {(() => {
+                // Đã thanh toán (VNPAY completed)
+                if (pay?.provider === "VNPAY" && pay?.payment_status === "completed") {
+                  return (
+                    <div className="relative flex items-start gap-4">
+                      <div className="relative z-10 flex items-center justify-center w-8 h-8 bg-green-500 rounded-full text-white text-sm font-bold">
+                        ✓
+                      </div>
+                      <div className="flex-1 pt-1">
+                        <div className="font-semibold text-gray-900">Đã thanh toán</div>
+                        <div className="text-sm text-gray-500">
+                          {pay.paid_at ? new Date(pay.paid_at).toLocaleString("vi-VN") : ""}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              )}
+                  );
+                }
+
+                // Đang chờ thanh toán (AWAITING_PAYMENT + VNPAY pending)
+                if (o.status === "AWAITING_PAYMENT" && pay?.provider === "VNPAY" && pay?.payment_status === "pending") {
+                  return (
+                    <div className="relative flex items-start gap-4">
+                      <div className="relative z-10 flex items-center justify-center w-8 h-8 bg-yellow-500 rounded-full text-white text-sm font-bold">
+                        ⏳
+                      </div>
+                      <div className="flex-1 pt-1">
+                        <div className="font-semibold text-gray-900">Đang chờ thanh toán</div>
+                        <div className="text-sm text-gray-500">
+                          Chờ khách hàng thanh toán qua VNPAY
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+
+                // Thanh toán thất bại
+                if (pay?.payment_status === "failed") {
+                  return (
+                    <div className="relative flex items-start gap-4">
+                      <div className="relative z-10 flex items-center justify-center w-8 h-8 bg-red-500 rounded-full text-white text-sm font-bold">
+                        ✗
+                      </div>
+                      <div className="flex-1 pt-1">
+                        <div className="font-semibold text-gray-900">Thanh toán thất bại</div>
+                        <div className="text-sm text-gray-500">
+                          Thanh toán không thành công
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+
+                return null;
+              })()}
 
               {/* Đang xử lý */}
               {["processing", "shipping", "delivered"].includes(o.status) && (
@@ -227,6 +381,26 @@ export default function OrderDetailPage() {
                       {o.note && (
                         <div className="mt-1 text-red-600">{o.note}</div>
                       )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Đã hoàn tiền */}
+              {o.status === "cancelled" && pay.payment_status === "refunded" && (
+                <div className="relative flex items-start gap-4">
+                  <div className="relative z-10 flex items-center justify-center w-8 h-8 bg-green-500 rounded-full text-white text-sm font-bold">
+                    💰
+                  </div>
+                  <div className="flex-1 pt-1">
+                    <div className="font-semibold text-gray-900 text-green-700">
+                      Đã hoàn tiền
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      Số tiền {formatPrice(o.final_amount)} đã được hoàn lại
+                      <div className="mt-1 text-green-600 text-xs">
+                        Thời gian xử lý: 3-5 ngày làm việc
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -309,7 +483,9 @@ export default function OrderDetailPage() {
                 <h3 className="text-lg font-semibold mb-2">
                   Thông tin giao hàng
                 </h3>
-                {!["shipping", "delivered", "cancelled"].includes(o.status) && (
+                {/* Chỉ cho phép sửa địa chỉ khi chưa thanh toán VNPAY */}
+                {!["shipping", "delivered", "cancelled"].includes(o.status) &&
+                 !(pay?.provider === "VNPAY" && pay?.payment_status === "completed") && (
                   <button
                     onClick={() => setOpenEditShip(true)}
                     className="text-sm px-2 py-1 border rounded hover:bg-gray-50"
@@ -335,13 +511,15 @@ export default function OrderDetailPage() {
             <div className="bg-white rounded-lg shadow-sm p-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold mb-2">Thanh toán</h3>
+                {/* Chỉ cho phép đổi từ COD sang VNPAY */}
                 {!["shipping", "delivered", "cancelled"].includes(o.status) &&
-                  o.payment?.payment_status !== "completed" && (
+                 pay?.provider === "COD" &&
+                 (o.status === "AWAITING_PAYMENT" || o.status === "processing") && (
                     <button
                       onClick={() => setOpenChangePM(true)}
                       className="text-sm px-2 py-1 border rounded hover:bg-gray-50"
                     >
-                      Đổi phương thức
+                      Đổi sang VNPAY
                     </button>
                   )}
               </div>
@@ -353,7 +531,13 @@ export default function OrderDetailPage() {
                   <b>Phương thức:</b> {pay.payment_method || "-"}
                 </div>
                 <div>
-                  <b>Trạng thái:</b> {pay.payment_status || "-"}
+                  <b>Trạng thái:</b> {
+                    pay.payment_status === "refunded" ? "Đã hoàn tiền" :
+                    pay.payment_status === "completed" ? "Đã thanh toán" :
+                    pay.payment_status === "pending" ? "Chờ thanh toán" :
+                    pay.payment_status === "failed" ? "Thanh toán thất bại" :
+                    pay.payment_status || "-"
+                  }
                 </div>
                 {pay.paid_at && (
                   <div>
@@ -452,18 +636,40 @@ export default function OrderDetailPage() {
             geo_lat: o.geo_lat,
             geo_lng: o.geo_lng,
           }}
+          currentShippingFee={o.shipping_fee}
+          provincesData={provincesData}
           disabled={updateAddr.isPending}
           onSubmit={(payload) => {
             updateAddr.mutate(
               { orderId: o.order_id, payload },
               {
-                onSuccess: () => {
+                onSuccess: (data) => {
+                  console.log('Update shipping address success:', data);
                   setOpenEditShip(false);
+
+                  // Update cache immediately with new data
+                  if (data?.order) {
+                    queryClient.setQueryData(["order", o.order_id], (oldData) => ({
+                      ...oldData,
+                      order: {
+                        ...oldData?.order,
+                        ...data.order
+                      }
+                    }));
+                  }
+
+                  // Invalidate để đảm bảo consistency
+                  queryClient.invalidateQueries({ queryKey: ["order", o.order_id] });
+                  queryClient.invalidateQueries({ queryKey: ["orders"] });
+
+                  // Force page reload để đảm bảo UI update
+                  setTimeout(() => window.location.reload(), 500);
                 },
                 onError: (err) => {
+                  console.error('Update shipping address error:', err);
                   alert(
                     err?.response?.data?.message ||
-                      "Cập nhật địa chỉ thất bại. (Có thể đơn đã thanh toán và phí ship thay đổi)"
+                      "Cập nhật địa chỉ thất bại. Vui lòng thử lại hoặc liên hệ hỗ trợ."
                   );
                 },
               }

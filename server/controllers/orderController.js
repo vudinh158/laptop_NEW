@@ -417,7 +417,7 @@ exports.getUserOrdersV2 = async (req, res, next) => {
       (sortDirRaw || "desc").toUpperCase() === "ASC" ? "ASC" : "DESC";
     const orderBy = [["created_at", sortDir]];
 
-    const where = { user_id: req.user.user_id };
+    const where = { user_id: req.userId };
 
     let paymentInclude = {
       model: Payment,
@@ -591,7 +591,7 @@ exports.getUserOrders = async (req, res, next) => {
     const orderBy = [["created_at", sortDir]]; // chỉ cho phép created_at để tránh SQLi
 
     // base filter (đơn của user hiện tại)
-    const where = { user_id: req.user.user_id };
+    const where = { user_id: req.userId };
 
     // lọc theo tab: ánh xạ đúng logic bạn yêu cầu
     // - AWAITING_PAYMENT: VNPAY -> order.AWAITING_PAYMENT + payment.pending
@@ -878,11 +878,6 @@ exports.cancelOrder = async (req, res, next) => {
   }
 };
 
-function appendNote(oldNote = "", reason = "") {
-  if (!reason) return oldNote;
-  const line = `[USER_CANCEL ${new Date().toISOString()}] ${reason}`;
-  return oldNote ? `${oldNote}\n${line}` : line;
-}
 
 // controllers/orderController.js (thêm vào file bạn đang có)
 exports.previewOrder = async (req, res, next) => {
@@ -1462,11 +1457,19 @@ exports.updateShippingAddress = async (req, res, next) => {
     const oldShipFee = Number(order.shipping_fee || 0);
     const willChangeAmount = Number(newShipFee) !== oldShipFee;
 
-    if (payment?.payment_status === "completed" && willChangeAmount) {
+    console.log('updateShippingAddress debug:', {
+      orderId: order.order_id,
+      paymentProvider: payment?.provider,
+      paymentStatus: payment?.payment_status,
+      oldShipFee,
+      newShipFee,
+      willChangeAmount
+    });
+
+    if (payment?.provider === "VNPAY" && payment?.payment_status === "completed" && willChangeAmount) {
       await t.rollback();
       return res.status(400).json({
-        message:
-          "Order already paid; cannot change address that alters shipping fee. Contact support for refund/extra-charge flow.",
+        message: "Cập nhật địa chỉ thất bại. Đơn hàng đã thanh toán VNPAY và phí ship sẽ thay đổi. Liên hệ hỗ trợ để xử lý hoàn tiền/phụ thu.",
       });
     }
 
@@ -1487,6 +1490,7 @@ exports.updateShippingAddress = async (req, res, next) => {
 
     // Đồng bộ số tiền ở Payment nếu chưa paid (pending/failed/refunded)
     if (payment && payment.payment_status !== "completed") {
+      console.log('Updating payment amount to:', Number(order.final_amount || patch.final_amount || 0));
       await payment.update(
         { amount: Number(order.final_amount || patch.final_amount || 0) },
         { transaction: t }
@@ -1494,6 +1498,7 @@ exports.updateShippingAddress = async (req, res, next) => {
     }
 
     await t.commit();
+    console.log('updateShippingAddress success for order:', order.order_id);
     return res.json({
       message: "Shipping address updated",
       order: {
@@ -1511,6 +1516,7 @@ exports.updateShippingAddress = async (req, res, next) => {
     });
   } catch (err) {
     await t.rollback();
+    console.error('updateShippingAddress error:', err.message);
     next(err);
   }
 };

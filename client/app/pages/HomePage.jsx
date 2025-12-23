@@ -91,15 +91,18 @@ export default function HomePage() {
     try {
       const resp = await fetch(`/api/products/questions?offset=${offset}&limit=${limit}`);
       if (!resp.ok) throw new Error("Fetch questions failed");
-      const payload = await resp.json().catch(() => ({}));
-      const rows = payload?.questions ?? [];
+      const payload = await resp.json().catch((err) => {
+        console.error("JSON parse error:", err);
+        return {};
+      });
+      const rows = Array.isArray(payload?.questions) ? payload.questions : [];
       setQaItems((prev) => (append ? [...prev, ...rows] : rows));
       const total = Number(payload?.total ?? 0);
       const nextOffset = offset + rows.length;
       setQaOffset(nextOffset);
       setQaHasMore(nextOffset < total);
     } catch (e) {
-      console.error(e);
+      console.error("fetchGlobalQuestions error:", e);
       setQaHasMore(false);
     } finally {
       setQaLoading(false);

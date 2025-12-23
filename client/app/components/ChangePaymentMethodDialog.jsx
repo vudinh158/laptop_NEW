@@ -23,8 +23,9 @@ export default function ChangePaymentMethodDialog({
   initialMethod,
   disabled,
 }) {
-  const [provider, setProvider] = useState(initialProvider || "COD");
-  const [method, setMethod] = useState(initialMethod || "COD");
+  // Chỉ cho phép chuyển từ COD sang VNPAY
+  const [provider, setProvider] = useState("VNPAY");
+  const [method, setMethod] = useState("VNPAYQR");
 
   if (!open) return null;
 
@@ -37,31 +38,20 @@ export default function ChangePaymentMethodDialog({
         <h3 className="text-lg font-semibold mb-3">Đổi phương thức thanh toán</h3>
 
         <div className="space-y-3">
-          <div>
-            <label className="block text-sm font-medium">Nhà cung cấp</label>
-            <select
-              value={provider}
-              onChange={(e) => {
-                const p = e.target.value;
-                setProvider(p);
-                setMethod(p === "COD" ? "COD" : "VNPAYQR");
-              }}
-              className="mt-1 w-full border rounded px-3 py-2"
-            >
-              {PROVIDERS.map(p => (
-                <option key={p.key} value={p.key}>{p.label}</option>
-              ))}
-            </select>
+          <div className="bg-blue-50 border border-blue-200 rounded p-3">
+            <p className="text-sm text-blue-800">
+              Bạn sẽ chuyển từ <strong>Thanh toán khi nhận hàng (COD)</strong> sang <strong>VNPAY</strong>
+            </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium">Phương thức</label>
+            <label className="block text-sm font-medium">Chọn phương thức VNPAY</label>
             <select
               value={method}
               onChange={(e) => setMethod(e.target.value)}
               className="mt-1 w-full border rounded px-3 py-2"
             >
-              {availableMethods.map(m => (
+              {PROVIDERS.find(p => p.key === "VNPAY")?.methods.map(m => (
                 <option key={m.key} value={m.key}>{m.label}</option>
               ))}
             </select>

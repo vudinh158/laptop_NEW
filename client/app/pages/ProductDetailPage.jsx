@@ -426,6 +426,8 @@ export default function ProductDetailPage() {
   };
 
   const handleBuyNow = () => {
+    console.log('handleBuyNow called, isAuthenticated:', isAuthenticated);
+
     const r = getValidationReason();
     if (r) {
       alert(reasonToMessage(r));
@@ -436,6 +438,34 @@ export default function ProductDetailPage() {
 
     const qty = Math.max(1, Number(quantity) || 1);
 
+    // Kiểm tra authentication trước khi navigate
+    if (!isAuthenticated) {
+      console.log('User not authenticated, saving pendingCheckout');
+      // Lưu thông tin checkout để sau khi đăng nhập thành công sẽ redirect tới checkout
+      const checkoutData = {
+        mode: "buy_now",
+        items: [
+          {
+            variation_id: matched.variation_id,
+            quantity: qty,
+            product: {
+              product_name: product.product_name,
+              thumbnail_url: product.thumbnail_url,
+              discount_percentage: product.discount_percentage,
+              variation: { price: Number(matched.price) },
+            },
+          },
+        ],
+        redirectAfterLogin: true,
+        timestamp: Date.now(), // Thêm timestamp để biết khi nào tạo
+      };
+      localStorage.setItem('pendingCheckout', JSON.stringify(checkoutData));
+      console.log('Saved pendingCheckout:', checkoutData);
+      navigate(`/login?redirect=/checkout`);
+      return;
+    }
+
+    console.log('User authenticated, navigating to checkout directly');
     // Không đụng giỏ. Điều hướng Checkout kèm "checkout intent"
     navigate("/checkout", {
       state: {

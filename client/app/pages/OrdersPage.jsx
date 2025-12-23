@@ -5,6 +5,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import { Link, useSearchParams } from "react-router-dom";
 import { canCancel } from "../utils/orderCanCancel";
 import { useCancelOrder, useRetryVnpayPayment } from "../hooks/useOrders";
+import { Clock } from "lucide-react";
 
 const TABS = [
   { key: "all", label: "Tất cả" },
@@ -15,6 +16,46 @@ const TABS = [
   { key: "cancelled", label: "Đã hủy" },
   { key: "failed", label: "Thanh toán thất bại" },
 ];
+
+function CountdownBadge({ expiresAt }) {
+  const [timeLeft, setTimeLeft] = useState("");
+
+  useEffect(() => {
+    if (!expiresAt) return;
+
+    const updateTimer = () => {
+      const now = new Date().getTime();
+      const expiry = new Date(expiresAt).getTime();
+      const diff = expiry - now;
+
+      if (diff <= 0) {
+        setTimeLeft("Hết thời gian");
+        return;
+      }
+
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+      setTimeLeft(`${hours}h ${minutes}m`);
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 60000); // Update every minute
+
+    return () => clearInterval(interval);
+  }, [expiresAt]);
+
+  if (!timeLeft || timeLeft === "Hết thời gian") {
+    return null;
+  }
+
+  return (
+    <div className="inline-flex items-center gap-1 px-2 py-1 bg-orange-100 text-orange-800 text-xs font-medium rounded-full">
+      <Clock className="w-3 h-3" />
+      {timeLeft}
+    </div>
+  );
+}
 
 export default function OrdersPage() {
   // ✅ đọc/ghi query params
@@ -180,8 +221,11 @@ export default function OrdersPage() {
 
                 {/* Footer + CTA */}
                 <div className="mt-3 flex items-center justify-between border-t pt-3">
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-gray-600 flex items-center gap-2">
                     Trạng thái: <b>{o.status}</b>
+                    {o.status === "AWAITING_PAYMENT" && o.reserve_expires_at && (
+                      <CountdownBadge expiresAt={o.reserve_expires_at} />
+                    )}
                   </div>
 
                   <div className="flex items-center gap-3">
@@ -259,3 +303,4 @@ export default function OrdersPage() {
     </div>
   );
 }
+

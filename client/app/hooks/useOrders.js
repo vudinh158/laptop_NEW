@@ -1,4 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { useSelector } from "react-redux"
+import { useEffect } from "react"
 import api from "../services/api"
 
 // export function useOrders() {
@@ -12,13 +14,24 @@ import api from "../services/api"
 // }
 
 export function useOrders(params) {
+  const queryClient = useQueryClient();
+  const { user } = useSelector(state => state.auth);
+
+  // Invalidate orders cache khi user thay đổi
+  useEffect(() => {
+    if (user?.user_id) {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+    }
+  }, [user?.user_id, queryClient]);
+
   return useQuery({
-    queryKey: ["orders", params], // cache theo tab/page/q/sort
+    queryKey: ["orders", user?.user_id, params], // cache theo user_id + tab/page/q/sort
     queryFn: async () => {
       const { data } = await api.get("/orders", { params });
       return data;
     },
     keepPreviousData: true,
+    enabled: !!user?.user_id, // chỉ chạy khi có user
   });
 }
 
@@ -52,13 +65,19 @@ export function useCreateOrder() {
   });
 }
 
-export function useAdminOrders() {
+export function useAdminOrders({ page = 1, limit = 20, status } = {}) {
   return useQuery({
-    queryKey: ["admin-orders"],
+    queryKey: ["admin-orders", page, limit, status],
     queryFn: async () => {
-      const { data } = await api.get("/admin/orders")
+      const params = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
+      if (status && status !== null && status !== undefined) {
+        params.append('status', status);
+      }
+      const url = params.toString() ? `/admin/orders?${params}` : '/admin/orders';
+      const { data } = await api.get(url);
       return data
     },
+    staleTime: 0, // Always refetch to ensure fresh data
   })
 }
 
@@ -73,6 +92,46 @@ export function useUpdateOrderStatus() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-orders"] })
       queryClient.invalidateQueries({ queryKey: ["orders"] })
+      queryClient.invalidateQueries({ queryKey: ["order-counters"] })
+    },
+  })
+}
+
+export function useShipOrder() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ orderId }) => {
+      const { data } = await api.post(`/admin/orders/${orderId}/ship`)
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-orders"] })
+    },
+  })
+}
+
+export function useDeliverOrder() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ orderId }) => {
+      const { data } = await api.post(`/admin/orders/${orderId}/deliver`)
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-orders"] })
+    },
+  })
+}
+
+export function useRefundOrder() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ orderId }) => {
+      const { data } = await api.post(`/admin/orders/${orderId}/refund`)
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-orders"] })
     },
   })
 }
@@ -92,6 +151,27 @@ export function useCancelOrder() {
       qc.invalidateQueries({ queryKey: ["order-counters"] });
     },
   });
+}
+
+export function useAdminAnalytics({ period = "30" } = {}) {
+  return useQuery({
+    queryKey: ["admin-analytics", period],
+    queryFn: async () => {
+      const { data } = await api.get(`/admin/analytics/dashboard?period=${period}`)
+      return data
+    },
+  })
+}
+
+export function useAdminOrderDetail(orderId) {
+  return useQuery({
+    queryKey: ["admin-order", orderId],
+    queryFn: async () => {
+      const { data } = await api.get(`/admin/orders/${orderId}`)
+      return data
+    },
+    enabled: !!orderId,
+  })
 }
 
 export function useRetryVnpayPayment({ autoRedirect = true } = {}) {
@@ -118,12 +198,23 @@ export function useRetryVnpayPayment({ autoRedirect = true } = {}) {
 }
 
 export function useOrderCounters() {
+  const queryClient = useQueryClient();
+  const { user } = useSelector(state => state.auth);
+
+  // Invalidate order counters khi user thay đổi
+  useEffect(() => {
+    if (user?.user_id) {
+      queryClient.invalidateQueries({ queryKey: ["order-counters"] });
+    }
+  }, [user?.user_id, queryClient]);
+
   return useQuery({
-    queryKey: ["order-counters"],
+    queryKey: ["order-counters", user?.user_id], // Cache theo user_id để tránh leak data
     queryFn: async () => {
       const { data } = await api.get("/orders/counters");
       return data; // { all, awaiting_payment, processing, to_ship, shipping, delivered, cancelled, failed }
     },
+    enabled: !!user?.user_id, // Chỉ chạy khi có user
     staleTime: 30_000,
   });
 }
@@ -158,11 +249,18 @@ export function useUpdateShippingAddress() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ orderId, payload }) => {
-      const { data } = await api.put(
-        `/orders/${orderId}/shipping-address`,
-        payload
-      );
-      return data; // { message, order: { … } }
+      console.log('Calling updateShippingAddress API:', { orderId, payload });
+      try {
+        const { data } = await api.put(
+          `/orders/${orderId}/shipping-address`,
+          payload
+        );
+        console.log('updateShippingAddress API success:', data);
+        return data; // { message, order: { … } }
+      } catch (error) {
+        console.error('updateShippingAddress API error:', error);
+        throw error;
+      }
     },
     onSuccess: (data, variables) => {
       if (variables?.orderId) {

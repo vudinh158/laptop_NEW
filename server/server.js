@@ -17,6 +17,9 @@ const shippingRoutes = require("./routes/shippingRoutes");
 const passport = require("./config/passport");
 const authSocialRoutes = require("./routes/authSocialRoutes");
 
+// Import jobs
+require("./jobs/releaseReservations");
+
 const app = express()
 
 // Middleware

@@ -16,7 +16,7 @@ L.Icon.Default.mergeOptions({
 function RecenterOnLocation({ value, zoom = 17 }) {
   const map = useMap();
   useEffect(() => {
-    if (!value) return;
+    if (!value || !map) return;
     map.setView([value.lat, value.lng], zoom, { animate: true });
     setTimeout(() => map.invalidateSize(), 200); // đề phòng map trong tab/accordion
   }, [value, zoom, map]);
