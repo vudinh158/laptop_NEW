@@ -196,7 +196,7 @@ export default function Header() {
                 <span className="text-white font-bold text-xl">L</span>
               </div>
               <span className="text-xl font-bold text-gray-900">
-                LaptopStore
+                Laptop Lê Sơn
               </span>
             </Link>
 

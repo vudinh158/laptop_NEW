@@ -18,6 +18,7 @@ import AdminProducts from "./pages/admin/AdminProducts";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminCategories from "./pages/admin/AdminCategories";
+import AdminBrands from "./pages/admin/AdminBrands";
 import AdminQuestions from "./pages/admin/AdminQuestions";
 import AdminQuestionDetail from "./pages/admin/AdminQuestionDetail";
 import AdminProductNewPage from "./pages/admin/AdminProductNewPage";
@@ -197,6 +198,15 @@ function App() {
             element={
               <AdminRoute>
                 <AdminCategories />
+              </AdminRoute>
+            }
+          />
+
+          <Route
+            path="admin/brands"
+            element={
+              <AdminRoute>
+                <AdminBrands />
               </AdminRoute>
             }
           />

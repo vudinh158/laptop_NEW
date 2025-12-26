@@ -60,14 +60,31 @@ export default function ProductCard({ product }) {
     return s.split(" ").slice(0, 2).join(" ")
   }
 
-  const productId = product.product_id; 
-  const productName = product.product_name; 
-  
-  const defaultVariation = product.variations?.[0]
+  const productId = product.product_id;
+  const productName = product.product_name;
 
+  const variations = Array.isArray(product.variations) ? product.variations : []
+
+  // Tìm variation primary (is_primary = true)
+  const primaryVariation = variations.find(v => v.is_primary === true)
+
+  // Xác định variation để hiển thị
+  let displayVariation
+  if (primaryVariation) {
+    displayVariation = primaryVariation
+  } else {
+    // Fallback: variation có giá thấp nhất
+    displayVariation = variations.reduce((min, current) => {
+      const currentPrice = Number(current.price || 0)
+      const minPrice = Number(min.price || 0)
+      return currentPrice < minPrice ? current : min
+    }, variations[0])
+  }
+
+  // Ưu tiên primary variation cho link
   const initialVariationId =
+  displayVariation?.variation_id ??
   product.primaryVariationId ??
-  defaultVariation?.variation_id ??
   undefined;
 
   // Link ưu tiên slug, fallback id
@@ -87,15 +104,8 @@ export default function ProductCard({ product }) {
       imageUrl = "/placeholder.svg";
   }
 
-  const variations = Array.isArray(product.variations) ? product.variations : []
-  const minVarPrice = variations.length
-    ? Math.min(
-        ...variations
-          .map((v) => Number(v?.price))
-          .filter((n) => Number.isFinite(n) && n > 0)
-      )
-    : NaN
-  const basePrice = Number.isFinite(minVarPrice) ? minVarPrice : Number(product.base_price || 0)
+  // Lấy giá từ displayVariation
+  const basePrice = Number(displayVariation?.price || product.base_price || 0)
 
   const discount = Number(product.discount_percentage || 0);
   const finalPrice = basePrice * (1 - discount / 100);
@@ -107,7 +117,16 @@ export default function ProductCard({ product }) {
     product?.brand?.name ||
     ""
 
-  const flat = flattenSpecs(product?.specs)
+  // Lấy spec từ displayVariation thay vì product.specs
+  const specData = {
+    cpu: displayVariation?.processor,
+    ram: displayVariation?.ram,
+    storage: displayVariation?.storage,
+    graphics_card: displayVariation?.graphics_card,
+    screen_size: displayVariation?.screen_size
+  }
+
+  const flat = flattenSpecs(specData)
   const cpu = shortCpu(pickSpec(flat, ["cpu", "processor", "cpu_model", "chip", "chipset"]))
   const ram = pickSpec(flat, ["ram", "memory"])
   const storage = pickSpec(flat, ["storage", "ssd", "hard_drive", "rom"])

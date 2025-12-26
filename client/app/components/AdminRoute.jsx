@@ -37,6 +37,11 @@ function AdminLayout({ children, onLogout }) {
       path: "/admin/categories",
     },
     {
+      title: "Thương hiệu",
+      icon: "🏷️",
+      path: "/admin/brands",
+    },
+    {
       title: "Q&A",
       icon: "💬",
       path: "/admin/questions",

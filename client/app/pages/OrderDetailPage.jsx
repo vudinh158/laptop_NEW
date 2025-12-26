@@ -638,6 +638,7 @@ export default function OrderDetailPage() {
           }}
           currentShippingFee={o.shipping_fee}
           provincesData={provincesData}
+          subtotal={o.final_amount - o.shipping_fee} // subtotal sau discount = final_amount - shipping_fee
           disabled={updateAddr.isPending}
           onSubmit={(payload) => {
             updateAddr.mutate(

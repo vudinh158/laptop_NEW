@@ -1,6 +1,7 @@
 // client/app/components/EditShippingAddressDialog.jsx
 import { useEffect, useState } from "react";
 import { useWards } from "../hooks/useWards";
+import { useShippingQuote } from "../hooks/useShippingQuote";
 import MapPicker from "./MapPicker";
 
 export default function EditShippingAddressDialog({
@@ -11,6 +12,7 @@ export default function EditShippingAddressDialog({
   disabled,
   currentShippingFee = 0, // phí ship hiện tại
   provincesData, // preload từ parent để tránh timing issues
+  subtotal = 0, // subtotal sau discount để tính shipping
 }) {
   const [form, setForm] = useState({
     shipping_name: "",
@@ -46,30 +48,16 @@ export default function EditShippingAddressDialog({
   const { data: wardsData } = useWards(provinceId);
   const wards = wardsData || [];
 
-  // Hàm tính phí ship cơ bản
-  const calculateShippingFee = (provinceId, wardId) => {
-    if (!provinceId || !provinces.length) {
-      console.log('calculateShippingFee: No province data or provinceId', { provinceId, provincesLength: provinces.length });
-      return 0;
-    }
+  // Sử dụng shippingService để tính phí ship chính xác
+  const { data: shippingQuote, loading: shippingLoading, error: shippingError } = useShippingQuote({
+    provinceId: form.province_id,
+    wardId: form.ward_id,
+    subtotal: subtotal,
+  });
 
-    const province = provinces.find(p => p.province_id === Number(provinceId));
-    if (!province) {
-      console.log('calculateShippingFee: Province not found', provinceId);
-      return 0;
-    }
-
-    // Giả sử các tỉnh có province_id > 50 là ngoại thành (+50k), còn lại +30k
-    const baseFee = province.province_id > 50 ? 50000 : 30000;
-
-    // Phụ phí cho xã/phường xa (+5k)
-    const wardFee = wardId ? 5000 : 0;
-
-    const total = baseFee + wardFee;
-    console.log('calculateShippingFee:', { provinceId, wardId, baseFee, wardFee, total });
-
-    return total;
-  };
+  // Tính phí ship mới từ shippingService
+  const newShippingFee = shippingQuote?.shipping_fee || 0;
+  const shippingReason = shippingQuote?.reason || null;
 
   // Geocode đơn giản
   const geocodeSimple = async (query) => {
@@ -241,8 +229,19 @@ export default function EditShippingAddressDialog({
       return;
     }
 
-    // Tính phí ship mới
-    const newShippingFee = calculateShippingFee(form.province_id, form.ward_id);
+    // Kiểm tra đang tính phí ship
+    if (shippingLoading) {
+      alert("Đang tính phí vận chuyển, vui lòng chờ...");
+      return;
+    }
+
+    // Kiểm tra lỗi tính phí ship
+    if (shippingError) {
+      alert("Không thể tính phí vận chuyển. Vui lòng thử lại.");
+      return;
+    }
+
+    // Tính phí ship mới từ shippingService
     const priceDifference = newShippingFee - (currentShippingFee || 0);
 
     // Nếu có thay đổi phí ship, hiển thị confirm dialog
@@ -435,7 +434,12 @@ export default function EditShippingAddressDialog({
                 </div>
                 <div className="flex justify-between text-sm mb-1">
                   <span>Phí ship mới:</span>
-                  <span>{confirmDialog.newShippingFee.toLocaleString()}₫</span>
+                  <span>
+                    {confirmDialog.newShippingFee.toLocaleString()}₫
+                    {shippingReason && (
+                      <span className="text-xs text-gray-500 ml-1">({shippingReason})</span>
+                    )}
+                  </span>
                 </div>
                 <div className="border-t pt-1 flex justify-between font-semibold">
                   <span>Chênh lệch:</span>

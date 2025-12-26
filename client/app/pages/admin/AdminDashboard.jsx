@@ -1,11 +1,12 @@
 import { Link, useLocation } from "react-router-dom"
 import { useState } from "react"
-import { Package, ShoppingCart, Users, FolderTree, BarChart3, LayoutDashboard, LogOut, Menu, X, TrendingUp, TrendingDown, DollarSign, Eye, Clock, CheckCircle, XCircle, Truck, MessageCircle } from "lucide-react"
+import { Package, ShoppingCart, Users, FolderTree, BarChart3, LayoutDashboard, LogOut, Menu, X, TrendingUp, TrendingDown, DollarSign, Eye, Clock, CheckCircle, XCircle, Truck, MessageCircle, AlertTriangle } from "lucide-react"
 import { useDispatch } from "react-redux"
 import { logout } from "../../store/slices/authSlice"
 import { useAdminAnalytics } from "../../hooks/useOrders"
 import LoadingSpinner from "../../components/LoadingSpinner"
 import { formatPrice } from "../../utils/formatters"
+import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
 // AdminLayout Component
 function AdminLayout({ children }) {
@@ -145,7 +146,13 @@ function AdminLayout({ children }) {
 // AdminAnalyticsDashboard Component
 function AdminAnalyticsDashboard() {
   const [period, setPeriod] = useState("30")
-  const { data, isLoading, error } = useAdminAnalytics({ period })
+  const { data, isLoading, error, refetch } = useAdminAnalytics({ period })
+
+  // Refetch when period changes
+  const handlePeriodChange = (newPeriod) => {
+    setPeriod(newPeriod)
+    refetch()
+  }
 
   if (isLoading) {
     return (
@@ -165,15 +172,51 @@ function AdminAnalyticsDashboard() {
 
   const analytics = data || {}
   const totals = analytics.totals || {}
-  const comparison = analytics.comparison || {}
-  const salesData = analytics.sales_data || []
+  const recent = analytics.recent || {}
+  const orderStatusBreakdown = analytics.order_status_breakdown || []
+  const lowStockAlerts = analytics.low_stock_alerts || []
+  const salesByCategory = analytics.sales_by_category || []
+  const salesByBrand = analytics.sales_by_brand || []
+  const topProducts = analytics.top_products || []
 
-  const StatCard = ({ title, value, icon: Icon, trend, trendValue }) => (
+  // Prepare data for charts
+  const revenueChartData = analytics.sales_data?.map(item => ({
+    date: new Date(item.date).toLocaleDateString('vi-VN'),
+    revenue: item.total_revenue || 0,
+    orders: item.order_count || 0
+  })) || []
+
+  const statusChartData = orderStatusBreakdown.map(status => ({
+    name: status.status === 'pending' ? 'Chờ xử lý' :
+          status.status === 'processing' ? 'Đang xử lý' :
+          status.status === 'shipped' ? 'Đã giao' :
+          status.status === 'delivered' ? 'Hoàn thành' :
+          status.status === 'cancelled' ? 'Đã hủy' :
+          status.status,
+    value: status.count,
+    fill: status.status === 'delivered' ? '#10B981' :
+          status.status === 'processing' ? '#F59E0B' :
+          status.status === 'pending' ? '#6B7280' :
+          status.status === 'shipped' ? '#3B82F6' :
+          status.status === 'cancelled' ? '#EF4444' :
+          '#8B5CF6'
+  }))
+
+  const categoryChartData = salesByCategory.map(cat => ({
+    name: cat.category_name || 'Unknown',
+    revenue: Number(cat.total_revenue) || 0,
+    quantity: Number(cat.total_quantity) || 0
+  }))
+
+  const StatCard = ({ title, value, icon: Icon, trend, trendValue, subtitle }) => (
     <div className="bg-white rounded-lg shadow-sm p-6">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-gray-600">{title}</p>
           <p className="text-3xl font-bold text-gray-900 mt-1">{value}</p>
+          {subtitle && (
+            <p className="text-xs text-gray-500 mt-1">{subtitle}</p>
+          )}
           {trend && trendValue && (
             <div className={`flex items-center mt-2 text-sm ${
               trend === 'up' ? 'text-green-600' : 'text-red-600'
@@ -201,7 +244,7 @@ function AdminAnalyticsDashboard() {
         <h1 className="text-2xl font-bold text-gray-900">Analytics Dashboard</h1>
         <select
           value={period}
-          onChange={(e) => setPeriod(e.target.value)}
+          onChange={(e) => handlePeriodChange(e.target.value)}
           className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
         >
           <option value="7">7 ngày</option>
@@ -216,91 +259,236 @@ function AdminAnalyticsDashboard() {
           title="Tổng doanh thu"
           value={formatPrice(totals.revenue)}
           icon={DollarSign}
-          trend={comparison.growth_percentage >= 0 ? 'up' : 'down'}
-          trendValue={`${comparison.growth_percentage}% vs tháng trước`}
+          subtitle={`${period} ngày gần nhất`}
+        />
+        <StatCard
+          title="Giá trị đơn hàng TB"
+          value={formatPrice(totals.aov)}
+          icon={TrendingUp}
+          subtitle="AOV - Average Order Value"
+        />
+        <StatCard
+          title="Tỷ lệ thành công"
+          value={`${totals.success_rate}%`}
+          icon={CheckCircle}
+          subtitle="Đơn hàng đã giao"
+        />
+        <StatCard
+          title="Tổng chiết khấu"
+          value={formatPrice(totals.discount)}
+          icon={TrendingDown}
+          subtitle="Đã áp dụng"
         />
         <StatCard
           title="Tổng đơn hàng"
           value={totals.orders}
           icon={ShoppingCart}
+          subtitle={`${recent.orders_last_7_days || 0} đơn trong 7 ngày`}
         />
         <StatCard
           title="Tổng sản phẩm"
           value={totals.products}
           icon={Package}
+          subtitle="Đang hoạt động"
         />
         <StatCard
           title="Tổng người dùng"
           value={totals.users}
           icon={Users}
+          subtitle="Đã đăng ký"
+        />
+        <StatCard
+          title="Cảnh báo kho"
+          value={lowStockAlerts.length}
+          icon={AlertTriangle}
+          subtitle="Sản phẩm sắp hết"
         />
       </div>
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Sales Chart */}
+        {/* Revenue Line Chart */}
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center mb-4">
             <BarChart3 className="w-5 h-5 text-blue-600 mr-2" />
             <h3 className="text-lg font-semibold text-gray-900">Doanh thu theo ngày</h3>
           </div>
-          <div className="h-64 flex items-center justify-center text-gray-500">
-            <div className="text-center">
-              <BarChart3 className="w-12 h-12 mx-auto mb-2 opacity-50" />
-              <p>Biểu đồ sẽ được cập nhật với thư viện chart</p>
-            </div>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={revenueChartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="date"
+                  fontSize={12}
+                  tick={{ fontSize: 11 }}
+                />
+                <YAxis
+                  fontSize={12}
+                  tick={{ fontSize: 11 }}
+                  tickFormatter={(value) => `${(value / 1000000).toFixed(1)}M`}
+                />
+                <Tooltip
+                  formatter={(value) => [formatPrice(value), 'Doanh thu']}
+                  labelStyle={{ fontSize: '12px' }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="#3B82F6"
+                  fill="#3B82F6"
+                  fillOpacity={0.2}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Order Status Distribution */}
+        {/* Order Status Pie Chart */}
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center mb-4">
             <LayoutDashboard className="w-5 h-5 text-blue-600 mr-2" />
             <h3 className="text-lg font-semibold text-gray-900">Trạng thái đơn hàng</h3>
           </div>
-          <div className="space-y-3">
-            {analytics.order_status_breakdown?.map((status) => (
-              <div key={status.status} className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 capitalize">
-                  {status.status.replace('_', ' ')}
-                </span>
-                <span className="text-sm font-medium text-gray-900">
-                  {status.count}
-                </span>
-              </div>
-            ))}
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={statusChartData}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  dataKey="value"
+                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  labelLine={false}
+                >
+                  {statusChartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.fill} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(value) => [value, 'Đơn hàng']} />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>
 
-      {/* Top Products */}
+      {/* Category Sales Bar Chart */}
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Sản phẩm bán chạy</h3>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Sản phẩm
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
-                  Đã bán
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {analytics.top_products?.slice(0, 5).map((product, index) => (
-                <tr key={index}>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {product.Product?.product_name || 'N/A'}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900 text-right">
+        <div className="flex items-center mb-4">
+          <FolderTree className="w-5 h-5 text-blue-600 mr-2" />
+          <h3 className="text-lg font-semibold text-gray-900">Doanh số theo danh mục</h3>
+        </div>
+        <div className="h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={categoryChartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                dataKey="name"
+                fontSize={12}
+                tick={{ fontSize: 11 }}
+                angle={-45}
+                textAnchor="end"
+                height={80}
+              />
+              <YAxis
+                fontSize={12}
+                tick={{ fontSize: 11 }}
+                tickFormatter={(value) => `${(value / 1000000).toFixed(1)}M`}
+              />
+              <Tooltip
+                formatter={(value) => [formatPrice(value), 'Doanh thu']}
+                labelStyle={{ fontSize: '12px' }}
+              />
+              <Bar dataKey="revenue" fill="#10B981" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Low Stock Alert & Top Products */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Low Stock Alert */}
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="flex items-center mb-4">
+            <AlertTriangle className="w-5 h-5 text-orange-600 mr-2" />
+            <h3 className="text-lg font-semibold text-gray-900">Cảnh báo hết hàng</h3>
+          </div>
+          <div className="space-y-3 max-h-64 overflow-y-auto">
+            {lowStockAlerts.length > 0 ? (
+              lowStockAlerts.map((item, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-200">
+                  <div className="flex items-center space-x-3">
+                    {item['product.thumbnail_url'] && (
+                      <img
+                        src={item['product.thumbnail_url']}
+                        alt={item['product.product_name']}
+                        className="w-8 h-8 object-cover rounded"
+                        onError={(e) => e.currentTarget.style.display = 'none'}
+                      />
+                    )}
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">
+                        {item['product.product_name']}
+                      </p>
+                      <p className="text-xs text-gray-600">SKU: {item.sku}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-bold text-orange-600">
+                      {item.stock_quantity}
+                    </p>
+                    <p className="text-xs text-gray-500">còn lại</p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <Package className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">Không có sản phẩm nào sắp hết hàng</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Top Products */}
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="flex items-center mb-4">
+            <TrendingUp className="w-5 h-5 text-green-600 mr-2" />
+            <h3 className="text-lg font-semibold text-gray-900">Sản phẩm bán chạy</h3>
+          </div>
+          <div className="space-y-3 max-h-64 overflow-y-auto">
+            {topProducts.map((product, index) => (
+              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  {product['product.thumbnail_url'] && (
+                    <img
+                      src={product['product.thumbnail_url']}
+                      alt={product['product.product_name']}
+                      className="w-10 h-10 object-cover rounded"
+                      onError={(e) => e.currentTarget.style.display = 'none'}
+                    />
+                  )}
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">
+                      {product['product.product_name']}
+                    </p>
+                    <p className="text-xs text-gray-600">
+                      SKU: {product.sku} • {product.processor} • {product.ram} • {product.storage}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-bold text-gray-900">
                     {product.total_quantity}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </p>
+                  <p className="text-xs text-gray-500">đã bán</p>
+                  <p className="text-xs text-green-600 font-medium">
+                    {formatPrice(product.total_revenue)}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

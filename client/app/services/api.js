@@ -122,6 +122,13 @@ export const adminAPI = {
   createCategory: (data) => api.post("/admin/categories", data),
   updateCategory: (id, data) => api.put(`/admin/categories/${id}`, data),
   deleteCategory: (id) => api.delete(`/admin/categories/${id}`),
+
+  // Brands
+  getAllBrands: () => api.get("/admin/brands"),
+  getBrandById: (id) => api.get(`/admin/brands/${id}`),
+  createBrand: (data) => api.post("/admin/brands", data),
+  updateBrand: (id, data) => api.put(`/admin/brands/${id}`, data),
+  deleteBrand: (id) => api.delete(`/admin/brands/${id}`),
 };
 export const geoAPI = {
   // Trả về nhẹ: chỉ lấy id + name; có thể thêm q, limit nếu BE hỗ trợ

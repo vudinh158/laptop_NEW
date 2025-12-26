@@ -36,10 +36,6 @@ const Product = sequelize.define(
         key: "brand_id",
       },
     },
-    base_price: {
-      type: DataTypes.DECIMAL(14, 2),
-      allowNull: false,
-    },
     discount_percentage: {
       type: DataTypes.DECIMAL(5, 2),
       defaultValue: 0,

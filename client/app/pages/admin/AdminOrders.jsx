@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { useAdminOrders, useAdminOrderDetail, useShipOrder, useDeliverOrder, useRefundOrder } from "../../hooks/useOrders";
+import { useAdminOrders, useAdminOrderDetail, useUpdateOrderStatus, useShipOrder, useDeliverOrder, useRefundOrder } from "../../hooks/useOrders";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { formatPrice } from "../../utils/formatters";
 import { Eye, ArrowLeft, ArrowUp, ArrowDown } from "lucide-react";

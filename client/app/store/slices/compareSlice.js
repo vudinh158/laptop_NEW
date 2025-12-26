@@ -4,16 +4,18 @@ import { createSlice } from "@reduxjs/toolkit";
 const MAX = 3;
 const compareSlice = createSlice({
   name: "compare",
-  initialState: { items: [] }, // [{product_id, product_name, thumbnail_url, specs}]
+  initialState: { items: [] }, // [{variation_id, product_id, product_name, thumbnail_url, discount_percentage, specs, variation}]
   reducers: {
     addCompare(state, action) {
       const p = action.payload;
-      if (state.items.find(x => x.product_id === p.product_id)) return;
+      // Check trùng dựa trên variation_id
+      if (state.items.find(x => x.variation_id === p.variation_id)) return;
       if (state.items.length >= MAX) state.items.shift(); // bỏ cái cũ nhất
       state.items.push(p);
     },
     removeCompare(state, action) {
-      state.items = state.items.filter(x => x.product_id !== action.payload);
+      // Xóa dựa trên variation_id
+      state.items = state.items.filter(x => x.variation_id !== action.payload);
     },
     clearCompare(state) {
       state.items = [];

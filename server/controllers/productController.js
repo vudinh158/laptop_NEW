@@ -194,7 +194,7 @@ exports.getProductsV2 = async (req, res, next) => {
         {
           model: ProductVariation,
           as: "variations",
-          attributes: ["variation_id", "price", "stock_quantity"],
+          attributes: ["variation_id", "price", "stock_quantity", "is_primary", "processor", "ram", "storage", "graphics_card", "screen_size"],
           ...(Object.keys(variationWhere).length
             ? { where: variationWhere, required: true }
             : {}),
@@ -306,7 +306,7 @@ exports.getProducts = async (req, res, next) => {
         {
           model: ProductVariation,
           as: "variations",
-          attributes: ["variation_id", "price", "stock_quantity"],
+          attributes: ["variation_id", "price", "stock_quantity", "is_primary", "processor", "ram", "storage", "graphics_card", "screen_size"],
         },
         {
           model: ProductImage,

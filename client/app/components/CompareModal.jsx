@@ -92,7 +92,45 @@ export default function CompareModal({ open, onClose, products = [] }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {keys.map((k) => (
+                  {/* Hàng giá gốc */}
+                  <tr className="border-t bg-blue-50">
+                    <td className="p-3 font-medium align-top text-blue-800">Giá gốc</td>
+                    {normalized.map((p) => (
+                      <td key={p.product_id + "price"} className="p-3 align-top text-gray-600">
+                        {p.specs?.price ? `${Number(p.specs.price).toLocaleString()}₫` : <span className="text-gray-400">—</span>}
+                      </td>
+                    ))}
+                  </tr>
+                  {/* Hàng giá sau giảm */}
+                  <tr className="border-t bg-green-50">
+                    <td className="p-3 font-medium align-top text-green-800">Giá sau giảm</td>
+                    {normalized.map((p) => {
+                      const originalPrice = Number(p.specs?.price || 0);
+                      const discountPercent = Number(p.discount_percentage || 0);
+                      const discountedPrice = originalPrice * (1 - discountPercent / 100);
+
+                      return (
+                        <td key={p.product_id + "discounted"} className="p-3 align-top">
+                          {originalPrice > 0 ? (
+                            <div className="flex flex-col gap-1">
+                              <span className="font-semibold text-green-600">
+                                {discountedPrice.toLocaleString()}₫
+                              </span>
+                              {discountPercent > 0 && (
+                                <span className="text-xs text-red-500">
+                                  Giảm {discountPercent}%
+                                </span>
+                              )}
+                            </div>
+                          ) : (
+                            <span className="text-gray-400">—</span>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                  {/* Các hàng specs */}
+                  {keys.filter(k => k !== 'price').map((k) => (
                     <tr key={k} className="border-t">
                       <td className="p-3 font-medium align-top">{k}</td>
                       {normalized.map((p) => (
@@ -100,7 +138,7 @@ export default function CompareModal({ open, onClose, products = [] }) {
                           {p._flatSpecs?.[k] || <span className="text-gray-400">—</span>}
                         </td>
                       ))}
-                  </tr>
+                    </tr>
                   ))}
                 </tbody>
               </table>

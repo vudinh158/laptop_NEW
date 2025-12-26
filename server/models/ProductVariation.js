@@ -39,6 +39,12 @@ const ProductVariation = sequelize.define(
     color: {
       type: DataTypes.STRING(50),
     },
+    graphics_card: {
+      type: DataTypes.STRING(100),
+    },
+    screen_size: {
+      type: DataTypes.STRING(50),
+    },
     price: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,

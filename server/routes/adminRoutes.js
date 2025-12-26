@@ -1,9 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const adminController = require("../controllers/adminController")
-const questionsController = require("../controllers/questionsController")
 const { authenticateToken, authorizeRoles } = require("../middleware/auth")
-const upload = require("../middleware/upload")
 
 // All admin routes require authentication and admin role
 router.use(authenticateToken)
@@ -11,10 +9,7 @@ router.use(authorizeRoles("admin", "manager"))
 
 // Product management
 router.post("/products", adminController.createProduct)
-router.put('/products/:product_id', upload.fields([
-    { name: 'thumbnail', maxCount: 1 }, 
-    { name: 'images', maxCount: 10 }
-  ]),  adminController.updateProduct);
+router.put('/products/:product_id', adminController.updateProduct);
 router.delete("/products/:product_id", adminController.deleteProduct)
 
 // Variation management
@@ -40,8 +35,11 @@ router.put("/categories/:category_id", adminController.updateCategory)
 router.delete("/categories/:category_id", adminController.deleteCategory)
 
 // Brand management
+router.get("/brands", adminController.getAllBrands)
+router.get("/brands/:brand_id", adminController.getBrandById)
 router.post("/brands", adminController.createBrand)
 router.put("/brands/:brand_id", adminController.updateBrand)
+router.delete("/brands/:brand_id", adminController.deleteBrand)
 
 // Role management
 router.get("/roles", adminController.getAllRoles)
@@ -53,12 +51,5 @@ router.put("/users/:user_id/roles", adminController.updateUserRoles)
 // Analytics & Dashboard
 router.get("/analytics/dashboard", adminController.getDashboardAnalytics)
 router.get("/analytics/sales", adminController.getSalesAnalytics)
-
-// Questions & Answers Management
-router.get("/questions", questionsController.getAllQuestions)
-router.get("/questions/:question_id", questionsController.getQuestionDetail)
-router.post("/questions/:question_id/answers", questionsController.createAnswer)
-router.put("/questions/:question_id/answers/:answer_id", questionsController.updateAnswer)
-router.delete("/questions/:question_id/answers/:answer_id", questionsController.deleteAnswer)
 
 module.exports = router

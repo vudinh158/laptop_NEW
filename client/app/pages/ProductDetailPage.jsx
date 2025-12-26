@@ -344,7 +344,32 @@ export default function ProductDetailPage() {
   useEffect(() => {
     if (product?.variations?.length) {
       setSelectedImage(0);
-      setSelectedVariation(product.variations[0]);
+
+      // Ưu tiên chọn variation có is_primary = true
+      const primaryVariation = product.variations.find(v => v.is_primary === true);
+
+      let defaultVariation;
+      if (primaryVariation) {
+        defaultVariation = primaryVariation;
+      } else {
+        // Fallback: chọn variation có giá rẻ nhất
+        defaultVariation = product.variations.reduce((cheapest, current) => {
+          const currentPrice = Number(current.price || 0);
+          const cheapestPrice = Number(cheapest.price || 0);
+          return currentPrice < cheapestPrice ? current : cheapest;
+        }, product.variations[0]);
+      }
+
+      setSelectedVariation(defaultVariation);
+
+      // Set selection state theo cấu hình của variation được chọn
+      if (defaultVariation) {
+        const newSel = ATTRS.reduce((acc, attr) => {
+          acc[attr] = defaultVariation[attr] || "";
+          return acc;
+        }, {});
+        setSel(newSel);
+      }
     }
   }, [product?.variations]);
   // const handleAddToCart = () => {
@@ -690,14 +715,28 @@ export default function ProductDetailPage() {
                   onClick={() =>
                     dispatch(
                       addCompare({
+                        variation_id: selectedVariation?.variation_id,
                         product_id: product.product_id,
                         product_name: product.product_name,
                         thumbnail_url: product.thumbnail_url,
-                        specs: product.specs, // rất quan trọng để có bảng
+                        discount_percentage: product.discount_percentage, // thêm discount để tính giá sau giảm
+                        // Gửi specs và giá của variation đã chọn
+                        specs: selectedVariation ? {
+                          price: selectedVariation.price,
+                          processor: selectedVariation.processor,
+                          ram: selectedVariation.ram,
+                          storage: selectedVariation.storage,
+                          graphics_card: selectedVariation.graphics_card,
+                          screen_size: selectedVariation.screen_size,
+                          color: selectedVariation.color
+                        } : {},
+                        variation: selectedVariation, // lưu cả object variation để dùng sau
                       })
                     )
                   }
-                  className="text-sm text-blue-600 hover:text-blue-700"
+                  disabled={!selectedVariation}
+                  className="text-sm text-blue-600 hover:text-blue-700 disabled:text-gray-400 disabled:cursor-not-allowed"
+                  title={!selectedVariation ? "Vui lòng chọn đủ cấu hình trước khi so sánh" : ""}
                 >
                   + Thêm vào so sánh
                 </button>

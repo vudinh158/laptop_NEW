@@ -1380,6 +1380,32 @@ exports.changePaymentMethod = async (req, res, next) => {
     }
 
     await t.commit();
+
+    // Gửi email thông báo thay đổi phương thức thanh toán
+    try {
+      const { sendOrderUpdateEmail } = require("../services/emailService");
+      const { User } = require('../models');
+      const user = await User.findByPk(order.user_id);
+
+      if (user) {
+        sendOrderUpdateEmail({
+          order,
+          changeType: 'PAYMENT_METHOD',
+          oldData: {
+            provider: payment._previousDataValues?.provider,
+            method: payment._previousDataValues?.payment_method,
+          },
+          newData: {
+            provider: payment.provider,
+            method: payment.payment_method,
+          },
+          user
+        }).catch(err => console.error("Payment method update email failed:", err));
+      }
+    } catch (emailError) {
+      console.error("Failed to queue payment method update email:", emailError);
+    }
+
     return res.json({
       message: "Payment method updated",
       order: {
@@ -1498,6 +1524,34 @@ exports.updateShippingAddress = async (req, res, next) => {
     }
 
     await t.commit();
+
+    // Gửi email thông báo cập nhật địa chỉ
+    try {
+      const { sendOrderUpdateEmail } = require("../services/emailService");
+      const { User } = require('../models');
+      const user = await User.findByPk(order.user_id);
+
+      if (user) {
+        sendOrderUpdateEmail({
+          order,
+          changeType: 'SHIPPING_ADDRESS',
+          oldData: {
+            shipping_name: order._previousDataValues?.shipping_name,
+            shipping_phone: order._previousDataValues?.shipping_phone,
+            shipping_address: order._previousDataValues?.shipping_address,
+          },
+          newData: {
+            shipping_name: order.shipping_name,
+            shipping_phone: order.shipping_phone,
+            shipping_address: order.shipping_address,
+          },
+          user
+        }).catch(err => console.error("Shipping address update email failed:", err));
+      }
+    } catch (emailError) {
+      console.error("Failed to queue shipping address update email:", emailError);
+    }
+
     console.log('updateShippingAddress success for order:', order.order_id);
     return res.json({
       message: "Shipping address updated",

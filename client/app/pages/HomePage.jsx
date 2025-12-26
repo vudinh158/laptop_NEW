@@ -503,12 +503,31 @@ export default function HomePage() {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-balance">
+      <div
+        className="relative text-white py-16 overflow-hidden"
+        style={{
+          background:
+            "linear-gradient(135deg, #0B2B6B 0%, #071A3F 45%, #04112B 100%)",
+        }}
+      >
+        {/* Dragon Pattern Overlay */}
+        <div
+          className="absolute inset-0 opacity-8"
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='80'%20height='80'%20viewBox='0%200%2080%2080'%3E%3Cg%20fill='none'%20stroke='%23FFFFFF'%20stroke-width='1'%20stroke-opacity='0.15'%3E%3Cpath%20d='M20%2050c5-5%2010-15%2015-10s5%2010%2010%205%208-12%2012-8%206%2014%2010%2010'/%3E%3Cpath%20d='M35%2035c3-2%208-8%2010-4s2%206%206%204%207-9%209-5%204%2011%207%208'/%3E%3Ccircle%20cx='25'%20cy='25'%20r='2'/%3E%3Ccircle%20cx='55'%20cy='55'%20r='2'/%3E%3Cpath%20d='M45%2020l5%205-3%208%208%203-5%205-8-3-3-8z'/%3E%3Cpath%20d='M15%2060l4-4%206%202-2%206-6-2%204-4z'/%3E%3C/g%3E%3C/svg%3E\")",
+            backgroundRepeat: "repeat",
+            backgroundSize: "80px 80px",
+          }}
+        />
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-purple-500/10" />
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-balance text-white drop-shadow-lg">
             Laptop LÊ SƠN
           </h1>
-          <p className="text-xl text-blue-100 text-pretty">
+          <p className="text-xl text-blue-100 text-pretty drop-shadow-md">
             Tìm chiếc laptop hoàn hảo cho công việc và giải trí của bạn
           </p>
         </div>
