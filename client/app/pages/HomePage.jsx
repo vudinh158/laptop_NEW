@@ -1381,7 +1381,7 @@ export default function HomePage() {
                   const firstChar = String(asker || "K").trim().charAt(0).toUpperCase();
                   const answers = Array.isArray(q?.answers) ? q.answers : [];
                   const opened = !!openQaReplies[q.question_id];
-                  const productName = q?.Product?.product_name;
+                  const productName = q?.product?.product_name;
                   return (
                     <div key={q.question_id} className="rounded-xl border border-gray-200 bg-white p-4">
                       <div className="flex gap-3">

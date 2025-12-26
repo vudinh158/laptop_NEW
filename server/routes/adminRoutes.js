@@ -1,6 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const adminController = require("../controllers/adminController")
+const questionsController = require("../controllers/questionsController")
 const { authenticateToken, authorizeRoles } = require("../middleware/auth")
 
 // All admin routes require authentication and admin role
@@ -51,5 +52,10 @@ router.put("/users/:user_id/roles", adminController.updateUserRoles)
 // Analytics & Dashboard
 router.get("/analytics/dashboard", adminController.getDashboardAnalytics)
 router.get("/analytics/sales", adminController.getSalesAnalytics)
+
+// Question management
+router.get("/questions", questionsController.getAllQuestions)
+router.get("/questions/:question_id", questionsController.getQuestionDetail)
+router.post("/questions/:question_id/answers", questionsController.createAnswer)
 
 module.exports = router
